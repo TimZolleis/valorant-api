@@ -1,32 +1,48 @@
+import { json, LoaderFunction } from '@remix-run/node';
+import { requireFrontendUser, requireUser } from '~/utils/session/session.server';
+import { useOptionalUser } from '~/utils/hooks/matchesData';
+import { Container } from '~/ui/container/Container';
+import { PlayerStatisticsComponent } from '~/ui/player/PlayerStatisticsComponent';
+import { useLoaderData } from 'react-router';
+import { ValorantUser } from '~/models/user/ValorantUser';
+import { PlayerRankComponent } from '~/ui/player/PlayerRankComponent';
+
+type LoaderData = {
+    user: ValorantUser;
+};
+
+export const loader: LoaderFunction = async ({ request }) => {
+    const user = await requireFrontendUser(request);
+    return json<LoaderData>({ user });
+};
+
 export default function Index() {
-  return (
-    <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.4" }}>
-      <h1>Welcome to Remix</h1>
-      <ul>
-        <li>
-          <a
-            target="_blank"
-            href="https://remix.run/tutorials/blog"
-            rel="noreferrer"
-          >
-            15m Quickstart Blog Tutorial
-          </a>
-        </li>
-        <li>
-          <a
-            target="_blank"
-            href="https://remix.run/tutorials/jokes"
-            rel="noreferrer"
-          >
-            Deep Dive Jokes App Tutorial
-          </a>
-        </li>
-        <li>
-          <a target="_blank" href="https://remix.run/docs" rel="noreferrer">
-            Remix Docs
-          </a>
-        </li>
-      </ul>
-    </div>
-  );
+    const { user } = useLoaderData() as LoaderData;
+    return (
+        <>
+            <p className={'font-inter font-medium text-headline-small text-white'}>
+                Hello, {user.userData.gameName}
+            </p>
+            <div className={'text-white mt-5 space-y-5'}>
+                <Container>
+                    <p className={'font-inter font-semibold text-title-medium py-2'}>
+                        Personal Statistics
+                    </p>
+                    <div className={'flex gap-2'}>
+                        <PlayerStatisticsComponent
+                            playerUuid={user.userData.puuid}></PlayerStatisticsComponent>
+                    </div>
+                </Container>
+                <Container>
+                    <p className={'font-inter font-semibold text-title-medium py-2'}>
+                        Match history
+                    </p>
+                    <div className={'flex gap-2'}>
+                        <PlayerStatisticsComponent
+                            playerUuid={user.userData.puuid}></PlayerStatisticsComponent>
+                    </div>
+                </Container>
+            </div>
+        </>
+    );
 }

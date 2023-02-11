@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { createCookieSessionStorage, json, Session } from '@remix-run/node';
+import { createCookieSessionStorage, json, redirect, Session } from '@remix-run/node';
 import { ValorantUser } from '~/models/user/ValorantUser';
 import { Params } from '@remix-run/react';
 
@@ -38,6 +38,14 @@ export async function requireUser(request: Request) {
         );
     }
     return user;
+}
+
+export async function requireFrontendUser(request: Request) {
+    try {
+        return await requireUser(request);
+    } catch (e) {
+        throw redirect('/login');
+    }
 }
 
 export async function requirePlayerUuid(request: Request) {
