@@ -34,11 +34,11 @@ export const PlayerInGameComponent = ({
                             <span className={'text-neutral-600'}>#{playerDetails.TagLine}</span>
                         </p>
                         <div className={'flex gap-2 items-center'}>
-                            <img className={'h-6'} src={player.rank.tier?.smallIcon} alt='' />
+                            <img className={'h-6'} src={player.rank?.tier?.smallIcon} alt='' />
                             <p className={'font-inter text-body-medium font-semibold capitalize'}>
-                                {player.rank.tier?.tierName.toLowerCase()}
+                                {player.rank?.tier?.tierName.toLowerCase()}
                                 <span className={' pl-2 text-gray-400 font-light'}>
-                                    {player.rank.latestRR}RR
+                                    {player.rank?.latestRR}RR
                                 </span>
                             </p>
                         </div>
