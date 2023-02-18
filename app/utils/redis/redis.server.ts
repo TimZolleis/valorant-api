@@ -85,8 +85,8 @@ export const getRedisInstance = async (): Promise<RedisClient> => {
 };
 
 function getClient() {
-    const config = new RedisConfig('upstash');
-    return new Redis(config.getRedisUrl(true));
+    const config = new RedisConfig('redis');
+    return new Redis(config.getRedisUrl(false));
 }
 
 export function globalCache() {
