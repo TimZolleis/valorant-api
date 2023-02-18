@@ -32,7 +32,6 @@ async function getSeasonalStatistics(seasonalInfoBySeasonID: SeasonalInfoBySeaso
                 { key: 'season', expiration: 3600 }
             );
             const winrate = calculateWinrate(season.NumberOfWins, season.NumberOfGames);
-            console.log('Season', season);
             const highestRank = await getSeasonalTopRank(season);
             return {
                 seasonID: season.SeasonID,

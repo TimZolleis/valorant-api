@@ -28,16 +28,23 @@ export async function getCurrentCompetitiveTiers() {
 }
 
 export async function getPlayerRank(user: ValorantUser, playerUuid: string) {
-    const currentCompetitiveTiers = await getCurrentCompetitiveTiers();
-    const latestCompetitiveUpdate = await getLatestCompetitiveUpdate(user, playerUuid);
-    const rank = findRank(
-        currentCompetitiveTiers,
-        latestCompetitiveUpdate.Matches[0].TierAfterUpdate
-    );
-    return {
-        tier: rank,
-        latestRR: latestCompetitiveUpdate.Matches[0].RankedRatingAfterUpdate,
-    };
+    try {
+        const currentCompetitiveTiers = await getCurrentCompetitiveTiers();
+        const latestCompetitiveUpdate = await getLatestCompetitiveUpdate(user, playerUuid);
+
+        const rank = findRank(
+            currentCompetitiveTiers,
+            latestCompetitiveUpdate.Matches[0].TierAfterUpdate
+                ? latestCompetitiveUpdate.Matches[0].TierAfterUpdate
+                : 0
+        );
+        return {
+            tier: rank,
+            latestRR: latestCompetitiveUpdate.Matches[0].RankedRatingAfterUpdate,
+        };
+    } catch (e) {
+        return undefined;
+    }
 }
 
 export async function getRankByTierNumber(tierNumber: number) {
