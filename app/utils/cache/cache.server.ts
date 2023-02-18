@@ -38,16 +38,22 @@ export async function getDatabaseCachedValue<T>(key: string): Promise<T> {
 
 export async function storeDatabaseCachedValue<T>(key: string, expiration: number, value: T) {
     const stringValue = JSON.stringify(value);
-    return await prisma.cache.upsert({
-        where: {
-            key,
-        },
-        create: {
-            key,
-            value: stringValue,
-        },
-        update: {
-            value: stringValue,
-        },
-    });
+    if (
+        !prisma.cache.findUnique({
+            where: { key },
+        })
+    ) {
+        return await prisma.cache.upsert({
+            where: {
+                key,
+            },
+            create: {
+                key,
+                value: stringValue,
+            },
+            update: {
+                value: stringValue,
+            },
+        });
+    }
 }

@@ -86,6 +86,24 @@ export class RiotGamesApiClient {
         }
     }
 
+    async putCached<T>(
+        request: RiotRequest,
+        body: Object,
+        cacheConfig: CacheConfig,
+        config?: AxiosRequestConfig<any>,
+        useFallback = false
+    ): Promise<T> {
+        const url = useFallback ? request.getFallback().getUrl() : request.getUrl();
+        const key = constructCacheKey(url, cacheConfig.key);
+        try {
+            return await getCachedValue(key);
+        } catch (error: any) {
+            const result = await this.put(request, body, config, useFallback);
+            await storeCachedValue<T>(key, cacheConfig.expiration, result);
+            return result;
+        }
+    }
+
     async getDatabaseCached<T>(
         request: RiotRequest,
         cacheConfig: CacheConfig,

@@ -5,7 +5,9 @@ const DefaultLayout = ({ children }: { children: ReactNode }) => {
     return (
         <>
             <NavBar />
-            <main className={'p-5'}>{children}</main>
+            <main className={'main select-text selection:bg-fuchsia-500'}>
+                <div className={'p-5'}>{children}</div>
+            </main>
         </>
     );
 };

@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import { SmallContainer } from '~/ui/container/SmallContainer';
 import { PlayerRankRoute } from '~/routes/api/player/$playerId/competitive/rank';
 import { PlayerRankComponent } from '~/ui/player/PlayerRankComponent';
+import { LoadingContainer } from '~/ui/container/LoadingContainer';
 
 export const PlayerStatisticsComponent = ({ playerUuid }: { playerUuid: string }) => {
     const statistics = useFetcher<PlayerStatisticsRoute>();
@@ -34,11 +35,7 @@ export const PlayerStatisticsComponent = ({ playerUuid }: { playerUuid: string }
             </div>
         );
     } else {
-        return (
-            <div>
-                <p className={'text-white'}>Loading...</p>
-            </div>
-        );
+        return <LoadingContainer />;
     }
 };
 
@@ -59,11 +56,11 @@ const TopRankComponent = ({ data }: { data: PlayerStatisticsRoute }) => {
             <p className={'pb-2 text-label-medium border-b border-white/20'}>Top Rank</p>
             <div className={'flex items-center  py-2'}>
                 <img
-                    className={'h-8'}
+                    className={'h-10'}
                     src={data.statistics.totalStatistics.topRank?.smallIcon}
                     alt=''
                 />
-                <p className={'font-semibold text-title-small p-2 first-letter:capitalize'}>
+                <p className={'font-semibold text-title-large p-2 capitalize'}>
                     {data.statistics.totalStatistics?.topRank?.tierName.toLowerCase()}
                 </p>
             </div>

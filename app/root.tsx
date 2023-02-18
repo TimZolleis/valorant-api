@@ -41,7 +41,3 @@ export default function App() {
         </html>
     );
 }
-
-export const ErrorBoundary = ({ error }) => {
-    return <div>Something went wrong!</div>;
-};

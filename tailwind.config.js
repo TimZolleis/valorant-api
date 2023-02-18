@@ -30,6 +30,9 @@ module.exports = {
                 'body-medium': '14px',
                 'body small': '12px',
             },
+            backgroundImage: {
+                'gradient-radial': 'radial-gradient(var(--gradient-color-stops))',
+            },
         },
     },
     safelist: [

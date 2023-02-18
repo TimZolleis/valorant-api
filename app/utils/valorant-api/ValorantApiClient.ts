@@ -41,7 +41,6 @@ export class ValorantApiClient {
     async getDatabaseCached<T>(url: string, cacheConfig: CacheConfig): Promise<T> {
         const key = constructCacheKey(url, cacheConfig.key);
         try {
-            console.log('Returning cached from DB');
             return await getDatabaseCachedValue<T>(key);
         } catch (error: any) {
             const result = await this.get<T>(url);

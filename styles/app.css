@@ -91,3 +91,26 @@ html {
     src: url("/resources/fonts/inter/Inter-Black.woff2?v=3.19") format("woff2"),
     url("/resources/fonts/inter/Inter-Black.woff?v=3.19") format("woff");
 }
+
+/*.main {*/
+/*    width: 100vw;*/
+/*    min-height: 100vh;*/
+/*    justify-content: center;*/
+/*}*/
+
+/*.main:before {*/
+/*    background: radial-gradient(circle, rgba(2, 0, 36, 0) 0, #161616 100%);*/
+/*    z-index: 2;*/
+/*    top: 0;*/
+/*}*/
+
+/*.main:after {*/
+/*    content: "";*/
+/*    background-image: url("/resources/img/grid.svg");*/
+/*    z-index: 1;*/
+/*    position: absolute;*/
+/*    width: 100%;*/
+/*    height: 100%;*/
+/*    opacity: 0.2;*/
+/*}*/
+
