@@ -1,4 +1,4 @@
-import type { LoaderFunction } from '@remix-run/node';
+import type { DataFunctionArgs, LoaderFunction } from '@remix-run/node';
 import {
     requirePlayerUuid,
     requirePlayerUuidAsParam,
@@ -11,6 +11,8 @@ import type { ValorantMatchHistory } from '~/models/valorant/match/ValorantMatch
 import { getCharacterByUUid, getMatchDetails, getMatchMap } from '~/utils/match/match.server';
 import type { ValorantMatchDetails } from '~/models/valorant/match/ValorantMatchDetails';
 import type { ValorantApiMap } from '~/models/valorant-api/ValorantApiMap';
+
+export type MatchHistoryRouteData = Awaited<ReturnType<typeof loader>>;
 
 async function getRelevantMatchData(
     puuid: string,
@@ -51,7 +53,7 @@ async function getRelevantMatchData(
         },
     };
 }
-export const loader: LoaderFunction = async ({ request, params }) => {
+export const loader = async ({ request, params }: DataFunctionArgs) => {
     const user = await requireUser(request);
     const playerId = await requirePlayerUuidAsParam(params);
     const url = new URL(request.url);
@@ -79,7 +81,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     return await Promise.all(
         matchHistory.History.map(async (match) => {
             const details = await getMatchDetails(user, match.MatchID);
-            const map = await getMatchMap(details);
+            const map = await getMatchMap(details.matchInfo.mapId);
             return await getRelevantMatchData(playerId, details, map!);
         })
     );

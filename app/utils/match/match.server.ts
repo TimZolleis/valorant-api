@@ -6,8 +6,9 @@ import { RiotRequest } from '~/models/Request';
 import { endpoints } from '~/config/endpoints';
 import { RiotGamesApiClient } from '~/utils/riot/RiotGamesApiClient';
 import { ValorantUser } from '~/models/user/ValorantUser';
+import { ValorantApiCharacter } from '~/models/valorant-api/ValorantApiCharacter';
 
-export async function getMatchMap(matchDetails: ValorantMatchDetails) {
+export async function getMatchMap(mapId: string) {
     const maps = await new ValorantApiClient().getDatabaseCached<ValorantApiMap[]>(
         valorantApiEndpoints.maps,
         {
@@ -15,9 +16,13 @@ export async function getMatchMap(matchDetails: ValorantMatchDetails) {
             expiration: 3600,
         }
     );
-    return maps.find((map) => {
-        return map.mapUrl === matchDetails.matchInfo.mapId;
+    const result = maps.find((map) => {
+        return map.mapUrl === mapId;
     });
+    if (!result) {
+        throw new Error('Map not found!');
+    }
+    return result;
 }
 
 export async function getMatchDetails(user: ValorantUser, matchId: string) {
@@ -34,7 +39,7 @@ export async function getMatchDetails(user: ValorantUser, matchId: string) {
 }
 
 export async function getCharacterByUUid(characterId: string) {
-    return await new ValorantApiClient().getDatabaseCached(
+    return await new ValorantApiClient().getDatabaseCached<ValorantApiCharacter>(
         valorantApiEndpoints.characterByUuid(characterId),
         {
             key: 'character',

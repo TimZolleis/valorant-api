@@ -32,6 +32,7 @@ async function getSeasonalStatistics(seasonalInfoBySeasonID: SeasonalInfoBySeaso
                 { key: 'season', expiration: 3600 }
             );
             const winrate = calculateWinrate(season.NumberOfWins, season.NumberOfGames);
+            console.log('Season', season);
             const highestRank = await getSeasonalTopRank(season);
             return {
                 seasonID: season.SeasonID,
@@ -48,27 +49,32 @@ async function getTopRank(seasonalInfoBySeasonID: SeasonalInfoBySeasonID) {
     let highestRank = 0;
     seasonIds.forEach((seasonId) => {
         const season = seasonalInfoBySeasonID[seasonId];
-        const tiersPlayedIn = Object.keys(season.WinsByTier);
-        tiersPlayedIn.forEach((tierPlayedIn) => {
-            const tierPlayedInAsNumber = parseInt(tierPlayedIn);
-            if (tierPlayedInAsNumber > highestRank) {
-                highestRank = tierPlayedInAsNumber;
-            }
-        });
+        if (season.WinsByTier) {
+            const tiersPlayedIn = Object.keys(season.WinsByTier);
+            tiersPlayedIn.forEach((tierPlayedIn) => {
+                const tierPlayedInAsNumber = parseInt(tierPlayedIn);
+                if (tierPlayedInAsNumber > highestRank) {
+                    highestRank = tierPlayedInAsNumber;
+                }
+            });
+        }
     });
     return await getRankByTierNumber(highestRank);
 }
 
 async function getSeasonalTopRank(season: SeasonalInfo) {
     let highestRank = 0;
-    const tiersPlayedIn = Object.keys(season.WinsByTier);
-    tiersPlayedIn.forEach((tierPlayedIn) => {
-        const tierPlayedInAsNumber = parseInt(tierPlayedIn);
-        if (tierPlayedInAsNumber > highestRank) {
-            highestRank = tierPlayedInAsNumber;
-        }
-    });
-    return await getRankByTierNumber(highestRank);
+    if (season !== null && season.WinsByTier) {
+        const tiersPlayedIn = Object.keys(season?.WinsByTier);
+        tiersPlayedIn.forEach((tierPlayedIn) => {
+            const tierPlayedInAsNumber = parseInt(tierPlayedIn);
+            if (tierPlayedInAsNumber > highestRank) {
+                highestRank = tierPlayedInAsNumber;
+            }
+        });
+        return await getRankByTierNumber(highestRank);
+    }
+    return null;
 }
 
 function getTotalGamesAndWins(seasonalInfoBySeasonID: SeasonalInfoBySeasonID) {
