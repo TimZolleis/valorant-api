@@ -44,9 +44,7 @@ const PlayerDetailsPage = () => {
                 </div>
             </div>
             <Container>
-                <p className={'font-inter font-semibold text-title-large py-2'}>
-                    personal statistics
-                </p>
+                <p className={'font-inter font-semibold text-title-large py-2'}>Statistics</p>
                 <div className={'flex gap-2'}>
                     <PlayerStatisticsComponent playerUuid={playerId}></PlayerStatisticsComponent>
                 </div>

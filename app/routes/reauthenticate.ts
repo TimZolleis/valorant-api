@@ -10,13 +10,10 @@ export const loader = async ({ request, params }: DataFunctionArgs) => {
             .then((client) => client.reauthenticate());
         const session = await getClientSession(request);
         session.set('user', reauthenticatedUser);
-        return json(
-            { user },
-            {
-                headers: {
-                    'Set-Cookie': await commitClientSession(session),
-                },
-            }
-        );
+        return redirect('/', {
+            headers: {
+                'Set-Cookie': await commitClientSession(session),
+            },
+        });
     } catch (e) {}
 };
