@@ -70,7 +70,7 @@ export const loader = async ({ request, params }: DataFunctionArgs) => {
         riotRequest,
         {
             key: 'match-history',
-            expiration: 3600,
+            expiration: 300,
         },
         {
             params: {
