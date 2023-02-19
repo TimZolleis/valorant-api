@@ -2,6 +2,7 @@ import { getRedisInstance } from '~/utils/redis/redis.server';
 import { prisma } from '~/utils/db/db.server';
 
 export async function getCachedValue(key: string) {
+    console.log('Getting from cache');
     const redis = await getRedisInstance();
     const redisValue = await redis.getValue(key);
     if (!redisValue) {
@@ -27,6 +28,7 @@ export async function getDatabaseCachedValue<T>(key: string): Promise<T> {
         },
     });
     if (!databaseValue) {
+        console.log(key, 'not found in db');
         throw new Error('Cache miss');
     }
     let value = databaseValue.value;
@@ -38,20 +40,24 @@ export async function getDatabaseCachedValue<T>(key: string): Promise<T> {
 
 export async function storeDatabaseCachedValue<T>(key: string, expiration: number, value: T) {
     const stringValue = JSON.stringify(value);
-    if (
-        !prisma.cache.findUnique({
-            where: { key },
-        })
-    ) {
-        return await prisma.cache.upsert({
+    const hasValue = await prisma.cache.findUnique({
+        where: {
+            key,
+        },
+    });
+    if (hasValue) {
+        return await prisma.cache.update({
             where: {
                 key,
             },
-            create: {
-                key,
+            data: {
                 value: stringValue,
             },
-            update: {
+        });
+    } else {
+        return await prisma.cache.create({
+            data: {
+                key,
                 value: stringValue,
             },
         });

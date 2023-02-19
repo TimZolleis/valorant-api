@@ -15,5 +15,5 @@ model Match {
 
 model Cache {
 key String @id @unique
-value String
+value String @db.VarChar(50000)
 }

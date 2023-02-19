@@ -17,6 +17,7 @@ import {
     storeCachedValue,
     storeDatabaseCachedValue,
 } from '~/utils/cache/cache.server';
+import Login from '~/routes/login';
 
 export class RiotGamesApiClient {
     axiosClient: AxiosInstance;
@@ -35,6 +36,7 @@ export class RiotGamesApiClient {
         useFallback = false
     ): Promise<T> {
         const url = useFallback ? request.getFallback().getUrl() : request.getUrl();
+        console.log('Fetching', url);
         return this.axiosClient
             .get(url, config)
             .then((response) => response.data)
@@ -112,9 +114,11 @@ export class RiotGamesApiClient {
     ): Promise<T> {
         const url = useFallback ? request.getFallback().getUrl() : request.getUrl();
         const key = constructCacheKey(url, cacheConfig.key);
+        console.log('Getting from db', url);
         try {
             return await getDatabaseCachedValue(key);
         } catch (error: any) {
+            console.log(error);
             const result = await this.get<T>(request, config, useFallback);
             await storeDatabaseCachedValue<T>(key, cacheConfig.expiration, result);
             return result;

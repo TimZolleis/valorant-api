@@ -12,6 +12,7 @@ import { checkForLiveGame, LivematchComponent } from '~/ui/match/LivematchCompon
 import is from '@sindresorhus/is';
 import { FetcherWithComponents, useFetcher } from '@remix-run/react';
 import { LiveMatchRoute } from '~/routes/api/match/live';
+import { TooManyRequestsException } from '~/exceptions/TooManyRequestsException';
 
 type LoaderData = {
     user: ValorantUser;

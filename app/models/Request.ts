@@ -40,7 +40,7 @@ export class RiotRequest {
     }
 
     getUrl() {
-        return `${this.endpoint.getEndpoint()}/${this.url}`;
+        return `${this.endpoint.getEndpoint()}${this.url}`;
     }
 
     getEndpoint() {

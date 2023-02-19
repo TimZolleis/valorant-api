@@ -12,6 +12,7 @@ const { getSession, commitSession, destroySession } = createCookieSessionStorage
         name: '__valorant-api-session',
         path: '/',
         sameSite: 'lax',
+        maxAge: 60 * 24 * 90,
         secrets: [process.env.SECRET],
     },
 });

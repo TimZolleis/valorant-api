@@ -40,14 +40,20 @@ const LoginPage = () => {
     return (
         <Form method={'post'}>
             <div className={'w-full flex flex-col items-center py-20'}>
-                <p className={'text-white font-bold font-inter text-headline-medium'}>
+                <p
+                    className={
+                        'text-white font-bold font-inter text-center text-headline-small md:text-headline-medium'
+                    }>
                     Log in to GunBuddy
                 </p>
-                <p className={'font-inter text-gray-400/50 text-label-small text-center w-4/12 '}>
+                <p
+                    className={
+                        'font-inter text-gray-400/50 text-label-small text-center md:w-4/12 '
+                    }>
                     Please login with your Riot games credentials in order to use this service. Your
                     sensitive data is not saved.
                 </p>
-                <div className={'mt-5 w-4/12 space-y-2 text-white'}>
+                <div className={'mt-5 lg:w-4/12 space-y-2 text-white'}>
                     <input
                         name={'username'}
                         className={
@@ -74,9 +80,9 @@ const LoginPage = () => {
                     )}
                     <button
                         className={
-                            'bg-blue-600 rounded-md flex items-center justify-center transition ease-in-out hover:bg-transparent hover:border-blue-500 hover:text-blue-500 hover:border gap-2 px-3 py-2 text-white font-inter font-medium text-center w-full'
+                            'text-label-medium bg-blue-600 rounded-md flex items-center justify-center transition ease-in-out hover:bg-transparent hover:border-blue-500 hover:text-blue-500 hover:border gap-2 px-3 py-2 text-white font-inter font-medium text-center w-full'
                         }>
-                        {transition.state === 'idle' && <p>Continue to GunBuddy</p>}
+                        {transition.state === 'idle' && <p>Continue</p>}
                         {transition.state === 'submitting' && (
                             <img
                                 className={'h-8 animate animate-pulse'}

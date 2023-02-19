@@ -3,17 +3,22 @@ import { DataFunctionArgs, json, redirect } from '@remix-run/node';
 import { commitClientSession, getClientSession } from '~/utils/session/session.server';
 import { of } from 'rxjs';
 import { useFetcher, useLoaderData } from '@remix-run/react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import * as crypto from 'crypto';
+import { useNavigate } from 'react-router';
 
 type Timer = {
+    id: string;
     issuedAt: number;
     validUntil: number;
 };
 
 function issueTimer(offenses: number): Timer {
+    const id = crypto.randomUUID();
     const issuedAt = Date.now();
-    const validUntil = issuedAt + offenses * 2000;
+    const validUntil = issuedAt + offenses * 10000;
     return {
+        id,
         issuedAt,
         validUntil,
     };
@@ -25,9 +30,10 @@ function hasTimerExpired(timer: Timer) {
 
 export const loader = async ({ request }: DataFunctionArgs) => {
     const session = await getClientSession(request);
+
     if (session.has('timer')) {
         const timer: Timer = session.get('timer');
-        if (timer.validUntil - Date.now() < 0) {
+        if (timer.validUntil - Date.now() <= 0) {
             session.unset('timer');
             return redirect('/', {
                 headers: {
@@ -35,14 +41,16 @@ export const loader = async ({ request }: DataFunctionArgs) => {
                 },
             });
         }
+    }
+
+    if (session.has('timer')) {
+        const timer: Timer = session.get('timer');
+        if (timer.validUntil - Date.now() < 0) {
+            session.unset('timer');
+        }
         return json({ timer: timer });
     } else {
-        let offenses = session.get('offenses');
-        if (!offenses) {
-            offenses = 1;
-        }
-        session.set('offenses', offenses);
-        const timer = issueTimer(offenses);
+        const timer = issueTimer(1);
         session.set('timer', timer);
         return json(
             {
@@ -59,13 +67,15 @@ export const loader = async ({ request }: DataFunctionArgs) => {
 
 const SlowDownPage = () => {
     const { timer } = useLoaderData<typeof loader>();
+    const [timeRemaining, setTimeRemaining] = useState<number>(timer.validUntil - timer.issuedAt);
+
     useEffect(() => {
         const interval = setInterval(() => {
-            if (hasTimerExpired(timer)) {
+            if (timeRemaining <= 0) {
                 window.location.reload();
             }
-        }, 1000);
-
+            setTimeRemaining(timer.validUntil - Date.now());
+        }, 100);
         return () => clearInterval(interval);
     });
     return (
@@ -81,7 +91,7 @@ const SlowDownPage = () => {
                         protect agains permanent blocks.
                     </p>
                     <p className={'text-white font-bold text-title-large'}>
-                        {timer.validUntil - timer.issuedAt}
+                        {timeRemaining / 1000}
                     </p>
                 </div>
             </Container>

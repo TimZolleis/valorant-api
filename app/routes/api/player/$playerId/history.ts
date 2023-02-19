@@ -50,6 +50,7 @@ async function getRelevantMatchData(
                 roundsWon: enemyTeam?.roundsWon,
                 hasWon: enemyTeam?.won,
             },
+            matchInfo: matchDetails.matchInfo,
         },
     };
 }

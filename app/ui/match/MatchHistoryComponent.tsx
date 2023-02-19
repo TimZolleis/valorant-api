@@ -2,7 +2,7 @@ import { FetcherWithComponents, useFetcher } from '@remix-run/react';
 import { MatchHistoryRouteData } from '~/routes/api/player/$playerId/history';
 import { useEffect } from 'react';
 import { LoadingContainer } from '~/ui/container/LoadingContainer';
-import { Simulate } from 'react-dom/test-utils';
+import { SmallContainer } from '~/ui/container/SmallContainer';
 
 type Match = MatchHistoryRouteData[number];
 const uniqueId = (match: Match) => {
@@ -29,52 +29,64 @@ export const MatchHistoryComponent = ({ puuid }: { puuid: string }) => {
 };
 
 export const MatchComponent = ({ match }: { match: Match }) => {
+    console.log(match);
     return (
-        <div className={'relative w-full'}>
-            <img
-                className={
-                    'rounded-md w-full relative grayscale bg-neutral-500 opacity-10 hover:opacity-50 hover:grayscale-0 transition ease-in-out duration-300 border border-white/50'
-                }
-                src={match.map.listViewIcon}
-                alt=''
-            />
+        <SmallContainer>
             <div
                 className={
-                    'absolute bottom-0 right-0 font-inter right-3 leading-1 text-end py-2 px-5'
+                    'flex items-center w-full border-b border-white/20 pb-2 gap-2 font-inter'
                 }>
-                <div className={'flex gap-3 items-center'}>
-                    <img
-                        className={'h-8 md:h-12 border-white/20 border rounded-md p-1'}
-                        src={match.details.player.character?.displayIconSmall}
-                        alt=''
-                    />
-                    <p className={'font-semibold text-title-small md:text-headline-small'}>
-                        {match.map.displayName}
+                <p className={'text-label-medium leading-none font-inter font-medium'}>
+                    {match.map.displayName}
+                </p>
+                <div className={'rounded-md text-label-small'}>
+                    {match.details.playerTeam.hasWon && (
+                        <div
+                            className={
+                                'bg-green-800/50 rounded-md py-0.5 px-3 border border-green-500 text-label-small'
+                            }>
+                            <p className={'text-green-500'}>Won</p>
+                        </div>
+                    )}
+                    {!match.details.playerTeam.hasWon && (
+                        <div
+                            className={
+                                'bg-red-800/50 rounded-md py-0.5 px-3 border border-red-500 text-label-small'
+                            }>
+                            <p className={'text-red-500'}>Lost</p>
+                        </div>
+                    )}
+                </div>
+                <div className={'bg-amber-800/50 rounded-md px-3 py-1 border border-amber-500'}>
+                    <p className={'text-amber-500 font-inter text-xs capitalize'}>
+                        {match.details.matchInfo.queueID}
                     </p>
-                    <div>
-                        {match.details.playerTeam.hasWon && (
-                            <div
-                                className={
-                                    'bg-green-500 rounded-md py-1 px-3 border border-green-400 text-label-small'
-                                }>
-                                <p>Won</p>
-                            </div>
-                        )}
-                        {!match.details.playerTeam.hasWon && (
-                            <div
-                                className={
-                                    'bg-red-500 rounded-md py-1 px-3 border border-red-400 text-label-small'
-                                }>
-                                <p>Lost</p>
-                            </div>
-                        )}
+                </div>
+            </div>
+            <div className={'font-inter leading-1 text-end p-2 '}>
+                <div className={'flex justify-between items-center'}>
+                    <div className={'flex gap-3 items-center'}>
+                        <img
+                            className={'h-10 border-white/20 border rounded-md p-1'}
+                            src={match.details.player.character?.displayIconSmall}
+                            alt={'character'}
+                        />
+                        <div className={'text-start'}>
+                            <p className={'font-medium'}>
+                                {match.details.player.character?.displayName}
+                            </p>
+                            <p className={'font-light text-label-small text-gray-400'}>
+                                {match.details.player.stats?.kills}/
+                                {match.details.player.stats?.deaths}/
+                                {match.details.player.stats?.assists}
+                            </p>
+                        </div>
+                    </div>
+                    <div className={'flex font-medium text-title-small'}>
+                        {match.details.playerTeam.roundsWon} - {match.details.enemyTeam.roundsWon}
                     </div>
                 </div>
-                <p className={'text-label-small font-inter'}>
-                    {match.details.player.stats?.kills} / {match.details.player.stats?.deaths} /{' '}
-                    {match.details.player.stats?.assists}
-                </p>
             </div>
-        </div>
+        </SmallContainer>
     );
 };
