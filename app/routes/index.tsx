@@ -1,18 +1,18 @@
-import { json, LoaderFunction } from '@remix-run/node';
-import { requireFrontendUser, requireUser } from '~/utils/session/session.server';
+import type { LoaderFunction } from '@remix-run/node';
+import { json } from '@remix-run/node';
+import { requireFrontendUser } from '~/utils/session/session.server';
 import { Container } from '~/ui/container/Container';
 import { PlayerStatisticsComponent } from '~/ui/player/PlayerStatisticsComponent';
-import { useLoaderData, useNavigate } from 'react-router';
-import { ValorantUser } from '~/models/user/ValorantUser';
-import { useEffect, useState } from 'react';
+import { useLoaderData } from 'react-router';
+import type { ValorantUser } from '~/models/user/ValorantUser';
+import { useState } from 'react';
 import { DefaultButton } from '~/ui/common/DefaultButton';
 import { StatusIndicator } from '~/ui/common/StatusIndicator';
 import { MatchHistoryComponent } from '~/ui/match/MatchHistoryComponent';
 import { checkForLiveGame, LivematchComponent } from '~/ui/match/LivematchComponent';
-import is from '@sindresorhus/is';
-import { FetcherWithComponents, useFetcher } from '@remix-run/react';
-import { LiveMatchRoute } from '~/routes/api/match/live';
-import { TooManyRequestsException } from '~/exceptions/TooManyRequestsException';
+import type { FetcherWithComponents } from '@remix-run/react';
+import { useFetcher } from '@remix-run/react';
+import type { LiveMatchRoute } from '~/routes/api/match/live';
 
 type LoaderData = {
     user: ValorantUser;
@@ -22,8 +22,7 @@ export const loader: LoaderFunction = async ({ request }) => {
     const user = await requireFrontendUser(request);
     return json<LoaderData>({ user });
 };
-
-export default function Index() {
+const IndexPage = ({ error }: { error: any }) => {
     const { user } = useLoaderData() as LoaderData;
     const [isLive, setIsLive] = useState<boolean>(false);
     const checkForLiveGameFetcher =
@@ -68,35 +67,37 @@ export default function Index() {
             </div>
         </>
     );
-}
-export const ErrorBoundary = ({ error }: { error: any }) => {
-    const navigate = useNavigate();
-
-    const redirectToReauth = () => {
-        return navigate('/reauthenticate');
-    };
-
-    useEffect(() => {
-        if (error.message.includes('429')) {
-            return navigate('/slow-down');
-        }
-    }, []);
-
-    return (
-        <Container>
-            <div
-                className={
-                    'w-full font-inter text-center flex flex-col leading-none gap-2 items-center'
-                }>
-                <p className={'font-bold text-title-large text-white'}>Oops!</p>
-                <p className={'text-gray-400 text-label-medium '}>
-                    It looks like something went wrong. But it doesnt look its your fault! You can
-                    try to reauthenticate your Riot session to fix this problem
-                </p>
-                <DefaultButton onClick={() => redirectToReauth()}>
-                    <p className={'text-black text-label-medium py-2'}>Reauthenticate</p>
-                </DefaultButton>
-            </div>
-        </Container>
-    );
 };
+
+export default IndexPage;
+// export const ErrorBoundary = ({ error }: { error: any }) => {
+//     const navigate = useNavigate();
+//
+//     const redirectToReauth = () => {
+//         return navigate('/reauthenticate');
+//     };
+//
+//     useEffect(() => {
+//         if (error.message.includes('429')) {
+//             return navigate('/slow-down');
+//         }
+//     }, []);
+//
+//     return (
+//         <Container>
+//             <div
+//                 className={
+//                     'w-full font-inter text-center flex flex-col leading-none gap-2 items-center'
+//                 }>
+//                 <p className={'font-bold text-title-large text-white'}>Oops!</p>
+//                 <p className={'text-gray-400 text-label-medium leading-normal'}>
+//                     It looks like something went wrong. But it doesnt look its your fault! You can
+//                     try to reauthenticate your Riot session to fix this problem
+//                 </p>
+//                 <DefaultButton onClick={() => redirectToReauth()}>
+//                     <p className={'text-black text-label-medium py-2'}>Reauthenticate</p>
+//                 </DefaultButton>
+//             </div>
+//         </Container>
+//     );
+// };

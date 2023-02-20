@@ -1,6 +1,6 @@
 import { FetcherWithComponents } from '@remix-run/react';
 import { InterpolatedCoregame, InterpolatedPregame, LiveMatchRoute } from '~/routes/api/match/live';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ValorantCoregameMatch } from '~/models/valorant/match/ValorantCoregameMatch';
 import { ValorantPregameMatch } from '~/models/valorant/match/ValorantPregameMatch';
 import Login from '~/routes/login';
@@ -44,11 +44,14 @@ export const LivematchComponent = ({
         }, 1000);
         return () => clearInterval(interval);
     });
-    if (fetcher.data?.status === 'pregame' && isPregame(fetcher.data.match)) {
-        return <PregameMatchComponent pregame={fetcher.data.match} />;
+
+    const data = useMemo(() => fetcher.data, [fetcher]);
+
+    if (data?.status === 'pregame' && isPregame(data.match)) {
+        return <PregameMatchComponent pregame={data.match} />;
     }
-    if (fetcher.data?.status === 'coregame' && isCoregame(fetcher.data.match)) {
-        return <CoregameMatchComponent coregame={fetcher.data.match} />;
+    if (data?.status === 'coregame' && isCoregame(data.match)) {
+        return <CoregameMatchComponent coregame={data.match} />;
     }
     return (
         <p className={'font-inter text-gray-400 text-label-medium'}>

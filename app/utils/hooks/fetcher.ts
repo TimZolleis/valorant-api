@@ -6,7 +6,11 @@ export function useFetcherData<T>(route: string) {
     const fetcher = useFetcher() as unknown as FetcherWithComponents<T>;
     useEffect(() => {
         if (fetcher.type === 'init') {
-            fetcher.load(route);
+            try {
+                fetcher.load(route);
+            } catch (e) {
+                console.log(e);
+            }
         }
         if (fetcher.data) {
             setFetcherData(fetcher.data);

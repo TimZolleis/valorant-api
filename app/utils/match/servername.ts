@@ -5,6 +5,7 @@ export const ServerRegions = {
     FRANKFURT: 'Frankfurt',
     WARSAW: 'Warsaw',
     TOKYO: 'Tokyo',
+    STOCKHOLM: 'Stockholm',
     UNKNOWN: 'Unknown',
 };
 
@@ -23,6 +24,9 @@ export function getServerRegion(gamePodId: string) {
     }
     if (gamePodId.includes('tokyo')) {
         return ServerRegions.TOKYO;
+    }
+    if (gamePodId.includes('stockholm')) {
+        return ServerRegions.STOCKHOLM;
     }
     if (gamePodId.includes('warsaw')) {
         return ServerRegions.WARSAW;

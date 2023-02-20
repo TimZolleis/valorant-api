@@ -75,6 +75,14 @@ export async function requirePlayerUuidAsParam(params: Params) {
     return puuid;
 }
 
+export function requireParam(param: string, params: Params) {
+    const value = params[param];
+    if (!value) {
+        throw new Error(`Please provide the parameter ${param}`);
+    }
+    return value;
+}
+
 export async function commitClientSession(session: Session) {
     return await commitSession(session);
 }

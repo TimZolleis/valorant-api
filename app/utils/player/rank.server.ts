@@ -31,7 +31,6 @@ export async function getPlayerRank(user: ValorantUser, playerUuid: string) {
     try {
         const currentCompetitiveTiers = await getCurrentCompetitiveTiers();
         const latestCompetitiveUpdate = await getLatestCompetitiveUpdate(user, playerUuid);
-
         const rank = findRank(
             currentCompetitiveTiers,
             latestCompetitiveUpdate.Matches[0].TierAfterUpdate
@@ -53,7 +52,11 @@ export async function getRankByTierNumber(tierNumber: number) {
 }
 
 function findRank(competitiveTier: ValorantApiCompetitiveTier, tierNumber: number) {
-    return competitiveTier.tiers.find((tier) => {
+    const rank = competitiveTier.tiers.find((tier) => {
         return tier.tier === tierNumber;
     });
+    if (!rank) {
+        return competitiveTier.tiers[0];
+    }
+    return rank;
 }

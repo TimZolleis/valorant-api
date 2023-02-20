@@ -1,26 +1,25 @@
-import { FetcherWithComponents, useFetcher } from '@remix-run/react';
+import { FetcherWithComponents, Link, useCatch, useFetcher } from '@remix-run/react';
 import { MatchHistoryRouteData } from '~/routes/api/player/$playerId/history';
 import { useEffect } from 'react';
 import { LoadingContainer } from '~/ui/container/LoadingContainer';
 import { SmallContainer } from '~/ui/container/SmallContainer';
+import { useFetcherData } from '~/utils/hooks/fetcher';
 
 type Match = MatchHistoryRouteData[number];
 const uniqueId = (match: Match) => {
     return `${match.map.uuid.slice(0, 5)}${match.details.player.stats?.kills}`;
 };
 export const MatchHistoryComponent = ({ puuid }: { puuid: string }) => {
-    const fetcher = useFetcher() as unknown as FetcherWithComponents<MatchHistoryRouteData>;
-    useEffect(() => {
-        if (fetcher.type === 'init') {
-            fetcher.load(`/api/player/${puuid}/history`);
-        }
-    }, [fetcher]);
-
-    if (fetcher.data) {
+    const data = useFetcherData<MatchHistoryRouteData>(`/api/player/${puuid}/history`);
+    if (data) {
         return (
             <div className={'grid grid-cols-1 w-full md:grid-cols-2 xl:grid-cols-3 gap-2'}>
-                {fetcher.data.map((match) => (
-                    <MatchComponent key={uniqueId(match)} match={match} />
+                {data.map((match) => (
+                    <Link
+                        key={match.details.matchInfo.matchId}
+                        to={`/match/${match.details.matchInfo.matchId}/details`}>
+                        <MatchComponent match={match} />
+                    </Link>
                 ))}
             </div>
         );
@@ -29,7 +28,6 @@ export const MatchHistoryComponent = ({ puuid }: { puuid: string }) => {
 };
 
 export const MatchComponent = ({ match }: { match: Match }) => {
-    console.log(match);
     return (
         <SmallContainer>
             <div
@@ -89,4 +87,8 @@ export const MatchComponent = ({ match }: { match: Match }) => {
             </div>
         </SmallContainer>
     );
+};
+
+export const ErrorBoundary = () => {
+    return <div>This is an error!</div>;
 };

@@ -14,7 +14,7 @@ import type { ValorantApiMap } from '~/models/valorant-api/ValorantApiMap';
 
 export type MatchHistoryRouteData = Awaited<ReturnType<typeof loader>>;
 
-async function getRelevantMatchData(
+export async function getRelevantMatchData(
     puuid: string,
     matchDetails: ValorantMatchDetails,
     matchMap: ValorantApiMap
@@ -43,10 +43,12 @@ async function getRelevantMatchData(
         details: {
             player: playerDetails,
             playerTeam: {
+                ...playerTeam,
                 roundsWon: playerTeam?.roundsWon,
                 hasWon: playerTeam?.won,
             },
             enemyTeam: {
+                ...enemyTeam,
                 roundsWon: enemyTeam?.roundsWon,
                 hasWon: enemyTeam?.won,
             },
@@ -79,6 +81,7 @@ export const loader = async ({ request, params }: DataFunctionArgs) => {
             },
         }
     );
+
     return await Promise.all(
         matchHistory.History.map(async (match) => {
             const details = await getMatchDetails(user, match.MatchID);

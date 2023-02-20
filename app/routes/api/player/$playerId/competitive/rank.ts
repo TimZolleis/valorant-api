@@ -9,6 +9,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     const user = await requireUser(request);
     const playerUUid = await requirePlayerUuidAsParam(params);
     const rank = await getPlayerRank(user, playerUUid);
+
     return json<PlayerRankRoute>({
         rank,
     });
