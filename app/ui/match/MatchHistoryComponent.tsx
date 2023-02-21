@@ -1,30 +1,21 @@
-import { FetcherWithComponents, Link, useCatch, useFetcher } from '@remix-run/react';
+import { Link } from '@remix-run/react';
 import { MatchHistoryRouteData } from '~/routes/api/player/$playerId/history';
-import { useEffect } from 'react';
-import { LoadingContainer } from '~/ui/container/LoadingContainer';
 import { SmallContainer } from '~/ui/container/SmallContainer';
-import { useFetcherData } from '~/utils/hooks/fetcher';
 
 type Match = MatchHistoryRouteData[number];
-const uniqueId = (match: Match) => {
-    return `${match.map.uuid.slice(0, 5)}${match.details.player.stats?.kills}`;
-};
-export const MatchHistoryComponent = ({ puuid }: { puuid: string }) => {
-    const data = useFetcherData<MatchHistoryRouteData>(`/api/player/${puuid}/history`);
-    if (data) {
-        return (
-            <div className={'grid grid-cols-1 w-full md:grid-cols-2 xl:grid-cols-3 gap-2'}>
-                {data.map((match) => (
-                    <Link
-                        key={match.details.matchInfo.matchId}
-                        to={`/match/${match.details.matchInfo.matchId}/details`}>
-                        <MatchComponent match={match} />
-                    </Link>
-                ))}
-            </div>
-        );
-    }
-    return <LoadingContainer />;
+
+export const MatchHistoryComponent = ({ history }: { history: MatchHistoryRouteData }) => {
+    return (
+        <div className={'grid grid-cols-1 w-full md:grid-cols-2 xl:grid-cols-3 gap-2'}>
+            {history.map((match) => (
+                <Link
+                    key={match.details.matchInfo.matchId}
+                    to={`/match/${match.details.matchInfo.matchId}/details`}>
+                    <MatchComponent match={match} />
+                </Link>
+            ))}
+        </div>
+    );
 };
 
 export const MatchComponent = ({ match }: { match: Match }) => {

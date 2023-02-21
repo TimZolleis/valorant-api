@@ -9,34 +9,20 @@ import { PlayerRankRoute } from '~/routes/api/player/$playerId/competitive/rank'
 import { PlayerRankComponent } from '~/ui/player/PlayerRankComponent';
 import { LoadingContainer } from '~/ui/container/LoadingContainer';
 
-export const PlayerStatisticsComponent = ({ playerUuid }: { playerUuid: string }) => {
-    const statistics = useFetcher<PlayerStatisticsRoute>();
-    const rank = useFetcher<PlayerRankRoute>();
-    useEffect(() => {
-        if (statistics.type == 'init') {
-            statistics.load(`/api/player/${playerUuid}/competitive/statistics`);
-        }
-    }, [statistics]);
-
-    useEffect(() => {
-        if (rank.type == 'init') {
-            rank.load(`/api/player/${playerUuid}/competitive/rank`);
-        }
-    }, [rank]);
-
-    if (statistics.data && rank.data) {
-        const statisticsData = statistics.data as unknown as PlayerStatisticsRoute;
-        const rankData = rank.data as unknown as PlayerRankRoute;
-        return (
-            <div className={'grid md:grid-cols-2 lg:grid-cols-3 gap-2 w-full'}>
-                <WinrateComponent data={statisticsData}></WinrateComponent>
-                <TopRankComponent data={statisticsData} />
-                <PlayerRankComponent data={rankData}></PlayerRankComponent>
-            </div>
-        );
-    } else {
-        return <LoadingContainer />;
-    }
+export const PlayerStatisticsComponent = ({
+    statistics,
+    rank,
+}: {
+    statistics: PlayerStatisticsRoute;
+    rank: PlayerRankRoute;
+}) => {
+    return (
+        <div className={'grid md:grid-cols-2 lg:grid-cols-3 gap-2 w-full'}>
+            <WinrateComponent data={statistics}></WinrateComponent>
+            <TopRankComponent data={statistics} />
+            <PlayerRankComponent data={rank}></PlayerRankComponent>
+        </div>
+    );
 };
 
 const WinrateComponent = ({ data }: { data: PlayerStatisticsRoute }) => {

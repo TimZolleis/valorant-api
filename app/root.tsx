@@ -33,10 +33,10 @@ export default function App() {
             <body>
                 <DefaultLayout>
                     <Outlet />
+                    <ScrollRestoration />
+                    <Scripts />
+                    <LiveReload />
                 </DefaultLayout>
-                <ScrollRestoration />
-                <Scripts />
-                <LiveReload />
             </body>
         </html>
     );

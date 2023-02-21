@@ -81,12 +81,12 @@ export const loader = async ({ request, params }: DataFunctionArgs) => {
             },
         }
     );
-
-    return await Promise.all(
+    const history = await Promise.all(
         matchHistory.History.map(async (match) => {
             const details = await getMatchDetails(user, match.MatchID);
             const map = await getMatchMap(details.matchInfo.mapId);
             return await getRelevantMatchData(playerId, details, map!);
         })
     );
+    return history;
 };

@@ -1,29 +1,26 @@
 import type { LoaderFunction } from '@remix-run/node';
-import { json } from '@remix-run/node';
+import { defer, json } from '@remix-run/node';
 import { requireFrontendUser } from '~/utils/session/session.server';
 import { Container } from '~/ui/container/Container';
 import { PlayerStatisticsComponent } from '~/ui/player/PlayerStatisticsComponent';
-import { useLoaderData } from 'react-router';
 import type { ValorantUser } from '~/models/user/ValorantUser';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { DefaultButton } from '~/ui/common/DefaultButton';
 import { StatusIndicator } from '~/ui/common/StatusIndicator';
 import { MatchHistoryComponent } from '~/ui/match/MatchHistoryComponent';
 import { checkForLiveGame, LivematchComponent } from '~/ui/match/LivematchComponent';
 import type { FetcherWithComponents } from '@remix-run/react';
-import { useFetcher } from '@remix-run/react';
+import { Await, Outlet, useFetcher, useLoaderData } from '@remix-run/react';
 import type { LiveMatchRoute } from '~/routes/api/match/live';
-
-type LoaderData = {
-    user: ValorantUser;
-};
+import { getPlayerStatistics } from '~/utils/player/statistics.server';
 
 export const loader: LoaderFunction = async ({ request }) => {
     const user = await requireFrontendUser(request);
-    return json<LoaderData>({ user });
+    const statisticsPromise = getPlayerStatistics(user, user.userData.puuid);
+    return json({ user, statisticsPromise });
 };
 const IndexPage = ({ error }: { error: any }) => {
-    const { user } = useLoaderData() as LoaderData;
+    const { user, statisticsPromise } = useLoaderData<typeof loader>();
     const [isLive, setIsLive] = useState<boolean>(false);
     const checkForLiveGameFetcher =
         useFetcher() as unknown as FetcherWithComponents<LiveMatchRoute>;
@@ -39,31 +36,19 @@ const IndexPage = ({ error }: { error: any }) => {
                 </DefaultButton>
             </div>
             <div className={'text-white mt-5 space-y-5'}>
-                <Container>
-                    <p className={'font-inter font-semibold text-title-large py-2'}>
-                        Personal Statistics
-                    </p>
-                    <div className={'flex gap-2'}>
-                        <PlayerStatisticsComponent
-                            playerUuid={user.userData.puuid}></PlayerStatisticsComponent>
-                    </div>
-                </Container>
-                <Container>
-                    <p className={'font-inter font-semibold text-title-large'}>Live match</p>
-                    <LivematchComponent
-                        onGameDetection={() => setIsLive(true)}
-                        fetcher={checkForLiveGameFetcher}></LivematchComponent>
-                </Container>
-                {!isLive && (
-                    <Container>
-                        <p className={'font-inter font-semibold text-title-large py-2'}>
-                            Match history
-                        </p>
-                        <div className={'flex gap-2'}>
-                            <MatchHistoryComponent puuid={user.userData.puuid} />
-                        </div>
-                    </Container>
-                )}
+                <Suspense fallback={<div>Loading...</div>}>
+                    <Await resolve={statisticsPromise} errorElement={<div>An error occurred</div>}>
+                        {(statistics) => <div>{JSON.stringify(statistics)}</div>}
+                    </Await>
+                </Suspense>
+
+                <Outlet />
+                {/*<Container>*/}
+                {/*    <p className={'font-inter font-semibold text-title-large'}>Live match</p>*/}
+                {/*    <LivematchComponent*/}
+                {/*        onGameDetection={() => setIsLive(true)}*/}
+                {/*        fetcher={checkForLiveGameFetcher}></LivematchComponent>*/}
+                {/*</Container>*/}
             </div>
         </>
     );
