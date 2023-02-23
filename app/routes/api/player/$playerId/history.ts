@@ -1,19 +1,17 @@
-import type { DataFunctionArgs, LoaderFunction } from '@remix-run/node';
-import {
-    requirePlayerUuid,
-    requirePlayerUuidAsParam,
-    requireUser,
-} from '~/utils/session/session.server';
+import type { DataFunctionArgs } from '@remix-run/node';
+import { requirePlayerUuidAsParam, requireUser } from '~/utils/session/session.server';
 import { RiotRequest } from '~/models/Request';
 import { endpoints } from '~/config/endpoints';
 import { RiotGamesApiClient } from '~/utils/riot/RiotGamesApiClient';
 import type { ValorantMatchHistory } from '~/models/valorant/match/ValorantMatchHistory';
+import { History } from '~/models/valorant/match/ValorantMatchHistory';
 import { getCharacterByUUid, getMatchDetails, getMatchMap } from '~/utils/match/match.server';
 import type { ValorantMatchDetails } from '~/models/valorant/match/ValorantMatchDetails';
 import type { ValorantApiMap } from '~/models/valorant-api/ValorantApiMap';
+import { ValorantUser } from '~/models/user/ValorantUser';
 
 export type MatchHistoryRouteData = Awaited<ReturnType<typeof loader>>;
-
+export type MatchHistory = Awaited<ReturnType<typeof getHistory>>;
 export async function getRelevantMatchData(
     puuid: string,
     matchDetails: ValorantMatchDetails,
@@ -56,6 +54,13 @@ export async function getRelevantMatchData(
         },
     };
 }
+
+async function getHistory(user: ValorantUser, match: History) {
+    const details = await getMatchDetails(user, match.MatchID);
+    const map = await getMatchMap(details.matchInfo.mapId);
+    return await getRelevantMatchData(user.userData.puuid, details, map!);
+}
+
 export const loader = async ({ request, params }: DataFunctionArgs) => {
     const user = await requireUser(request);
     const playerId = await requirePlayerUuidAsParam(params);
@@ -81,12 +86,9 @@ export const loader = async ({ request, params }: DataFunctionArgs) => {
             },
         }
     );
-    const history = await Promise.all(
+    return await Promise.all(
         matchHistory.History.map(async (match) => {
-            const details = await getMatchDetails(user, match.MatchID);
-            const map = await getMatchMap(details.matchInfo.mapId);
-            return await getRelevantMatchData(playerId, details, map!);
+            return getHistory(user, match);
         })
     );
-    return history;
 };

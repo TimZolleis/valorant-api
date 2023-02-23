@@ -1,10 +1,10 @@
 import { Link } from '@remix-run/react';
-import { MatchHistoryRouteData } from '~/routes/api/player/$playerId/history';
+import { MatchHistory, MatchHistoryRouteData } from '~/routes/api/player/$playerId/history';
 import { SmallContainer } from '~/ui/container/SmallContainer';
 
 type Match = MatchHistoryRouteData[number];
 
-export const MatchHistoryComponent = ({ history }: { history: MatchHistoryRouteData }) => {
+export const MatchHistoryComponent = ({ history }: { history: MatchHistory[] }) => {
     return (
         <div className={'grid grid-cols-1 w-full md:grid-cols-2 xl:grid-cols-3 gap-2'}>
             {history.map((match) => (

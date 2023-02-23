@@ -16,4 +16,7 @@ export const endpoints = {
         mmr: (puuid: string) => `/mmr/v1/players/${puuid}`,
         nameservice: '/name-service/v2/players',
     },
+    party: {
+        player: (puuid: string) => `/parties/v1/players/${puuid}`,
+    },
 };

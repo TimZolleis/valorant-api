@@ -3,38 +3,41 @@ import { Player } from '~/models/valorant/match/ValorantMatchDetails';
 import { useFetcherData } from '~/utils/hooks/fetcher';
 import { PlayerRankRoute } from '~/routes/api/player/$playerId/competitive/rank';
 import { CharacterRoute } from '~/routes/api/character/$characterId';
+import { PlayerRank } from '~/utils/player/rank.server';
+import { ValorantApiCharacter } from '~/models/valorant-api/ValorantApiCharacter';
+import { ValorantNameService } from '~/models/valorant/player/ValorantNameService';
 
-export const PlayerComponent = ({ player }: { player: Player }) => {
-    const rankData = useFetcherData<PlayerRankRoute>(
-        `/api/player/${player.subject}/competitive/rank`
-    );
-    const characterData = useFetcherData<CharacterRoute>(`/api/character/${player.characterId}`);
+export const PlayerComponent = ({
+    rank,
+    character,
+    nameservice,
+}: {
+    rank: PlayerRank;
+    character: ValorantApiCharacter;
+    nameservice: ValorantNameService;
+}) => {
     return (
         <>
             <Container>
                 <div className={'flex gap-2 items-center'}>
                     <div className={'p-1.5 rounded-md border border-gray-600/40'}>
-                        <img className={'h-8'} src={characterData?.displayIconSmall} alt='' />
+                        <img className={'h-8'} src={character.displayIconSmall} alt='' />
                     </div>
                     <div>
                         <p className={'font-inter font-semibold text-title-small'}>
-                            {player.gameName}
-                            <span className={'text-neutral-600'}>#{player.tagLine}</span>
+                            {nameservice.GameName}
+                            <span className={'text-neutral-600'}>#{nameservice.TagLine}</span>
                         </p>
                         <div className={'flex gap-2 items-center'}>
                             <>
-                                <img
-                                    className={'h-6'}
-                                    src={rankData?.rank?.tier?.smallIcon}
-                                    alt=''
-                                />
+                                <img className={'h-6'} src={rank?.tier?.smallIcon} alt='' />
                                 <p
                                     className={
                                         'font-inter text-body-medium font-semibold capitalize'
                                     }>
-                                    {rankData?.rank?.tier?.tierName.toLowerCase()}
+                                    {rank?.tier?.tierName.toLowerCase()}
                                     <span className={' pl-2 text-gray-400 font-light'}>
-                                        {rankData?.rank?.latestRR}RR
+                                        {rank?.latestRR}RR
                                     </span>
                                 </p>
                             </>

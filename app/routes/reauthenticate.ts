@@ -3,7 +3,7 @@ import { commitClientSession, getClientSession, requireUser } from '~/utils/sess
 import { RiotReauthenticationClient } from '~/utils/auth/RiotReauthenticationClient';
 
 export const loader = async ({ request, params }: DataFunctionArgs) => {
-    const user = await requireUser(request);
+    const user = await requireUser(request, false);
     try {
         const reauthenticatedUser = await new RiotReauthenticationClient()
             .init(user)

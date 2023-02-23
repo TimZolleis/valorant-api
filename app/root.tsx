@@ -1,10 +1,17 @@
 import type { LoaderFunction, MetaFunction } from '@remix-run/node';
-import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration } from '@remix-run/react';
+import { json } from '@remix-run/node';
+import {
+    Links,
+    LiveReload,
+    Meta,
+    Outlet,
+    Scripts,
+    ScrollRestoration,
+    useLoaderData,
+} from '@remix-run/react';
 import styles from './styles/app.css';
 import DefaultLayout from '~/ui/layout/DefaultLayout';
 import { getUserFromSession } from '~/utils/session/session.server';
-import { json } from '@remix-run/node';
-import { ReauthenticationRequiredException } from '~/exceptions/ReauthenticationRequiredException';
 
 export function links() {
     return [{ rel: 'stylesheet', href: styles }];
@@ -24,6 +31,8 @@ export const loader: LoaderFunction = async ({ request }) => {
 };
 
 export default function App() {
+    const { user } = useLoaderData();
+
     return (
         <html lang='en'>
             <head>
@@ -33,10 +42,10 @@ export default function App() {
             <body>
                 <DefaultLayout>
                     <Outlet />
-                    <ScrollRestoration />
-                    <Scripts />
-                    <LiveReload />
                 </DefaultLayout>
+                <ScrollRestoration />
+                <Scripts />
+                <LiveReload />
             </body>
         </html>
     );

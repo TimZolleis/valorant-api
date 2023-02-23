@@ -7,6 +7,7 @@ import { ValorantUser } from '~/models/user/ValorantUser';
 import { getLatestCompetitiveUpdate } from '~/utils/player/competitiveupdate.server';
 import { ValorantApiCompetitiveTier } from '~/models/valorant-api/ValorantApiCompetitiveTier';
 import { ValorantCompetitiveUpdate } from '~/models/valorant/competitive/ValorantCompetitiveUpdate';
+export type PlayerRank = Awaited<ReturnType<typeof getPlayerRank>>;
 
 export async function getCurrentCompetitiveTiers() {
     const competitiveSeasons = await new ValorantApiClient().getDatabaseCached<

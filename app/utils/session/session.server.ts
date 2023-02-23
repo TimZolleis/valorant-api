@@ -1,7 +1,11 @@
-import { v4 as uuidv4 } from 'uuid';
-import { createCookieSessionStorage, json, redirect, Session } from '@remix-run/node';
-import { ValorantUser } from '~/models/user/ValorantUser';
-import { Params } from '@remix-run/react';
+import type { Session } from '@remix-run/node';
+import { createCookieSessionStorage, json, redirect } from '@remix-run/node';
+import type { ValorantUser } from '~/models/user/ValorantUser';
+import type { Params } from '@remix-run/react';
+import { RiotRequest } from '~/models/Request';
+import { endpoints } from '~/config/endpoints';
+import { RiotGamesApiClient } from '~/utils/riot/RiotGamesApiClient';
+import { ReauthenticationRequiredException } from '~/exceptions/ReauthenticationRequiredException';
 
 if (!process.env.SECRET) {
     throw new Error('Session secret missing from ENV');
@@ -26,7 +30,7 @@ export async function getUserFromSession(request: Request): Promise<ValorantUser
     return session.get('user');
 }
 
-export async function requireUser(request: Request) {
+export async function requireUser(request: Request, verifyValidAuthentication = true) {
     const user = await getUserFromSession(request);
     if (!user) {
         throw json(
@@ -38,14 +42,24 @@ export async function requireUser(request: Request) {
             }
         );
     }
+    if (verifyValidAuthentication) {
+        const isAuthenticated = await checkUserToken(user);
+        if (!isAuthenticated) {
+            throw redirect('/reauthenticate');
+        }
+    }
     return user;
 }
 
-export async function requireFrontendUser(request: Request) {
+async function checkUserToken(user: ValorantUser) {
+    const request = new RiotRequest(user.userData.region).buildMatchUrl(
+        endpoints.party.player(user.userData.puuid)
+    );
     try {
-        return await requireUser(request);
+        const party = await new RiotGamesApiClient(user.accessToken, user.entitlement).get(request);
+        return true;
     } catch (e) {
-        throw redirect('/login');
+        return !(e instanceof ReauthenticationRequiredException);
     }
 }
 
