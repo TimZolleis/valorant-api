@@ -10,7 +10,6 @@ import { Suspense, useMemo } from 'react';
 import { LoadingContainer } from '~/ui/container/LoadingContainer';
 import { DefaultButton } from '~/ui/common/DefaultButton';
 import type { ValorantUser } from '~/models/user/ValorantUser';
-export const config = { runtime: 'edge' };
 
 type LoaderData = {
     statisticsPromise: ReturnType<typeof getPlayerStatistics>;
