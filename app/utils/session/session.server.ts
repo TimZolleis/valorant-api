@@ -30,17 +30,24 @@ export async function getUserFromSession(request: Request): Promise<ValorantUser
     return session.get('user');
 }
 
-export async function requireUser(request: Request, verifyValidAuthentication = true) {
+export async function requireUser(
+    request: Request,
+    verifyValidAuthentication = true,
+    useApiResponse = false
+) {
     const user = await getUserFromSession(request);
     if (!user) {
-        throw json(
-            {
-                error: 'Unauthorized',
-            },
-            {
-                status: 403,
-            }
-        );
+        if (useApiResponse) {
+            throw json(
+                {
+                    error: 'Unauthorized',
+                },
+                {
+                    status: 403,
+                }
+            );
+        }
+        throw redirect('/login');
     }
     if (verifyValidAuthentication) {
         const isAuthenticated = await checkUserToken(user);

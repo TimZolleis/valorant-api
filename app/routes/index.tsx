@@ -7,10 +7,12 @@ export const loader: LoaderFunction = async ({ request }) => {
     const user = await requireUser(request);
     return redirect('/dashboard/history');
 };
-const IndexPage = ({ error }: { error: any }) => {
+const IndexPage = () => {
     return (
         <>
             <Outlet />
         </>
     );
 };
+
+export default IndexPage;
