@@ -3,7 +3,7 @@ import { requireParam, requireUser } from '~/utils/session/session.server';
 import { getCharacterByUUid, getMatchDetails } from '~/utils/match/match.server';
 import { getPlayerRank } from '~/utils/player/rank.server';
 import { getPlayerNameService } from '~/utils/player/nameservice.server';
-import { Await, useLoaderData } from '@remix-run/react';
+import { Await, Link, RouteMatch, useLoaderData } from '@remix-run/react';
 import { Suspense, useMemo } from 'react';
 import { Player } from '~/models/valorant/match/ValorantMatchDetails';
 import { ValorantUser } from '~/models/user/ValorantUser';
@@ -14,6 +14,10 @@ import { LoadingContainer } from '~/ui/container/LoadingContainer';
 type LoaderData = ReturnType<typeof loader>;
 
 type PlayerData = ReturnType<typeof getPlayerData>;
+
+export const handle = {
+    breadcrumb: (match: RouteMatch) => <Link to={`${match.pathname}`}>Players</Link>,
+};
 
 function getPlayerData(user: ValorantUser, player: Player) {
     const rank = getPlayerRank(user, player.subject);

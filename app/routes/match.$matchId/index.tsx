@@ -1,7 +1,8 @@
-import { DataFunctionArgs, defer } from '@remix-run/node';
+import type { DataFunctionArgs } from '@remix-run/node';
+import { defer } from '@remix-run/node';
 import { requireParam, requireUser } from '~/utils/session/session.server';
-import { getMatchDetails, getMatchMap } from '~/utils/match/match.server';
-import { Await, Outlet, useLoaderData } from '@remix-run/react';
+import { getMatchDetails } from '~/utils/match/match.server';
+import { Await, Link, Outlet, RouteMatch, useLoaderData, useMatches } from '@remix-run/react';
 import { Suspense } from 'react';
 import { getServerRegion } from '~/utils/match/servername';
 import { LoadingContainer } from '~/ui/container/LoadingContainer';
@@ -24,6 +25,10 @@ const links = [
         href: 'details',
     },
 ];
+
+export const handle = {
+    breadcrumb: (match: RouteMatch) => <Link to={`${match.pathname}`}>Match</Link>,
+};
 
 const MatchPage = () => {
     const { detailsPromise } = useLoaderData<typeof loader>();

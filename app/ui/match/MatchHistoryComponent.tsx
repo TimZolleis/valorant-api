@@ -10,7 +10,7 @@ export const MatchHistoryComponent = ({ history }: { history: MatchHistory[] }) 
             {history.map((match) => (
                 <Link
                     key={match.details.matchInfo.matchId}
-                    to={`/match/${match.details.matchInfo.matchId}/details`}>
+                    to={`/match/${match.details.matchInfo.matchId}/players`}>
                     <MatchComponent match={match} />
                 </Link>
             ))}

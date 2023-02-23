@@ -8,6 +8,7 @@ import {
     Scripts,
     ScrollRestoration,
     useLoaderData,
+    useMatches,
 } from '@remix-run/react';
 import styles from './styles/app.css';
 import DefaultLayout from '~/ui/layout/DefaultLayout';
