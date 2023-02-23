@@ -50,8 +50,10 @@ export async function requireUser(
         throw redirect('/login');
     }
     if (verifyValidAuthentication) {
-        const isAuthenticated = await checkUserToken(user);
-        if (!isAuthenticated) {
+        const session = await getClientSession(request);
+        const reauthenticatedAt = session.get('reauthenticated-at') / 1000;
+        const currentTimeInSeconds = Date.now() / 1000;
+        if (!reauthenticatedAt || currentTimeInSeconds - reauthenticatedAt > 3200) {
             throw redirect('/reauthenticate');
         }
     }

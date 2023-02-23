@@ -10,6 +10,7 @@ export const loader = async ({ request, params }: DataFunctionArgs) => {
             .then((client) => client.reauthenticate());
         const session = await getClientSession(request);
         session.set('user', reauthenticatedUser);
+        session.set('reauthenticated-at', Date.now());
         return redirect('/', {
             headers: {
                 'Set-Cookie': await commitClientSession(session),
