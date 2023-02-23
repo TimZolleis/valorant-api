@@ -39,7 +39,7 @@ export class RedisConfig {
     private requireEnvironmentVariable(env: string) {
         const envElement = process.env[env];
         if (!envElement) {
-            throw new Error('Env not correct');
+            throw new Error(`Env not correct, missing ${env}`);
         }
         return envElement;
     }
