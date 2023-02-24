@@ -1,12 +1,12 @@
-import { ValorantMatchDetails } from '~/models/valorant/match/ValorantMatchDetails';
+import type { ValorantMatchDetails } from '~/models/valorant/match/ValorantMatchDetails';
 import { ValorantApiClient } from '~/utils/valorant-api/ValorantApiClient';
-import { ValorantApiMap } from '~/models/valorant-api/ValorantApiMap';
+import type { ValorantApiMap } from '~/models/valorant-api/ValorantApiMap';
 import { valorantApiEndpoints } from '~/config/valorantApiEndpoints';
 import { RiotRequest } from '~/models/Request';
 import { endpoints } from '~/config/endpoints';
 import { RiotGamesApiClient } from '~/utils/riot/RiotGamesApiClient';
-import { ValorantUser } from '~/models/user/ValorantUser';
-import { ValorantApiCharacter } from '~/models/valorant-api/ValorantApiCharacter';
+import type { ValorantUser } from '~/models/user/ValorantUser';
+import type { ValorantApiCharacter } from '~/models/valorant-api/ValorantApiCharacter';
 
 export async function getMatchMap(mapId: string) {
     const maps = await new ValorantApiClient().getDatabaseCached<ValorantApiMap[]>(
@@ -38,7 +38,8 @@ export async function getMatchDetails(user: ValorantUser, matchId: string) {
     });
 }
 
-export async function getCharacterByUUid(characterId: string) {
+export async function getCharacterByUUid(characterId: string | undefined) {
+    if (!characterId) return null;
     return await new ValorantApiClient().getDatabaseCached<ValorantApiCharacter>(
         valorantApiEndpoints.characterByUuid(characterId),
         {

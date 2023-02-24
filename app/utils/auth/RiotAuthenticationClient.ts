@@ -6,12 +6,11 @@ import { ENDPOINTS } from '~/models/Endpoint';
 import type { RSOUserInfo } from '~/models/user/authentication/RSOUserInfo';
 import { ValorantUser } from '~/models/user/ValorantUser';
 import { parseTokenData } from '~/utils/token/token';
-import { ValorantAuthenticationTokenResponse } from '~/models/valorant/auth/ValorantAuthenticationTokenResponse';
-import { ValorantAuthenticationMultifactorResponse } from '~/models/valorant/auth/ValorantAuthenticationMultifactorResponse';
-import { redirect } from '@remix-run/node';
-import * as url from 'url';
+import type { ValorantAuthenticationTokenResponse } from '~/models/valorant/auth/ValorantAuthenticationTokenResponse';
+import type { ValorantAuthenticationMultifactorResponse } from '~/models/valorant/auth/ValorantAuthenticationMultifactorResponse';
 import { MultifactorAuthenticationRequiredException } from '~/exceptions/MultifactorAuthenticationRequiredException';
-import { AuthenticationCookies, MultifactorCookies } from '~/models/cookies/MultifactorCookies';
+import type { AuthenticationCookies } from '~/models/cookies/MultifactorCookies';
+import { MultifactorCookies } from '~/models/cookies/MultifactorCookies';
 
 export class RiotAuthenticationClient {
     client: AxiosInstance;
@@ -26,7 +25,7 @@ export class RiotAuthenticationClient {
 
     async authorize(username: string, password: string) {
         await this.requestCookies();
-        const { idToken, accessToken } = await this.requestAccessToken(username, password);
+        const { accessToken } = await this.requestAccessToken(username, password);
         const entitlementsToken = await this.requestEntitlementsToken(accessToken);
         const reauthenticationCookies = await new ReauthenticationCookies().init(this.jar);
         const userData = await this.requestUserData(accessToken);
@@ -52,7 +51,9 @@ export class RiotAuthenticationClient {
             .post(`${ENDPOINTS.AUTH}/api/v1/authorization`, {
                 ...AUTHORIZATION_BODY,
             })
-            .catch((error) => {});
+            .catch((error) => {
+                console.log('There was an error requesting cookies', error);
+            });
     }
 
     private async requestAccessToken(username: string, password: string) {
@@ -126,7 +127,7 @@ export class RiotAuthenticationClient {
                 return parseTokenData(response.data.response.parameters.uri);
             })
             .catch((error) => {
-                throw new Error('Invalid code');
+                throw new Error(`Invalid code: ${error.message}`);
             });
     }
 }
@@ -135,12 +136,6 @@ function isMultifactorResponse(
     response: ValorantAuthenticationTokenResponse | ValorantAuthenticationMultifactorResponse
 ): response is ValorantAuthenticationMultifactorResponse {
     return response.type === 'multifactor';
-}
-
-function isTokenResponse(
-    response: ValorantAuthenticationTokenResponse | ValorantAuthenticationMultifactorResponse
-): response is ValorantAuthenticationTokenResponse {
-    return response.type === 'response';
 }
 
 const AUTHORIZATION_BODY = {

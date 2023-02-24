@@ -23,7 +23,7 @@ export const DefaultButton = ({
                     alt=''
                 />
             )}
-            <div>{children}</div>
+            <div className={'w-full'}>{children}</div>
         </button>
     );
 };

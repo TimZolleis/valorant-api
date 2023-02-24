@@ -4,6 +4,7 @@ import { SeasonalInfo, SeasonalInfoBySeasonID } from '~/models/valorant/competit
 import { getRankByTierNumber } from '~/utils/player/rank.server';
 import { ValorantApiClient } from '~/utils/valorant-api/ValorantApiClient';
 import { valorantApiEndpoints } from '~/config/valorantApiEndpoints';
+import { ValorantApiSeason } from '~/models/valorant-api/ValorantApiSeason';
 
 export async function getPlayerStatistics(user: ValorantUser, playerUuid: string) {
     const mmr = await getPlayerMMR(user, playerUuid);
@@ -27,10 +28,11 @@ async function getSeasonalStatistics(seasonalInfoBySeasonID: SeasonalInfoBySeaso
     return await Promise.all(
         seasonsIds.map(async (seasonId) => {
             const season = seasonalInfoBySeasonID[seasonId];
-            const seasonDescription = await new ValorantApiClient().getDatabaseCached(
-                valorantApiEndpoints.seasonByUuid(seasonId),
-                { key: 'season', expiration: 3600 }
-            );
+            const seasonDescription =
+                await new ValorantApiClient().getDatabaseCached<ValorantApiSeason>(
+                    valorantApiEndpoints.seasonByUuid(seasonId),
+                    { key: 'season', expiration: 3600 }
+                );
             const winrate = calculateWinrate(season.NumberOfWins, season.NumberOfGames);
             const highestRank = await getSeasonalTopRank(season);
             return {

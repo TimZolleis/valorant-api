@@ -13,7 +13,7 @@ export const PlayerComponent = ({
     nameservice,
 }: {
     rank: PlayerRank;
-    character: ValorantApiCharacter;
+    character: ValorantApiCharacter | null;
     nameservice: ValorantNameService;
 }) => {
     return (
@@ -21,7 +21,7 @@ export const PlayerComponent = ({
             <Container>
                 <div className={'flex gap-2 items-center'}>
                     <div className={'p-1.5 rounded-md border border-gray-600/40'}>
-                        <img className={'h-8'} src={character.displayIconSmall} alt='' />
+                        <img className={'h-8'} src={character?.displayIconSmall} alt='' />
                     </div>
                     <div>
                         <p className={'font-inter font-semibold text-title-small'}>

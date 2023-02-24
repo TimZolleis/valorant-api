@@ -1,4 +1,5 @@
-import { DataFunctionArgs, defer } from '@remix-run/node';
+import type { DataFunctionArgs } from '@remix-run/node';
+import { defer } from '@remix-run/node';
 import { requireUser } from '~/utils/session/session.server';
 import { Await, useLoaderData } from '@remix-run/react';
 import { Container } from '~/ui/container/Container';
@@ -6,12 +7,13 @@ import { MatchHistoryComponent } from '~/ui/match/MatchHistoryComponent';
 import { RiotRequest } from '~/models/Request';
 import { endpoints } from '~/config/endpoints';
 import { RiotGamesApiClient } from '~/utils/riot/RiotGamesApiClient';
-import { History, ValorantMatchHistory } from '~/models/valorant/match/ValorantMatchHistory';
+import type { History, ValorantMatchHistory } from '~/models/valorant/match/ValorantMatchHistory';
 import { getMatchDetails, getMatchMap } from '~/utils/match/match.server';
-import { getRelevantMatchData, MatchHistory } from '~/routes/api/player/$playerId/history';
+import type { MatchHistory } from '~/routes/api/player/$playerId/history';
+import { getRelevantMatchData } from '~/routes/api/player/$playerId/history';
 import { Suspense } from 'react';
 import { LoadingContainer } from '~/ui/container/LoadingContainer';
-import { ValorantUser } from '~/models/user/ValorantUser';
+import type { ValorantUser } from '~/models/user/ValorantUser';
 
 type LoaderData = {
     history: Promise<MatchHistory[]>;
@@ -46,21 +48,19 @@ export const loader = async ({ request }: DataFunctionArgs) => {
 const HistoryPage = () => {
     const { history } = useLoaderData() as unknown as LoaderData;
     return (
-        <Container>
-            <div className={'text-white'}>
-                <p className={'font-inter font-semibold text-title-large py-2'}>Match history</p>
-                <div className={'flex gap-2'}>
-                    <Suspense fallback={<LoadingContainer />}>
-                        <Await resolve={history}>
-                            {(resolvedHistory) => (
-                                <MatchHistoryComponent
-                                    history={resolvedHistory}></MatchHistoryComponent>
-                            )}
-                        </Await>
-                    </Suspense>
-                </div>
+        <div className={'text-white'}>
+            <p className={'font-inter font-semibold text-title-large py-2'}>Match history</p>
+            <div className={'flex gap-2'}>
+                <Suspense fallback={<LoadingContainer />}>
+                    <Await resolve={history}>
+                        {(resolvedHistory) => (
+                            <MatchHistoryComponent
+                                history={resolvedHistory}></MatchHistoryComponent>
+                        )}
+                    </Await>
+                </Suspense>
             </div>
-        </Container>
+        </div>
     );
 };
 

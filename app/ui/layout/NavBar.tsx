@@ -1,7 +1,10 @@
 import { Link, useMatches } from '@remix-run/react';
 import { DefaultButton } from '~/ui/common/DefaultButton';
+import { useOptionalUser } from '~/utils/hooks/matchesData';
+import { use } from 'ast-types';
 
 const NavBar = () => {
+    const user = useOptionalUser();
     return (
         <div className={'w-full py-3 px-5 justify-between flex border-b border-zinc-800 '}>
             <div className={'flex items-center'}>
@@ -11,9 +14,9 @@ const NavBar = () => {
                 <img src='/resources/icons/slash-icon.svg' alt='' />
                 <BreadcrumbNavigation />
             </div>
-            <Link to={'/logout'}>
+            <Link to={user ? '/logout' : '/login'}>
                 <DefaultButton>
-                    <p className={'text-sm px-2'}>Logout</p>
+                    <p className={'text-sm px-2'}>{user ? 'Logout' : 'Login'}</p>
                 </DefaultButton>
             </Link>
         </div>
