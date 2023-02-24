@@ -9,6 +9,7 @@ import {
     ScrollRestoration,
     useLoaderData,
     useMatches,
+    useTransition,
 } from '@remix-run/react';
 import styles from './styles/app.css';
 import DefaultLayout from '~/ui/layout/DefaultLayout';
@@ -20,7 +21,7 @@ export function links() {
 
 export const meta: MetaFunction = () => ({
     charset: 'utf-8',
-    title: 'Gunbuddy',
+    title: 'GunBuddy',
     viewport: 'width=device-width,initial-scale=1',
 });
 
@@ -33,6 +34,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 export default function App() {
     const { user } = useLoaderData();
+    const transition = useTransition();
 
     return (
         <html lang='en'>
