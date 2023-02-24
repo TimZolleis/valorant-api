@@ -605,6 +605,10 @@ video {
   height: 100%;
 }
 
+.h-12 {
+  height: 3rem;
+}
+
 .w-10 {
   width: 2.5rem;
 }
@@ -1419,6 +1423,10 @@ html {
 }
 
 @media (min-width: 768px) {
+  .md\:h-10 {
+    height: 2.5rem;
+  }
+
   .md\:w-4\/12 {
     width: 33.333333%;
   }

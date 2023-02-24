@@ -52,7 +52,7 @@ export const LiveMatchDetectionComponent = () => {
             <button
                 onClick={() => checkForGame(fetcher)}
                 className={
-                    'px-3 h-10 flex items-center gap-1 select-none rounded-md py-2 bg-white font-inter active:scale-95 transition ease-in-out'
+                    'px-3 h-12 md:h-10 flex items-center gap-1 select-none rounded-md py-2 bg-white font-inter active:scale-95 transition ease-in-out'
                 }>
                 {isLoading && (
                     <div className={'w-10 flex items-center'}>
