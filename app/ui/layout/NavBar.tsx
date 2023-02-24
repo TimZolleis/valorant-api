@@ -1,13 +1,21 @@
 import { Link, useMatches } from '@remix-run/react';
+import { DefaultButton } from '~/ui/common/DefaultButton';
 
 const NavBar = () => {
     return (
-        <div className={'w-full p-3 flex border-b border-zinc-800 '}>
-            <Link className={'font-inter text-title-medium text-white'} to={'/'}>
-                GunBuddy
+        <div className={'w-full py-3 px-5 justify-between flex border-b border-zinc-800 '}>
+            <div className={'flex items-center'}>
+                <Link className={'font-inter text-title-medium text-white'} to={'/'}>
+                    GunBuddy
+                </Link>
+                <img src='/resources/icons/slash-icon.svg' alt='' />
+                <BreadcrumbNavigation />
+            </div>
+            <Link to={'/logout'}>
+                <DefaultButton>
+                    <p className={'text-sm px-2'}>Logout</p>
+                </DefaultButton>
             </Link>
-            <img src='/resources/icons/slash-icon.svg' alt='' />
-            <BreadcrumbNavigation />
         </div>
     );
 };

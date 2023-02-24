@@ -1,51 +1,68 @@
-import { ActionFunction, json, redirect } from '@remix-run/node';
+import { ActionFunction, DataFunctionArgs, json, redirect } from '@remix-run/node';
 import { requireLoginData } from '~/utils/auth/authrequest.server';
-import { v4 as uuidv4 } from 'uuid';
 import { RiotAuthenticationClient } from '~/utils/auth/RiotAuthenticationClient';
 import { commitClientSession, getClientSession } from '~/utils/session/session.server';
-import { Form, useActionData, useTransition } from '@remix-run/react';
-import { MultifactorAuthenticationRequiredException } from '~/exceptions/MultifactorAuthenticationRequiredException';
+import { Form, useActionData, useLoaderData, useTransition } from '@remix-run/react';
 import base64url from 'base64url';
-import { encode } from 'url-safe-base64';
+import { decode } from 'url-safe-base64';
+import { AuthenticationCookies } from '~/models/cookies/MultifactorCookies';
 
 export const action: ActionFunction = async ({ request, params }) => {
     const formData = await request.formData();
-    const username = formData.get('username')?.toString();
-    const password = formData.get('password')?.toString();
-    if (!username) {
+    const url = new URL(request.url);
+    const multifactorCode = formData.get('multifactor')?.toString();
+
+    if (!multifactorCode) {
         return json({
-            error: 'Please provide a username',
+            error: 'Please provide a multifactor code',
         });
     }
-    if (!password) {
-        return json({
-            error: 'Please provide a password',
-        });
+    const cookieString = url.searchParams.get('cookies');
+    if (!cookieString) {
+        return redirect('/login');
     }
+    const decodedCookies: AuthenticationCookies = JSON.parse(
+        Buffer.from(cookieString, 'base64').toString('utf-8')
+    );
+    console.log(decodedCookies);
     try {
+        const user = await new RiotAuthenticationClient().authorizeWithMultifactor(
+            multifactorCode,
+            decodedCookies
+        );
         const session = await getClientSession(request);
-        const user = await new RiotAuthenticationClient().authorize(username, password);
         session.set('user', user);
+        session.set('reauthenticated-at', Date.now());
         return redirect('/', {
             headers: {
                 'Set-Cookie': await commitClientSession(session),
             },
         });
     } catch (e) {
-        if (e instanceof MultifactorAuthenticationRequiredException) {
-            const base64cookies = Buffer.from(e.cookieString).toString('base64');
-            throw redirect(`/2fa?mail=${e.mailAddress}&cookies=${base64cookies}`, {});
-        }
-
+        console.log(e);
         return json({
-            error: 'Authentication failed. Maybe wrong credentials?',
+            error: 'Authentication failed. The code has expired',
         });
     }
+};
+
+export const loader = async ({ request }: DataFunctionArgs) => {
+    const url = await new URL(request.url);
+    const email = url.searchParams.get('mail') || 'unknown_email';
+    const cookieString = url.searchParams.get('cookies');
+    if (!cookieString) {
+        return redirect('/login');
+    }
+
+    return json({
+        email,
+    });
 };
 
 const LoginPage = () => {
     const actionData = useActionData();
     const transition = useTransition();
+    const { email } = useLoaderData<typeof loader>();
     return (
         <Form method={'post'}>
             <div className={'w-full flex flex-col items-center py-20'}>
@@ -53,31 +70,23 @@ const LoginPage = () => {
                     className={
                         'text-white font-bold font-inter text-center text-headline-small md:text-headline-medium'
                     }>
-                    Log in to GunBuddy
+                    Multifactor authentication
                 </p>
                 <p
                     className={
                         'font-inter text-gray-400/50 text-label-small text-center md:w-4/12 '
                     }>
-                    Please login with your Riot games credentials in order to use this service. Your
-                    sensitive data is not saved.
+                    Please provide the 2fa code that has been sent to{' '}
+                    <span className={'font-bold '}>{email}</span>
                 </p>
                 <div className={'mt-5 lg:w-4/12 space-y-2 text-white'}>
                     <input
-                        name={'username'}
+                        name={'multifactor'}
                         className={
                             'bg-transparent focus:outline-none focus:border-blue-500 placeholder:font-inter border rounded-md border-zinc-800 px-3 py-2 w-full'
                         }
-                        placeholder={'Riot Username'}
+                        placeholder={'Code'}
                         type='text'
-                    />
-                    <input
-                        name={'password'}
-                        className={
-                            'bg-transparent focus:outline-none focus:border-blue-500 placeholder:font-inter border rounded-md border-zinc-800 px-3 py-2 w-full'
-                        }
-                        placeholder={'Password'}
-                        type='password'
                     />
                     {actionData?.error !== undefined && (
                         <div

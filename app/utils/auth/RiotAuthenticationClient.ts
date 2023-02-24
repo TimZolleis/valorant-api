@@ -1,11 +1,17 @@
-import type {AxiosInstance} from "axios";
-import type {CookieJar} from "tough-cookie";
-import {ReauthenticationCookies} from "~/models/cookies/ReauthenticationCookies";
-import {getAuthorizationHeader, getLoginClient} from "~/utils/axios/client.server";
-import {ENDPOINTS} from "~/models/Endpoint";
-import type {RSOUserInfo} from "~/models/user/authentication/RSOUserInfo";
-import {ValorantUser} from "~/models/user/ValorantUser";
-import {parseTokenData} from "~/utils/token/token";
+import type { AxiosInstance } from 'axios';
+import { CookieJar } from 'tough-cookie';
+import { ReauthenticationCookies } from '~/models/cookies/ReauthenticationCookies';
+import { getAuthorizationHeader, getLoginClient } from '~/utils/axios/client.server';
+import { ENDPOINTS } from '~/models/Endpoint';
+import type { RSOUserInfo } from '~/models/user/authentication/RSOUserInfo';
+import { ValorantUser } from '~/models/user/ValorantUser';
+import { parseTokenData } from '~/utils/token/token';
+import { ValorantAuthenticationTokenResponse } from '~/models/valorant/auth/ValorantAuthenticationTokenResponse';
+import { ValorantAuthenticationMultifactorResponse } from '~/models/valorant/auth/ValorantAuthenticationMultifactorResponse';
+import { redirect } from '@remix-run/node';
+import * as url from 'url';
+import { MultifactorAuthenticationRequiredException } from '~/exceptions/MultifactorAuthenticationRequiredException';
+import { AuthenticationCookies, MultifactorCookies } from '~/models/cookies/MultifactorCookies';
 
 export class RiotAuthenticationClient {
     client: AxiosInstance;
@@ -18,13 +24,27 @@ export class RiotAuthenticationClient {
         return this;
     }
 
-    async authorize(username: string, password: string){
+    async authorize(username: string, password: string) {
         await this.requestCookies();
         const { idToken, accessToken } = await this.requestAccessToken(username, password);
         const entitlementsToken = await this.requestEntitlementsToken(accessToken);
         const reauthenticationCookies = await new ReauthenticationCookies().init(this.jar);
         const userData = await this.requestUserData(accessToken);
-        return new ValorantUser(accessToken, entitlementsToken, reauthenticationCookies, userData)
+        return new ValorantUser(accessToken, entitlementsToken, reauthenticationCookies, userData);
+    }
+
+    async authorizeWithMultifactor(
+        multifactorCode: string,
+        authenticationCookies: AuthenticationCookies
+    ) {
+        const { accessToken } = await this.requestMultifactorAccessToken(
+            multifactorCode,
+            authenticationCookies
+        );
+        const entitlementsToken = await this.requestEntitlementsToken(accessToken);
+        const reauthenticationCookies = await new ReauthenticationCookies().init(this.jar);
+        const userData = await this.requestUserData(accessToken);
+        return new ValorantUser(accessToken, entitlementsToken, reauthenticationCookies, userData);
     }
 
     private async requestCookies() {
@@ -37,19 +57,30 @@ export class RiotAuthenticationClient {
 
     private async requestAccessToken(username: string, password: string) {
         return await this.client
-            .put(`${ENDPOINTS.AUTH}/api/v1/authorization`, {
+            .put<ValorantAuthenticationTokenResponse>(`${ENDPOINTS.AUTH}/api/v1/authorization`, {
                 type: 'auth',
                 username: username,
                 password: password,
                 remember: true,
                 language: 'en_US',
             })
-            .then((response) => {
+            .then(async (response) => {
+                if (isMultifactorResponse(response.data)) {
+                    const multifactorCookies = await new MultifactorCookies().init(this.jar);
+                    throw new MultifactorAuthenticationRequiredException(
+                        'Multi factor authentication required',
+                        response.data.multifactor.email,
+                        multifactorCookies.getJson()
+                    );
+                }
                 return parseTokenData(response.data.response.parameters.uri);
-            }).catch(error => {
-                throw new Error("No access token present in response!")
             })
-
+            .catch((error) => {
+                if (error instanceof MultifactorAuthenticationRequiredException) {
+                    throw error;
+                }
+                throw new Error('No access token present in response!');
+            });
     }
 
     private async requestEntitlementsToken(accessToken: string) {
@@ -59,8 +90,7 @@ export class RiotAuthenticationClient {
                 {},
                 { headers: { ...getAuthorizationHeader(accessToken) } }
             )
-            .then((response) => response.data.entitlements_token)
-
+            .then((response) => response.data.entitlements_token);
     }
 
     private async requestUserData(accessToken: string): Promise<RSOUserInfo> {
@@ -70,10 +100,47 @@ export class RiotAuthenticationClient {
                     ...getAuthorizationHeader(accessToken),
                 },
             })
-            .then((response) => response.data)
+            .then((response) => response.data);
     }
 
+    private async requestMultifactorAccessToken(
+        multifactorCode: string,
+        authenticationCookies: AuthenticationCookies
+    ) {
+        const jar = new CookieJar(undefined, { rejectPublicSuffixes: false });
+        const domain = ENDPOINTS.AUTH;
+        await Promise.all([
+            jar.setCookie(authenticationCookies.clid, domain),
+            jar.setCookie(authenticationCookies.asid, domain),
+        ]);
+        const { cookieJar, client } = getLoginClient(jar);
+        this.jar = cookieJar;
+        this.client = client;
+        return await this.client
+            .put<ValorantAuthenticationTokenResponse>(`${ENDPOINTS.AUTH}/api/v1/authorization`, {
+                type: 'multifactor',
+                code: multifactorCode,
+                rememberDevice: true,
+            })
+            .then((response) => {
+                return parseTokenData(response.data.response.parameters.uri);
+            })
+            .catch((error) => {
+                throw new Error('Invalid code');
+            });
+    }
+}
 
+function isMultifactorResponse(
+    response: ValorantAuthenticationTokenResponse | ValorantAuthenticationMultifactorResponse
+): response is ValorantAuthenticationMultifactorResponse {
+    return response.type === 'multifactor';
+}
+
+function isTokenResponse(
+    response: ValorantAuthenticationTokenResponse | ValorantAuthenticationMultifactorResponse
+): response is ValorantAuthenticationTokenResponse {
+    return response.type === 'response';
 }
 
 const AUTHORIZATION_BODY = {

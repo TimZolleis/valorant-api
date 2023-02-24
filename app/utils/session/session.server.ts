@@ -60,18 +60,6 @@ export async function requireUser(
     return user;
 }
 
-async function checkUserToken(user: ValorantUser) {
-    const request = new RiotRequest(user.userData.region).buildMatchUrl(
-        endpoints.party.player(user.userData.puuid)
-    );
-    try {
-        const party = await new RiotGamesApiClient(user.accessToken, user.entitlement).get(request);
-        return true;
-    } catch (e) {
-        return !(e instanceof ReauthenticationRequiredException);
-    }
-}
-
 export async function requirePlayerUuid(request: Request) {
     const puuid = new URL(request.url).searchParams.get('puuid');
     if (!puuid) {
@@ -108,4 +96,8 @@ export function requireParam(param: string, params: Params) {
 
 export async function commitClientSession(session: Session) {
     return await commitSession(session);
+}
+
+export async function destroyClientSession(session: Session) {
+    return await destroySession(session);
 }

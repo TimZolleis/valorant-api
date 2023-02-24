@@ -1,10 +1,10 @@
-import type {AxiosInstance} from "axios";
-import type {ValorantUser} from "~/models/user/ValorantUser";
-import {CookieJar} from "tough-cookie";
-import {getAuthorizationHeader, getLoginClient} from "~/utils/axios/client.server";
-import {ENDPOINTS} from "~/models/Endpoint";
-import {parseTokenData} from "~/utils/token/token";
-import {ReauthenticationCookies} from "~/models/cookies/ReauthenticationCookies";
+import type { AxiosInstance } from 'axios';
+import type { ValorantUser } from '~/models/user/ValorantUser';
+import { CookieJar } from 'tough-cookie';
+import { getAuthorizationHeader, getLoginClient } from '~/utils/axios/client.server';
+import { ENDPOINTS } from '~/models/Endpoint';
+import { parseTokenData } from '~/utils/token/token';
+import { ReauthenticationCookies } from '~/models/cookies/ReauthenticationCookies';
 
 export class RiotReauthenticationClient {
     client: AxiosInstance;
@@ -13,7 +13,7 @@ export class RiotReauthenticationClient {
 
     async init(user: ValorantUser) {
         const jar = await this.getReauthenticationCookieJar(user);
-        const {cookieJar, client} = getLoginClient(jar);
+        const { cookieJar, client } = getLoginClient(jar);
         this.user = user;
         this.jar = cookieJar;
         this.client = client;
@@ -42,7 +42,7 @@ export class RiotReauthenticationClient {
                 try {
                     return parseTokenData(error.response.request.res.responseUrl);
                 } catch (error) {
-                   throw new Error("No access token present in response!")
+                    throw new Error('No access token present in response!');
                 }
             });
     }
@@ -51,15 +51,15 @@ export class RiotReauthenticationClient {
             .post(
                 `${ENDPOINTS.ENTITLEMENTS}/api/token/v1`,
                 {},
-                {headers: {...getAuthorizationHeader(accessToken)}}
+                { headers: { ...getAuthorizationHeader(accessToken) } }
             )
             .then((response) => response.data.entitlements_token)
             .catch(() => {
-                throw new Error("No entitlement token present in response!")
+                throw new Error('No entitlement token present in response!');
             });
     }
     async reauthenticate() {
-        const {accessToken} = await this.requestAccessToken();
+        const { accessToken } = await this.requestAccessToken();
         const entitlement = await this.requestEntitlementsToken(accessToken);
         const reauthenticationCookies = await new ReauthenticationCookies().init(this.jar);
         this.user.accessToken = accessToken;
