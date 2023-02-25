@@ -1,11 +1,11 @@
 import { ValorantApiClient } from '~/utils/valorant-api/ValorantApiClient';
-import { endpoints } from '~/config/endpoints';
 import { valorantApiEndpoints } from '~/config/valorantApiEndpoints';
 import { ValorantApiCompetitiveSeason } from '~/models/valorant-api/ValorantApiCompetitiveSeasons';
 import { seasonsConfig } from '~/config/season';
 import { ValorantUser } from '~/models/user/ValorantUser';
 import { getLatestCompetitiveUpdate } from '~/utils/player/competitiveupdate.server';
 import { ValorantApiCompetitiveTier } from '~/models/valorant-api/ValorantApiCompetitiveTier';
+
 export type PlayerRank = Awaited<ReturnType<typeof getPlayerRank>>;
 
 export async function getCurrentCompetitiveTiers() {
@@ -31,15 +31,11 @@ export async function getPlayerRank(user: ValorantUser, playerUuid: string) {
     try {
         const currentCompetitiveTiers = await getCurrentCompetitiveTiers();
         const latestCompetitiveUpdate = await getLatestCompetitiveUpdate(user, playerUuid);
-        const rank = findRank(
-            currentCompetitiveTiers,
-            latestCompetitiveUpdate.Matches[0].TierAfterUpdate
-                ? latestCompetitiveUpdate.Matches[0].TierAfterUpdate
-                : 0
-        );
+        const tierNumber = latestCompetitiveUpdate.Matches[0]?.TierAfterUpdate || 0;
+        const rank = findRank(currentCompetitiveTiers, tierNumber);
         return {
             tier: rank,
-            latestRR: latestCompetitiveUpdate.Matches[0].RankedRatingAfterUpdate,
+            latestRR: latestCompetitiveUpdate.Matches[0]?.RankedRatingAfterUpdate || 0,
         };
     } catch (e) {
         return undefined;

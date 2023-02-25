@@ -11,7 +11,6 @@ import { getPlayerNameService } from '~/utils/player/nameservice.server';
 import { PlayerInGameComponent } from '~/ui/player/PlayerInGameComponent';
 import { getServerRegion } from '~/utils/match/servername';
 import { Tag } from '~/ui/common/Tag';
-import { getRunningPregameMatch } from '~/utils/match/livematch.server';
 import { BreadCrumbLink } from '~/ui/common/BreadCrumbLink';
 
 export const handle = {
@@ -107,6 +106,7 @@ const LiveMatchPage = () => {
                                 }>
                                 {players.map(([player, rank, character, nameService]) => (
                                     <Link
+                                        prefetch={'intent'}
                                         to={`playerdetails/${player.Subject}`}
                                         key={player.Subject}>
                                         <PlayerInGameComponent

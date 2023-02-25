@@ -4,6 +4,11 @@
 
 html {
     background-color: black;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+::-webkit-scrollbar {
+    display: none;
 }
 
 @font-face {

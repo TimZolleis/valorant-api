@@ -1,12 +1,6 @@
-import type { DataFunctionArgs } from '@remix-run/node';
-import { requireUser } from '~/utils/session/session.server';
 import { Link } from '@remix-run/react';
 import { Container } from '~/ui/container/Container';
 import { DefaultButton } from '~/ui/common/DefaultButton';
-
-export const loader = async ({ request, params }: DataFunctionArgs) => {
-    const user = await requireUser(request);
-};
 
 const MatchDetailsPage = () => {
     return (

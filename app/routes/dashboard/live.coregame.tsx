@@ -3,7 +3,6 @@ import { defer, redirect } from '@remix-run/node';
 import { requireUser } from '~/utils/session/session.server';
 import { getCharacterByUUid, getMatchMap } from '~/utils/match/match.server';
 import { getPlayerRank } from '~/utils/player/rank.server';
-import { NoPregameFoundException } from '~/exceptions/NoPregameFoundException';
 import { Await, Link, Outlet, RouteMatch, useLoaderData } from '@remix-run/react';
 import { Suspense } from 'react';
 import { LoadingContainer } from '~/ui/container/LoadingContainer';
@@ -11,7 +10,6 @@ import { getPlayerNameService } from '~/utils/player/nameservice.server';
 import { PlayerInGameComponent } from '~/ui/player/PlayerInGameComponent';
 import { getServerRegion } from '~/utils/match/servername';
 import { Tag } from '~/ui/common/Tag';
-import { TEST_COREGAME } from '~/test/TEST_COREGAME';
 import { LoadingTag } from '~/ui/common/LoadingTag';
 import { NoCoregameFoundException } from '~/exceptions/NoCoregameFoundException';
 import { BreadCrumbLink } from '~/ui/common/BreadCrumbLink';
@@ -103,6 +101,7 @@ const LiveMatchPage = () => {
                                 <div className={'grid gap-2'}>
                                     {players.map(([player, rank, character, nameService]) => (
                                         <Link
+                                            prefetch={'intent'}
                                             to={`playerdetails/${player.Subject}`}
                                             key={player.Subject}>
                                             <PlayerInGameComponent
@@ -128,6 +127,7 @@ const LiveMatchPage = () => {
                                 <div className={'grid gap-2 '}>
                                     {players.map(([player, rank, character, nameService]) => (
                                         <Link
+                                            prefetch={'intent'}
                                             to={`playerdetails/${player.Subject}`}
                                             key={player.Subject}>
                                             <PlayerInGameComponent
