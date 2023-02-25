@@ -14,6 +14,8 @@ import { LoadingTag } from '~/ui/common/LoadingTag';
 import { NoCoregameFoundException } from '~/exceptions/NoCoregameFoundException';
 import { BreadCrumbLink } from '~/ui/common/BreadCrumbLink';
 import { getRunningCoregameMatch } from '~/utils/match/livematch.server';
+import { get } from '@vercel/edge-config';
+import { TEST_COREGAME } from '~/test/TEST_COREGAME';
 
 export const handle = {
     breadcrumb: (match: RouteMatch) => (
@@ -23,8 +25,11 @@ export const handle = {
 
 export const loader = async ({ request }: DataFunctionArgs) => {
     const user = await requireUser(request);
+    const mockCoregame = await get('mockCoregame');
     try {
-        const coregame = await getRunningCoregameMatch(user, user.userData.puuid);
+        const coregame = mockCoregame
+            ? TEST_COREGAME
+            : await getRunningCoregameMatch(user, user.userData.puuid);
         const playerTeamId = coregame.Players.find((player) => {
             return player.Subject === user.userData.puuid;
         })?.TeamID;

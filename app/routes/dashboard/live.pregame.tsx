@@ -12,6 +12,8 @@ import { PlayerInGameComponent } from '~/ui/player/PlayerInGameComponent';
 import { getServerRegion } from '~/utils/match/servername';
 import { Tag } from '~/ui/common/Tag';
 import { BreadCrumbLink } from '~/ui/common/BreadCrumbLink';
+import { get } from '@vercel/edge-config';
+import { getRunningPregameMatch } from '~/utils/match/livematch.server';
 
 export const handle = {
     breadcrumb: (match: RouteMatch) => (
@@ -22,8 +24,10 @@ export const handle = {
 export const loader = async ({ request }: DataFunctionArgs) => {
     const user = await requireUser(request);
     try {
-        // const pregame = await getRunningPregameMatch(user, user.userData.puuid);
-        const pregame = PREGAME_MATCH;
+        const mockPregame = await get('mockPregame');
+        const pregame = mockPregame
+            ? PREGAME_MATCH
+            : await getRunningPregameMatch(user, user.userData.puuid);
         const players = Promise.all(
             pregame.AllyTeam.Players.map((player) => {
                 const nameService = getPlayerNameService(user, player.PlayerIdentity.Subject);

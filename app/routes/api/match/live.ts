@@ -5,7 +5,7 @@ import { getRunningCoregameMatch, getRunningPregameMatch } from '~/utils/match/l
 import { NoPregameFoundException } from '~/exceptions/NoPregameFoundException';
 import { NoCoregameFoundException } from '~/exceptions/NoCoregameFoundException';
 import type { ValorantUser } from '~/models/user/ValorantUser';
-import { PREGAME_MATCH } from '~/test/TEST_PREGAME';
+import { get } from '@vercel/edge-config';
 
 export type LiveMatchRoute = Awaited<LoaderData>;
 export type GameStatus = 'pregame' | 'coregame' | 'not in game';
@@ -15,7 +15,10 @@ type LoaderData = {
 
 async function detectGame(user: ValorantUser, puuid: string) {
     try {
-        const pregame = await getRunningPregameMatch(user, user.userData.puuid);
+        const mockPregame = await get('mockPregame');
+        const pregame = mockPregame
+            ? true
+            : await getRunningPregameMatch(user, user.userData.puuid);
         return json<LoaderData>({
             status: 'pregame',
         });
@@ -25,7 +28,10 @@ async function detectGame(user: ValorantUser, puuid: string) {
         }
     }
     try {
-        const coregame = await getRunningCoregameMatch(user, user.userData.puuid);
+        const mockCoregame = await get('mockCoregame');
+        const coregame = mockCoregame
+            ? true
+            : await getRunningCoregameMatch(user, user.userData.puuid);
         return json<LoaderData>({
             status: 'coregame',
         });
@@ -35,9 +41,10 @@ async function detectGame(user: ValorantUser, puuid: string) {
         }
     }
     return json<LoaderData>({
-        status: 'pregame',
+        status: 'not in game',
     });
 }
+
 export const loader = async ({ request, params }: DataFunctionArgs) => {
     const user = await requireUser(request);
     return await detectGame(user, user.userData.puuid);
