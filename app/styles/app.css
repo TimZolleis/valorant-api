@@ -581,6 +581,10 @@ video {
   height: 2.5rem;
 }
 
+.h-12 {
+  height: 3rem;
+}
+
 .h-20 {
   height: 5rem;
 }
@@ -605,10 +609,6 @@ video {
   height: 100%;
 }
 
-.h-12 {
-  height: 3rem;
-}
-
 .w-10 {
   width: 2.5rem;
 }
@@ -631,6 +631,10 @@ video {
 
 .w-full {
   width: 100%;
+}
+
+.min-w-0 {
+  min-width: 0px;
 }
 
 @keyframes ping {
@@ -714,8 +718,38 @@ video {
   margin-bottom: calc(0.5rem * var(--tw-space-y-reverse));
 }
 
+.overflow-auto {
+  overflow: auto;
+}
+
+.overflow-hidden {
+  overflow: hidden;
+}
+
+.overflow-x-clip {
+  overflow-x: clip;
+}
+
 .overflow-y-scroll {
   overflow-y: scroll;
+}
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.overflow-ellipsis {
+  text-overflow: ellipsis;
+}
+
+.text-ellipsis {
+  text-overflow: ellipsis;
+}
+
+.whitespace-nowrap {
+  white-space: nowrap;
 }
 
 .rounded-full {
@@ -989,6 +1023,10 @@ video {
 
 .pt-3 {
   padding-top: 0.75rem;
+}
+
+.pr-5 {
+  padding-right: 1.25rem;
 }
 
 .text-center {

@@ -35,13 +35,13 @@ export const LiveMatchDetectionComponent = () => {
     useEffect(() => {
         if (
             fetcher.data?.status === 'pregame' &&
-            window.location.pathname !== '/dashboard/live/pregame'
+            !window.location.pathname.includes('/dashboard/live/pregame')
         ) {
             return navigate('/dashboard/live/pregame');
         }
         if (
             fetcher.data?.status === 'coregame' &&
-            window.location.pathname !== '/dashboard/live/coregame'
+            !window.location.pathname.includes('/dashboard/live/coregame')
         ) {
             return navigate('/dashboard/live/coregame');
         }

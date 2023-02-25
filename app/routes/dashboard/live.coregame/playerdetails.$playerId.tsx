@@ -11,9 +11,12 @@ import type { RouteMatch } from '@remix-run/react';
 import { Await, Link, useLoaderData } from '@remix-run/react';
 import { LoadingContainer } from '~/ui/container/LoadingContainer';
 import { PlayerDetailsComponent } from '~/ui/player/PlayerDetailsComponent';
+import { BreadCrumbLink } from '~/ui/common/BreadCrumbLink';
 
 export const handle = {
-    breadcrumb: (match: RouteMatch) => <Link to={`${match.pathname}`}>Player Details</Link>,
+    breadcrumb: (match: RouteMatch) => (
+        <BreadCrumbLink to={match.pathname}>Player Details</BreadCrumbLink>
+    ),
 };
 export const loader = async ({ request, params }: DataFunctionArgs) => {
     const user = await requireUser(request);

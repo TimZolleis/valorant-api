@@ -18,13 +18,18 @@ export const Modal = ({
         }
     }, [showModal]);
 
+    const closeModal = () => {
+        document.body.style.overflow = 'auto';
+        toggleModal();
+    };
+
     return (
         <>
             <AnimatePresence>
                 {showModal ? (
                     <motion.div
                         key={showModal.toString()}
-                        onClick={() => toggleModal()}
+                        onClick={() => closeModal()}
                         className={
                             'bg-black bg-opacity-40 p-3 z-50 fixed lg:px-32 left-0 top-0 right-0 bottom-0 flex flex-col items-center justify-center'
                         }

@@ -13,11 +13,14 @@ import { getServerRegion } from '~/utils/match/servername';
 import { Tag } from '~/ui/common/Tag';
 import { TEST_COREGAME } from '~/test/TEST_COREGAME';
 import { LoadingTag } from '~/ui/common/LoadingTag';
-import { getRunningCoregameMatch } from '~/utils/match/livematch.server';
 import { NoCoregameFoundException } from '~/exceptions/NoCoregameFoundException';
+import { BreadCrumbLink } from '~/ui/common/BreadCrumbLink';
+import { getRunningCoregameMatch } from '~/utils/match/livematch.server';
 
 export const handle = {
-    breadcrumb: (match: RouteMatch) => <Link to={`${match.pathname}`}>Live Coregame</Link>,
+    breadcrumb: (match: RouteMatch) => (
+        <BreadCrumbLink to={match.pathname}>Live Coregame</BreadCrumbLink>
+    ),
 };
 
 export const loader = async ({ request }: DataFunctionArgs) => {

@@ -22,15 +22,17 @@ export const PlayerDetailsComponent = ({
 }) => {
     return (
         <>
-            <p className={'font-inter font-semibold text-white text-title-large py-2'}>
-                {nameservice.GameName}{' '}
-                <span className={'text-gray-400'}>#{nameservice.TagLine}</span>
-            </p>
-            <div className={'flex gap-2 text-white w-full '}>
-                <PlayerStatisticsComponent
-                    statistics={statistics}
-                    rank={rank}></PlayerStatisticsComponent>
-            </div>
+            <main className={'p-3'}>
+                <p className={'font-inter font-semibold text-white text-title-large py-2'}>
+                    {nameservice.GameName}{' '}
+                    <span className={'text-gray-400'}>#{nameservice.TagLine}</span>
+                </p>
+                <div className={'flex gap-2 text-white w-full '}>
+                    <PlayerStatisticsComponent
+                        statistics={statistics}
+                        rank={rank}></PlayerStatisticsComponent>
+                </div>
+            </main>
         </>
     );
 };

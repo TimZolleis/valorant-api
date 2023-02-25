@@ -35,7 +35,7 @@ async function detectGame(user: ValorantUser, puuid: string) {
         }
     }
     return json<LoaderData>({
-        status: 'not in game',
+        status: 'pregame',
     });
 }
 export const loader = async ({ request, params }: DataFunctionArgs) => {

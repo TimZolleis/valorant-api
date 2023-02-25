@@ -7,7 +7,7 @@ const NavBar = () => {
     const user = useOptionalUser();
     return (
         <div className={'w-full py-3 px-5 justify-between flex border-b border-zinc-800 '}>
-            <div className={'flex items-center'}>
+            <div className={'flex items-center min-w-0 truncate pr-5'}>
                 <Link className={'font-inter text-title-medium text-white'} to={'/'}>
                     GunBuddy
                 </Link>
@@ -29,10 +29,10 @@ const BreadcrumbNavigation = () => {
     const filteredMatches = matches.filter((match) => match.handle && match.handle.breadcrumb);
 
     return (
-        <nav className={'flex gap-1'}>
+        <nav className={'flex gap-1 min-w-0 '}>
             {filteredMatches.map((match, index) => (
-                <div className={'flex  items-center text-white'} key={index}>
-                    <p className={'font-inter'}>{match.handle?.breadcrumb(match)}</p>
+                <div className={'flex items-center text-white min-w-0'} key={index}>
+                    <p className={'font-inter min-w-0 flex '}>{match.handle?.breadcrumb(match)}</p>
                     {index < filteredMatches.length - 1 && (
                         <img src='/resources/icons/slash-icon.svg' alt='' />
                     )}

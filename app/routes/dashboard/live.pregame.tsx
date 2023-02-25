@@ -4,23 +4,27 @@ import { getCharacterByUUid, getMatchMap } from '~/utils/match/match.server';
 import { getPlayerRank } from '~/utils/player/rank.server';
 import { NoPregameFoundException } from '~/exceptions/NoPregameFoundException';
 import { PREGAME_MATCH } from '~/test/TEST_PREGAME';
-import { Await, Link, Outlet, RouteMatch, useLoaderData } from '@remix-run/react';
-import { Suspense } from 'react';
+import { Await, Link, Outlet, RouteMatch, useLoaderData, useRevalidator } from '@remix-run/react';
+import { Suspense, useEffect, useState } from 'react';
 import { LoadingContainer } from '~/ui/container/LoadingContainer';
 import { getPlayerNameService } from '~/utils/player/nameservice.server';
 import { PlayerInGameComponent } from '~/ui/player/PlayerInGameComponent';
 import { getServerRegion } from '~/utils/match/servername';
 import { Tag } from '~/ui/common/Tag';
 import { getRunningPregameMatch } from '~/utils/match/livematch.server';
+import { BreadCrumbLink } from '~/ui/common/BreadCrumbLink';
 
 export const handle = {
-    breadcrumb: (match: RouteMatch) => <Link to={`${match.pathname}`}>Live Pregame</Link>,
+    breadcrumb: (match: RouteMatch) => (
+        <BreadCrumbLink to={match.pathname}>Live Pregame</BreadCrumbLink>
+    ),
 };
 
 export const loader = async ({ request }: DataFunctionArgs) => {
     const user = await requireUser(request);
     try {
-        const pregame = await getRunningPregameMatch(user, user.userData.puuid);
+        // const pregame = await getRunningPregameMatch(user, user.userData.puuid);
+        const pregame = PREGAME_MATCH;
         const players = Promise.all(
             pregame.AllyTeam.Players.map((player) => {
                 const nameService = getPlayerNameService(user, player.PlayerIdentity.Subject);
@@ -46,6 +50,19 @@ export const loader = async ({ request }: DataFunctionArgs) => {
 
 const LiveMatchPage = () => {
     const { players, map, pregame } = useLoaderData<typeof loader>();
+    const [remainingTime, setRemainingTime] = useState(5);
+    const revalidator = useRevalidator();
+    useEffect(() => {
+        const interval = setInterval(() => {
+            if (remainingTime > 0) {
+                setRemainingTime(remainingTime - 1);
+            } else {
+                revalidator.revalidate();
+                setRemainingTime(5);
+            }
+        }, 1000);
+        return () => clearInterval(interval);
+    });
 
     return (
         <div className={'text-white'}>
