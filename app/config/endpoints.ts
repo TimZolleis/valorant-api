@@ -19,4 +19,7 @@ export const endpoints = {
     party: {
         player: (puuid: string) => `/parties/v1/players/${puuid}`,
     },
+    store: {
+        storefront: (puuid: string) => `/store/v2/storefront/${puuid}`,
+    },
 };

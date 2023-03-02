@@ -7,6 +7,8 @@ module.exports = {
                 'valorant-red': '#FF4654',
                 'valorant-blue': '#0F1923',
                 mud: '#111111',
+                root: '#05050A',
+                accent: '#111',
             },
             fontFamily: {
                 'work-sans': ['Work Sans', 'sans-serif'],

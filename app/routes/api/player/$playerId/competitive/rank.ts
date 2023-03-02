@@ -1,4 +1,5 @@
-import { json, LoaderFunction } from '@remix-run/node';
+import type { LoaderFunction } from '@remix-run/node';
+import { json } from '@remix-run/node';
 import { requirePlayerUuidAsParam, requireUser } from '~/utils/session/session.server';
 import { getPlayerRank } from '~/utils/player/rank.server';
 

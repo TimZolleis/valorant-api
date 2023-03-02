@@ -7,13 +7,14 @@ html {
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
+
 ::-webkit-scrollbar {
     display: none;
 }
 
 @font-face {
     font-family: 'Inter';
-    font-style:  normal;
+    font-style: normal;
     font-weight: 100;
     font-display: swap;
     src: url("/resources/fonts/inter/Inter-Thin.woff2?v=3.19") format("woff2"),
@@ -22,7 +23,7 @@ html {
 
 @font-face {
     font-family: 'Inter';
-    font-style:  normal;
+    font-style: normal;
     font-weight: 200;
     font-display: swap;
     src: url("/resources/fonts/inter/Inter-ExtraLight.woff2?v=3.19") format("woff2"),
@@ -31,7 +32,7 @@ html {
 
 @font-face {
     font-family: 'Inter';
-    font-style:  normal;
+    font-style: normal;
     font-weight: 300;
     font-display: swap;
     src: url("/resources/fonts/inter/Inter-Light.woff2?v=3.19") format("woff2"),
@@ -41,7 +42,7 @@ html {
 
 @font-face {
     font-family: 'Inter';
-    font-style:  normal;
+    font-style: normal;
     font-weight: 400;
     font-display: swap;
     src: url("/resources/fonts/inter/Inter-Regular.woff2?v=3.19") format("woff2"),
@@ -51,7 +52,7 @@ html {
 
 @font-face {
     font-family: 'Inter';
-    font-style:  normal;
+    font-style: normal;
     font-weight: 500;
     font-display: swap;
     src: url("/resources/fonts/inter/Inter-Medium.woff2?v=3.19") format("woff2"),
@@ -61,7 +62,7 @@ html {
 
 @font-face {
     font-family: 'Inter';
-    font-style:  normal;
+    font-style: normal;
     font-weight: 600;
     font-display: swap;
     src: url("/resources/fonts/inter/Inter-SemiBold.woff2?v=3.19") format("woff2"),
@@ -70,7 +71,7 @@ html {
 
 @font-face {
     font-family: 'Inter';
-    font-style:  normal;
+    font-style: normal;
     font-weight: 700;
     font-display: swap;
     src: url("/resources/fonts/inter/Inter-Bold.woff2?v=3.19") format("woff2"),
@@ -80,7 +81,7 @@ html {
 
 @font-face {
     font-family: 'Inter';
-    font-style:  normal;
+    font-style: normal;
     font-weight: 800;
     font-display: swap;
     src: url("/resources/fonts/inter/Inter-ExtraBold.woff2?v=3.19") format("woff2"),
@@ -90,7 +91,7 @@ html {
 
 @font-face {
     font-family: 'Inter';
-    font-style:  normal;
+    font-style: normal;
     font-weight: 900;
     font-display: swap;
     src: url("/resources/fonts/inter/Inter-Black.woff2?v=3.19") format("woff2"),

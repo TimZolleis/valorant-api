@@ -7,3 +7,5 @@ export const riotConfig = {
     },
     clientVersion: 'release-06.02-11-827558',
 };
+
+export const RIOT_POINTS_UUID = '85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741';
