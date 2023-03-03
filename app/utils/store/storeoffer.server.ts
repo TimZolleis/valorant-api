@@ -11,7 +11,7 @@ import { RIOT_POINTS_UUID } from '~/config/riot';
 
 export async function getStoreOffers(user: ValorantUser) {
     const time = getNextStoreRotationTime();
-    const cacheExpirationTime = time.diff(DateTime.now(), 'second').get('second');
+    const cacheExpirationTime = Math.floor(time.diff(DateTime.now(), 'second').get('second'));
 
     const request = new RiotRequest(user.userData.region).buildBaseUrl(
         endpoints.store.storefront(user.userData.puuid)
