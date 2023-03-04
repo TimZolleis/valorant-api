@@ -8,6 +8,7 @@ import { ValorantApiClient } from '~/utils/valorant-api/ValorantApiClient';
 import { ValorantApiWeaponSkin } from '~/models/valorant-api/ValorantApiWeaponSkin';
 import { valorantApiEndpoints } from '~/config/valorantApiEndpoints';
 import { RIOT_POINTS_UUID } from '~/config/riot';
+import { ValorantStoreOffers } from '~/models/valorant/store/ValorantStoreOffers';
 
 export async function getStoreOffers(user: ValorantUser) {
     const time = getNextStoreRotationTime();
@@ -87,9 +88,25 @@ export async function getItembyItemId(itemId: string) {
     );
 }
 
+export async function getOfferById(user: ValorantUser, offerId: string) {
+    const request = new RiotRequest(user.userData.region).buildBaseUrl(endpoints.store.offers);
+    const time = getNextStoreRotationTime();
+    const cacheExpirationTime = Math.floor(time.diff(DateTime.now(), 'second').get('second'));
+    const offers = await new RiotGamesApiClient(
+        user.accessToken,
+        user.entitlement
+    ).getCached<ValorantStoreOffers>(request, { key: 'offers', expiration: cacheExpirationTime });
+    const offer = offers.Offers.find((offer) => offer.OfferID === offerId);
+    if (!offer) return undefined;
+    return {
+        ...offer,
+        Cost: getOfferCost(offer),
+    };
+}
+
 function getNextStoreRotationTime() {
     const time = DateTime.now();
-    if (time.get('hour') > 1) {
+    if (time.get('hour') >= 1) {
         return DateTime.now().plus({ day: 1 }).set({ hour: 1, minute: 0, second: 0 });
     }
     return time.set({ hour: 1, minute: 0, second: 0 });

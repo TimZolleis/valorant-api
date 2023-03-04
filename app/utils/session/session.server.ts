@@ -2,10 +2,6 @@ import type { Session } from '@remix-run/node';
 import { createCookieSessionStorage, json, redirect } from '@remix-run/node';
 import type { ValorantUser } from '~/models/user/ValorantUser';
 import type { Params } from '@remix-run/react';
-import { RiotRequest } from '~/models/Request';
-import { endpoints } from '~/config/endpoints';
-import { RiotGamesApiClient } from '~/utils/riot/RiotGamesApiClient';
-import { ReauthenticationRequiredException } from '~/exceptions/ReauthenticationRequiredException';
 
 if (!process.env.SECRET) {
     throw new Error('Session secret missing from ENV');
@@ -16,7 +12,7 @@ const { getSession, commitSession, destroySession } = createCookieSessionStorage
         name: '__valorant-api-session',
         path: '/',
         sameSite: 'lax',
-        maxAge: 60 * 24 * 90,
+        maxAge: 60 * 60 * 24 * 90,
         secrets: [process.env.SECRET],
     },
 });

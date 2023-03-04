@@ -21,5 +21,6 @@ export const endpoints = {
     },
     store: {
         storefront: (puuid: string) => `/store/v2/storefront/${puuid}`,
+        offers: '/store/v1/offers',
     },
 };

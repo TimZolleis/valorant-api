@@ -10,7 +10,7 @@ export const WeaponComponent = ({
     cost: number;
 }) => {
     return (
-        <Link className={'flex'} to={`/store/offer/${weapon.uuid}`}>
+        <Link className={'flex'} to={`/store/offers/${weapon.uuid}`}>
             <Container className={'w-full'}>
                 <div className={'h-full w-full flex flex-col items-start justify-between'}>
                     <img className={'max-h-20'} src={weapon.displayIcon} alt='' />
