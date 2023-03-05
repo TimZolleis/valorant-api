@@ -1,55 +1,60 @@
-import { CookieJar } from "tough-cookie";
-import {InvalidReauthenticationCookiesException} from "~/exceptions/InvalidReauthenticationCookiesException";
+import type { CookieJar } from 'tough-cookie';
+import { InvalidReauthenticationCookiesException } from '~/exceptions/InvalidReauthenticationCookiesException';
 
 export class ReauthenticationCookies {
-  sub: string;
-  ssid: string;
-  clid: string;
-  csid: string;
+    sub: string;
+    ssid: string;
+    clid: string;
+    csid: string;
 
-  async init(jar: CookieJar) {
-    const cookieStrings = await jar.getSetCookieStrings(
-      "https://auth.riotgames.com"
-    );
-    cookieStrings.forEach((cookieString) => {
-      this.setCookie(cookieString);
-    });
-    this.verify();
-    return this;
-  }
-
-  private setCookie(cookieString: string) {
-    if (cookieString.includes("sub")) {
-      this.sub = cookieString;
-    }
-    if (cookieString.includes("ssid")) {
-      this.ssid = cookieString;
+    constructor(sub?: string, ssid?: string, clid?: string, csid?: string) {
+        if (sub) this.sub = sub;
+        if (ssid) this.ssid = ssid;
+        if (clid) this.clid = clid;
+        if (csid) this.csid = csid;
     }
 
-    if (cookieString.includes("clid")) {
-      this.clid = cookieString;
+    async init(jar: CookieJar) {
+        const cookieStrings = await jar.getSetCookieStrings('https://auth.riotgames.com');
+        cookieStrings.forEach((cookieString) => {
+            this.setCookie(cookieString);
+        });
+        this.verify();
+        return this;
     }
-    if (cookieString.includes("csid")) {
-      this.csid = cookieString;
-    }
-  }
 
-  private verify() {
-    if (!this.sub) {
-      throw new InvalidReauthenticationCookiesException();
-    }
-    if (!this.ssid) {
-      throw new InvalidReauthenticationCookiesException();
-    }
-    if (!this.clid) {
-      throw new InvalidReauthenticationCookiesException();
-    }
-    if (!this.csid) {
-      throw new InvalidReauthenticationCookiesException();
-    }
-  }
+    private setCookie(cookieString: string) {
+        if (cookieString.includes('sub')) {
+            this.sub = cookieString;
+        }
+        if (cookieString.includes('ssid')) {
+            this.ssid = cookieString;
+        }
 
-  get() {
-    return this;
-  }
+        if (cookieString.includes('clid')) {
+            this.clid = cookieString;
+        }
+        if (cookieString.includes('csid')) {
+            this.csid = cookieString;
+        }
+    }
+
+    private verify() {
+        if (!this.sub) {
+            throw new InvalidReauthenticationCookiesException();
+        }
+        if (!this.ssid) {
+            throw new InvalidReauthenticationCookiesException();
+        }
+        if (!this.clid) {
+            throw new InvalidReauthenticationCookiesException();
+        }
+        if (!this.csid) {
+            throw new InvalidReauthenticationCookiesException();
+        }
+    }
+
+    get() {
+        return this;
+    }
 }

@@ -8,12 +8,12 @@ import {
     Scripts,
     ScrollRestoration,
     useLoaderData,
-    useMatches,
     useTransition,
 } from '@remix-run/react';
 import styles from './styles/app.css';
 import DefaultLayout from '~/ui/layout/DefaultLayout';
 import { getUserFromSession } from '~/utils/session/session.server';
+import { GeistProvider } from '@geist-ui/core';
 
 export function links() {
     return [{ rel: 'stylesheet', href: styles }];
@@ -43,12 +43,14 @@ export default function App() {
                 <Links />
             </head>
             <body>
-                <DefaultLayout>
-                    <Outlet />
-                </DefaultLayout>
-                <ScrollRestoration />
-                <Scripts />
-                <LiveReload />
+                <GeistProvider themeType={'dark'}>
+                    <DefaultLayout>
+                        <Outlet />
+                    </DefaultLayout>
+                    <ScrollRestoration />
+                    <Scripts />
+                    <LiveReload />
+                </GeistProvider>
             </body>
         </html>
     );

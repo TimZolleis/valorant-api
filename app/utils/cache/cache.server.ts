@@ -17,6 +17,12 @@ export async function storeCachedValue<T>(key: string, expiration: number, value
     return await redis.setValue(key, expiration, stringValue);
 }
 
+export async function storePersistentCachedValue<T>(key: string, value: T) {
+    const redis = await getRedisInstance();
+    const stringValue = JSON.stringify(value);
+    return await redis.setPersistentValue(key, stringValue);
+}
+
 export function constructCacheKey(url: string, key: string) {
     return `${url}-${key}`;
 }
@@ -28,7 +34,6 @@ export async function getDatabaseCachedValue<T>(key: string): Promise<T> {
         },
     });
     if (!databaseValue) {
-        console.log(key, 'not found in db');
         throw new Error('Cache miss');
     }
     let value = databaseValue.value;

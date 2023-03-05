@@ -1,19 +1,68 @@
-
 generator client {
   provider = "prisma-client-js"
+    previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
+
 }
 
-model Match {
- id String @id
- matchData Json
+model User {
+  puuid            String                   @id
+  gameName         String
+  tagLine          String
+  region           String
+  reauthentication ReauthenticationCookies?
+  Offers           Offers[]
+  reminders        Reminder[]
+}
+
+model ReauthenticationCookies {
+  puuid String @id
+  user  User   @relation(fields: [puuid], references: [puuid])
+  sub   String @db.VarChar(2000)
+  ssid  String @db.VarChar(2000)
+  clid  String @db.VarChar(2000)
+  csid  String @db.VarChar(2000)
+}
+
+model Offers {
+  id      String    @id @default(uuid())
+  puuid   String
+  user    User      @relation(fields: [puuid], references: [puuid])
+  date    DateTime  @default(now())
+  offerId String
+  type    OfferType
+
+  @@unique([puuid, date, offerId], name: "uniqueDailyOffer")
+}
+
+enum OfferType {
+  DAILY
+  FEATURED
+  BONUS
+}
+
+model Skin {
+id String @id
+displayName String
+imageUrl String
+  @@fulltext([displayName])
+}
+
+
+
+model Reminder {
+  id             String    @id @default(uuid())
+  offerId        String @unique
+  name           String
+  expirationDate DateTime?
+  users          User[]
 }
 
 model Cache {
-key String @id @unique
-value String @db.VarChar(50000)
+  key   String @id @unique
+  value String @db.VarChar(50000)
 }

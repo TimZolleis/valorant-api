@@ -1,8 +1,7 @@
 import type { ReactNode } from 'react';
 import NavBar from '~/ui/layout/NavBar';
 import { useTransition } from '@remix-run/react';
-import { Loading, Spinner } from '@geist-ui/core';
-import { LoadingContainer } from '~/ui/container/LoadingContainer';
+import { Loading } from '@geist-ui/core';
 
 const DefaultLayout = ({ children }: { children: ReactNode }) => {
     const transition = useTransition();

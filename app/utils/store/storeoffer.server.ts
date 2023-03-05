@@ -1,14 +1,15 @@
-import { ValorantUser } from '~/models/user/ValorantUser';
+import type { ValorantUser } from '~/models/user/ValorantUser';
 import { RiotRequest } from '~/models/Request';
 import { endpoints } from '~/config/endpoints';
 import { RiotGamesApiClient } from '~/utils/riot/RiotGamesApiClient';
-import { Offer, ValorantStoreFront } from '~/models/valorant/store/ValorantStoreFront';
+import type { Offer, ValorantStoreFront } from '~/models/valorant/store/ValorantStoreFront';
 import { DateTime } from 'luxon';
 import { ValorantApiClient } from '~/utils/valorant-api/ValorantApiClient';
-import { ValorantApiWeaponSkin } from '~/models/valorant-api/ValorantApiWeaponSkin';
+import type { ValorantApiWeaponSkin } from '~/models/valorant-api/ValorantApiWeaponSkin';
 import { valorantApiEndpoints } from '~/config/valorantApiEndpoints';
 import { RIOT_POINTS_UUID } from '~/config/riot';
-import { ValorantStoreOffers } from '~/models/valorant/store/ValorantStoreOffers';
+import type { ValorantStoreOffers } from '~/models/valorant/store/ValorantStoreOffers';
+import { of } from 'rxjs';
 
 export async function getStoreOffers(user: ValorantUser) {
     const time = getNextStoreRotationTime();
@@ -24,6 +25,30 @@ export async function getStoreOffers(user: ValorantUser) {
         key: 'storefront',
         expiration: cacheExpirationTime,
     });
+}
+
+export async function getAllStoreOffers(user: ValorantUser) {
+    const request = new RiotRequest(user.userData.region).buildBaseUrl(endpoints.store.offers);
+    const offers = await new RiotGamesApiClient(
+        user.accessToken,
+        user.entitlement
+    ).getCached<ValorantStoreOffers>(request, {
+        key: 'storeoffers',
+        expiration: 86400,
+    });
+    return await Promise.all(
+        offers.Offers.map((offer) => {
+            return Promise.all(
+                offer.Rewards.map(async (reward) => {
+                    try {
+                        return await getItembyItemId(reward.ItemID);
+                    } catch (e) {
+                        return undefined;
+                    }
+                })
+            );
+        })
+    );
 }
 
 export async function getDailyOffers(storefront: ValorantStoreFront) {

@@ -68,6 +68,10 @@ export class RedisClient {
         await this.client.setex(key, expiration, value);
     }
 
+    async setPersistentValue(key: string, value: string) {
+        await this.client.set(key, value);
+    }
+
     async getValue(key: string) {
         return this.client.get(key);
     }

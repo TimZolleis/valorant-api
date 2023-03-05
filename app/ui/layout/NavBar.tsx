@@ -1,7 +1,6 @@
 import { Link, useMatches } from '@remix-run/react';
 import { DefaultButton } from '~/ui/common/DefaultButton';
 import { useOptionalUser } from '~/utils/hooks/matchesData';
-import { use } from 'ast-types';
 
 const NavBar = () => {
     const user = useOptionalUser();
@@ -14,11 +13,17 @@ const NavBar = () => {
                 <img src='/resources/icons/slash-icon.svg' alt='' />
                 <BreadcrumbNavigation />
             </div>
-            <Link to={user ? '/logout' : '/login'}>
-                <DefaultButton>
-                    <p className={'text-sm px-2'}>{user ? 'Logout' : 'Login'}</p>
-                </DefaultButton>
-            </Link>
+            <div className={'flex items-center font-inter text-white text-sm'}>
+                <div className={'flex items-center pr-10 gap-5'}>
+                    <Link to={'/dashboard/history '}>Dashboard</Link>
+                    <Link to={'/store/offers '}>Store</Link>
+                </div>
+                <Link to={user ? '/logout' : '/login'}>
+                    <DefaultButton>
+                        <p className={'text-sm px-2 text-black'}>{user ? 'Logout' : 'Login'}</p>
+                    </DefaultButton>
+                </Link>
+            </div>
         </div>
     );
 };
@@ -27,7 +32,6 @@ export default NavBar;
 const BreadcrumbNavigation = () => {
     const matches = useMatches();
     const filteredMatches = matches.filter((match) => match.handle && match.handle.breadcrumb);
-
     return (
         <nav className={'flex gap-1 min-w-0 '}>
             {filteredMatches.map((match, index) => (
