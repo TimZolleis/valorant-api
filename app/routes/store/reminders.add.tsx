@@ -2,7 +2,6 @@ import type { DataFunctionArgs } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { requireUser } from '~/utils/session/session.server';
 import { useFetcher } from '@remix-run/react';
-import { Container } from '~/ui/container/Container';
 import { searchWeapons, storeWeapons } from '~/utils/redis/weapondictionary.server';
 import { DefaultButton } from '~/ui/common/DefaultButton';
 import { Modal } from '@geist-ui/core';
@@ -53,7 +52,11 @@ const AddRemindersPage = () => {
                 </Modal.Action>
                 <Modal.Action
                     onClick={() => {
-                        fetch(`/api/reminder/add/${currentWeapon?.id}?name=${reminderName}`);
+                        fetch(
+                            `/api/reminder/add/${currentWeapon?.id}?name=${
+                                reminderName ? reminderName : currentWeapon?.displayName
+                            }`
+                        );
                         setShowModal(false);
                     }}>
                     Confirm
@@ -61,39 +64,69 @@ const AddRemindersPage = () => {
             </Modal>
             <div className={'flex flex-col mt-5'}>
                 <p className={'font-inter text-title-large font-medium py-2'}>Add reminder</p>
-                <Container className={'w-full lg:w-1/2  p-5'}>
+                <div className={'flex flex-col'}>
                     <div>
                         <offerFetcher.Form method={'get'}>
-                            <label className={'text-sm text-neutral-400 capitalize'}>
-                                Search Weapon skin
-                            </label>
-                            <input
+                            <div
                                 className={
-                                    'w-full min-w-0 mt-2 bg-transparent border rounded-md border-white/20 px-3 py-1.5 font-inter text-white text-sm'
-                                }
-                                placeholder='Reaver Phantom'
-                                name={'offer-query'}
-                                onChange={(event) => offerFetcher.submit(event.target.form)}
-                            />
+                                    'flex gap-2 items-center w-full min-w-0 mt-2 border rounded-md border-white/20 px-3 py-2 font-inter text-white text-sm'
+                                }>
+                                <img className={'h-4'} src={'/resources/icons/search.svg'}></img>
+                                <input
+                                    className={
+                                        'border-none focus:outline-none bg-transparent placeholder:text-zinc-400'
+                                    }
+                                    placeholder='Search weapon skin...'
+                                    name={'offer-query'}
+                                    onChange={(event) => offerFetcher.submit(event.target.form)}
+                                />
+                            </div>
+                            <p className={'font-inter mt-2 text-sm text-zinc-400'}>
+                                {' '}
+                                {offerFetcher.data?.skins.length || '0'} Results
+                            </p>
                         </offerFetcher.Form>
                     </div>
                     {offerFetcher.data && (
-                        <div className={'flex flex-col gap-2  mt-5'}>
+                        <div className={'flex flex-col gap-2 mt-5'}>
                             {offerFetcher.data?.skins.map((skin) => (
                                 <div
                                     className={'rounded-md border border-white/20 p-3'}
                                     key={skin.id}>
-                                    <div
-                                        className={
-                                            'grid grid-cols-3 gap-2 items-center justify-start'
-                                        }>
-                                        <img className={'max-h-10'} src={skin.imageUrl} alt='' />
-                                        <p className={'font-inter text-sm font-medium text-white'}>
-                                            {skin.displayName}
-                                        </p>
+                                    <div className={'flex gap-10 items-center justify-between'}>
+                                        <div>
+                                            <div
+                                                className={
+                                                    'border border-white/10 p-4 bg-neutral-900/50 rounded-md'
+                                                }>
+                                                <img
+                                                    className={'max-h-10'}
+                                                    src={skin.imageUrl}
+                                                    alt=''
+                                                />
+                                            </div>
+                                            <div className={'flex items-center'}>
+                                                <p
+                                                    className={
+                                                        'font-inter font-medium text-sm text-white mt-3'
+                                                    }>
+                                                    {skin.displayName}
+                                                </p>
+                                            </div>
+                                        </div>
                                         <div className={'flex justify-end'}>
                                             <DefaultButton onClick={() => addReminder(skin)}>
-                                                <p className={'text-black text-xs'}>Add</p>
+                                                <span
+                                                    className={
+                                                        'text-black text-xs flex items-center gap-2'
+                                                    }>
+                                                    <img
+                                                        className={'h-2'}
+                                                        src='/resources/icons/plus.svg'
+                                                        alt=''
+                                                    />
+                                                    Add reminder
+                                                </span>
                                             </DefaultButton>
                                         </div>
                                     </div>
@@ -101,7 +134,7 @@ const AddRemindersPage = () => {
                             ))}
                         </div>
                     )}
-                </Container>
+                </div>
             </div>
         </>
     );

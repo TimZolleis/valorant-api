@@ -8,5 +8,12 @@
       <jdbc-url>jdbc:mariadb://xd5.serverdomain.org:3306/xd572_db2</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="valorant-api@timzolleis.com" uuid="2e3baffa-71ac-4540-bea7-137f8f5650f9">
+      <driver-ref>mariadb</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.mariadb.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mariadb://timzolleis.com:3306/gunbuddy</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>

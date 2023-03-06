@@ -573,10 +573,6 @@ video {
   margin-top: 1.25rem;
 }
 
-.mb-2 {
-  margin-bottom: 0.5rem;
-}
-
 .flex {
   display: flex;
 }
@@ -601,12 +597,20 @@ video {
   height: 3rem;
 }
 
+.h-2 {
+  height: 0.5rem;
+}
+
 .h-20 {
   height: 5rem;
 }
 
 .h-3 {
   height: 0.75rem;
+}
+
+.h-4 {
+  height: 1rem;
 }
 
 .h-5 {
@@ -631,6 +635,10 @@ video {
 
 .max-h-20 {
   max-height: 5rem;
+}
+
+.max-h-14 {
+  max-height: 3.5rem;
 }
 
 .w-1\/2 {
@@ -702,10 +710,6 @@ video {
   grid-template-columns: repeat(1, minmax(0, 1fr));
 }
 
-.grid-cols-3 {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
 .flex-col {
   flex-direction: column;
 }
@@ -736,6 +740,10 @@ video {
 
 .gap-1 {
   gap: 0.25rem;
+}
+
+.gap-10 {
+  gap: 2.5rem;
 }
 
 .gap-2 {
@@ -800,6 +808,10 @@ video {
   border-bottom-width: 2px;
 }
 
+.border-none {
+  border-style: none;
+}
+
 .border-amber-500 {
   --tw-border-opacity: 1;
   border-color: rgb(245 158 11 / var(--tw-border-opacity));
@@ -836,6 +848,10 @@ video {
 .border-white {
   --tw-border-opacity: 1;
   border-color: rgb(255 255 255 / var(--tw-border-opacity));
+}
+
+.border-white\/10 {
+  border-color: rgb(255 255 255 / 0.1);
 }
 
 .border-white\/20 {
@@ -904,6 +920,10 @@ video {
 .bg-neutral-900 {
   --tw-bg-opacity: 1;
   background-color: rgb(23 23 23 / var(--tw-bg-opacity));
+}
+
+.bg-neutral-900\/50 {
+  background-color: rgb(23 23 23 / 0.5);
 }
 
 .bg-red-500 {
@@ -980,6 +1000,10 @@ video {
   padding: 0.75rem;
 }
 
+.p-4 {
+  padding: 1rem;
+}
+
 .p-5 {
   padding: 1.25rem;
 }
@@ -1034,11 +1058,6 @@ video {
   padding-bottom: 0.75rem;
 }
 
-.py-5 {
-  padding-top: 1.25rem;
-  padding-bottom: 1.25rem;
-}
-
 .pb-2 {
   padding-bottom: 0.5rem;
 }
@@ -1061,10 +1080,6 @@ video {
 
 .pt-3 {
   padding-top: 0.75rem;
-}
-
-.text-left {
-  text-align: left;
 }
 
 .text-center {
@@ -1210,6 +1225,11 @@ video {
 .text-white {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+
+.text-zinc-400 {
+  --tw-text-opacity: 1;
+  color: rgb(161 161 170 / var(--tw-text-opacity));
 }
 
 .text-zinc-500 {
@@ -1473,6 +1493,16 @@ html {
   font-family: Inter, sans-serif;
 }
 
+.placeholder\:text-zinc-400::-moz-placeholder {
+  --tw-text-opacity: 1;
+  color: rgb(161 161 170 / var(--tw-text-opacity));
+}
+
+.placeholder\:text-zinc-400::placeholder {
+  --tw-text-opacity: 1;
+  color: rgb(161 161 170 / var(--tw-text-opacity));
+}
+
 .hover\:border:hover {
   border-width: 1px;
 }
@@ -1556,10 +1586,6 @@ html {
 }
 
 @media (min-width: 1024px) {
-  .lg\:w-1\/2 {
-    width: 50%;
-  }
-
   .lg\:w-4\/12 {
     width: 33.333333%;
   }
