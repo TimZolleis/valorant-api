@@ -42,7 +42,7 @@ export default function App() {
                 <Meta />
                 <Links />
             </head>
-            <body>
+            <body className={'block relative bg-[#0a0a0a]'}>
                 <GeistProvider themeType={'dark'}>
                     <DefaultLayout>
                         <Outlet />

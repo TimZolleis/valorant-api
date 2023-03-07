@@ -11,7 +11,7 @@ export const WeaponComponent = ({
 }) => {
     return (
         <Link className={'flex'} to={`/store/offers/${weapon.uuid}`}>
-            <Container className={'w-full'}>
+            <Container className={'w-full bg-black'}>
                 <div className={'h-full w-full flex flex-col items-start justify-between'}>
                     <img className={'max-h-14'} src={weapon.displayIcon} alt='' />
                     <div className={'flex gap-2 items-center mt-5 relative'}>

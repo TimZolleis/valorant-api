@@ -52,14 +52,13 @@ imageUrl String
   @@fulltext([displayName])
 }
 
-
-
 model Reminder {
   id             String    @id @default(uuid())
   offerId        String @unique
   name           String
-  expirationDate DateTime?
+  expirationDate String?
   users          User[]
+  createdAt String?
 }
 
 model Cache {

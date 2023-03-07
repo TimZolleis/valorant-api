@@ -12,6 +12,8 @@ import { DefaultButton } from '~/ui/common/DefaultButton';
 import type { ValorantUser } from '~/models/user/ValorantUser';
 import { LiveMatchDetectionComponent } from '~/ui/match/LiveMatchDetectionComponent';
 
+export const config = { runtime: 'edge' };
+
 type LoaderData = {
     statisticsPromise: ReturnType<typeof getPlayerStatistics>;
     user: ValorantUser;

@@ -1,12 +1,7 @@
 import type { RouteMatch } from '@remix-run/react';
 import { Outlet } from '@remix-run/react';
 import { BreadCrumbLink } from '~/ui/common/BreadCrumbLink';
-import { HorizontalNavBar } from '~/ui/nav/HorizontalNavBar';
-
-export const handle = {
-    breadcrumb: (match: RouteMatch) => <BreadCrumbLink to={match.pathname}>Store</BreadCrumbLink>,
-};
-
+import { redirect } from '@remix-run/node';
 const links = [
     {
         name: 'Offers',
@@ -18,10 +13,16 @@ const links = [
     },
 ];
 
+export const handle = {
+    breadcrumb: (match: RouteMatch) => <BreadCrumbLink to={match.pathname}>Store</BreadCrumbLink>,
+    navbar: {
+        links: links,
+    },
+};
+
 const StorePage = () => {
     return (
         <div className={'text-white'}>
-            <HorizontalNavBar links={links}></HorizontalNavBar>
             <Outlet />
         </div>
     );
