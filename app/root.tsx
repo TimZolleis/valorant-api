@@ -56,7 +56,5 @@ export default function App() {
 }
 
 export const CatchBoundary = () => {
-    const caught = useCatch();
-    const location = useLocation();
     return <div className={'text-white'}>Oops</div>;
 };
