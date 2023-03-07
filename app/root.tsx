@@ -7,7 +7,9 @@ import {
     Outlet,
     Scripts,
     ScrollRestoration,
+    useCatch,
     useLoaderData,
+    useLocation,
     useTransition,
 } from '@remix-run/react';
 import styles from './styles/app.css';
@@ -33,9 +35,6 @@ export const loader: LoaderFunction = async ({ request }) => {
 };
 
 export default function App() {
-    const { user } = useLoaderData();
-    const transition = useTransition();
-
     return (
         <html lang='en'>
             <head>
@@ -55,3 +54,9 @@ export default function App() {
         </html>
     );
 }
+
+export const CatchBoundary = () => {
+    const caught = useCatch();
+    const location = useLocation();
+    return <div className={'text-white'}>Oops</div>;
+};
