@@ -82,14 +82,16 @@ const StoreOfferPage = () => {
 
             <div className={'w-full h-5 border-b border-white/20'}></div>
 
-            <section>
-                <Suspense fallback={<LoadingContainer />}>
-                    <p className={'font-inter text-title-large font-medium py-2'}>
-                        Nightmarket offers
-                    </p>
-                    <Await resolve={nightmarketOffers}>
-                        {(nightmarketOffers) =>
-                            !!nightmarketOffers && (
+            {!!featuredOffers && (
+                <section>
+                    <Suspense fallback={<LoadingContainer />}>
+                        <p className={'font-inter text-title-large font-medium py-2'}>
+                            Nightmarket offers
+                        </p>
+                        <Await
+                            resolve={nightmarketOffers}
+                            errorElement={<div>No nightmarket available</div>}>
+                            {(nightmarketOffers) => (
                                 <div
                                     className={
                                         'grid gap-2 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5'
@@ -103,11 +105,11 @@ const StoreOfferPage = () => {
                                         ))
                                     )}
                                 </div>
-                            )
-                        }
-                    </Await>
-                </Suspense>
-            </section>
+                            )}
+                        </Await>
+                    </Suspense>
+                </section>
+            )}
         </div>
     );
 };

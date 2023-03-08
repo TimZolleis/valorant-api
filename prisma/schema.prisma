@@ -1,12 +1,11 @@
 generator client {
-  provider = "prisma-client-js"
-    previewFeatures = ["fullTextSearch", "fullTextIndex"]
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
-
 }
 
 model User {
@@ -17,6 +16,7 @@ model User {
   reauthentication ReauthenticationCookies?
   Offers           Offers[]
   reminders        Reminder[]
+  reminder_email   String?
 }
 
 model ReauthenticationCookies {
@@ -46,19 +46,20 @@ enum OfferType {
 }
 
 model Skin {
-id String @id
-displayName String
-imageUrl String
+  id          String @id
+  displayName String
+  imageUrl    String
+
   @@fulltext([displayName])
 }
 
 model Reminder {
-  id             String    @id @default(uuid())
-  offerId        String @unique
+  id             String  @id @default(uuid())
+  offerId        String  @unique
   name           String
   expirationDate String?
   users          User[]
-  createdAt String?
+  createdAt      String
 }
 
 model Cache {

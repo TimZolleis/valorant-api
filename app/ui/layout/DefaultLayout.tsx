@@ -6,11 +6,10 @@ import useMeasure from 'react-use-measure';
 
 const DefaultLayout = ({ children }: { children: ReactNode }) => {
     const transition = useTransition();
-    const [ref, bounds] = useMeasure();
     return (
         <>
             <div className={'relative'}>
-                <div ref={ref}>
+                <div>
                     <NavBar />
                 </div>
                 <main className={`select-text min-h-full selection:bg-fuchsia-500`}>

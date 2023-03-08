@@ -1,7 +1,7 @@
 import { Link, NavLink, Path, useMatches } from '@remix-run/react';
 import { DefaultButton } from '~/ui/common/DefaultButton';
 import { useOptionalUser } from '~/utils/hooks/matchesData';
-import { Ref } from 'react';
+import type { Ref } from 'react';
 
 const NavBar = ({ ref }: { ref?: Ref<any> }) => {
     const user = useOptionalUser();
@@ -40,7 +40,7 @@ const HorizontalNavigation = () => {
     return (
         <nav className={'w-full'}>
             {filteredMatches.map((match) => (
-                <div className={'flex gap-2 border-b border-white/20 px-5 w-full'}>
+                <div key={match.id} className={'flex gap-2 border-b border-white/20 px-5 w-full'}>
                     {match.handle?.navbar.links.map((link: { href: string; name: string }) => (
                         <NavLink
                             className={'text-white font-inter text-sm '}

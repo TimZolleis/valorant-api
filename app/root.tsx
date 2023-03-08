@@ -1,17 +1,6 @@
 import type { LoaderFunction, MetaFunction } from '@remix-run/node';
 import { json } from '@remix-run/node';
-import {
-    Links,
-    LiveReload,
-    Meta,
-    Outlet,
-    Scripts,
-    ScrollRestoration,
-    useCatch,
-    useLoaderData,
-    useLocation,
-    useTransition,
-} from '@remix-run/react';
+import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration } from '@remix-run/react';
 import styles from './styles/app.css';
 import DefaultLayout from '~/ui/layout/DefaultLayout';
 import { getUserFromSession } from '~/utils/session/session.server';

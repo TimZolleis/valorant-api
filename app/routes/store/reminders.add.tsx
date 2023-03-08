@@ -5,8 +5,11 @@ import { useFetcher } from '@remix-run/react';
 import { searchWeapons, storeWeapons } from '~/utils/redis/weapondictionary.server';
 import { DefaultButton } from '~/ui/common/DefaultButton';
 import { Modal } from '@geist-ui/core';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { Skin } from '@prisma/client';
+import { getItembyItemId } from '~/utils/store/storeoffer.server';
+import { prisma } from '~/utils/db/db.server';
+import { DateTime } from 'luxon';
 
 export const loader = async ({ request }: DataFunctionArgs) => {
     const user = await requireUser(request);
@@ -17,11 +20,58 @@ export const loader = async ({ request }: DataFunctionArgs) => {
     return json({ query, skins });
 };
 
+export const action = async ({ request }: DataFunctionArgs) => {
+    const user = await requireUser(request);
+    const formData = await request.formData();
+    const reminderName = formData.get('name')?.toString();
+    const offerId = formData.get('offerId')?.toString();
+    if (!reminderName) {
+        return json({ error: 'Provide a reminder name' });
+    }
+    if (!offerId) {
+        return json({ error: 'Please provide an offer id' });
+    }
+
+    const item = await getItembyItemId(offerId);
+    prisma.user
+        .update({
+            where: {
+                puuid: user.userData.puuid,
+            },
+            data: {
+                reminders: {
+                    upsert: {
+                        where: {
+                            offerId,
+                        },
+                        create: {
+                            name: reminderName || item.displayName,
+                            offerId,
+                            createdAt: DateTime.now().toSeconds().toString(),
+                        },
+                        update: {
+                            name: reminderName || item.displayName,
+                            offerId,
+                        },
+                    },
+                },
+            },
+        })
+        .catch();
+
+    return json({ message: 'Reminder added' });
+};
+
 const AddRemindersPage = () => {
     const offerFetcher = useFetcher<typeof loader>();
+    const addOfferFetcher = useFetcher();
     const [showModal, setShowModal] = useState(false);
     const [currentWeapon, setCurrentWeapon] = useState<Skin | undefined>(undefined);
     const [reminderName, setReminderName] = useState(currentWeapon?.displayName);
+
+    useEffect(() => {
+        setReminderName(currentWeapon?.displayName);
+    }, [currentWeapon]);
 
     function addReminder(skin: Skin) {
         setCurrentWeapon(skin);
@@ -34,14 +84,17 @@ const AddRemindersPage = () => {
                 <Modal.Title>Set Reminder</Modal.Title>
                 <Modal.Content>
                     <label className={'text-sm text-neutral-400 capitalize'}>Reminder name</label>
-                    <input
-                        defaultValue={currentWeapon?.displayName}
-                        onChange={(event) => setReminderName(event.target.value)}
-                        className={
-                            'bg-transparent w-full px-3 py-1.5 font-inter border border-white/20 rounded-md text-sm'
-                        }
-                        placeholder={'Reminder name'}
-                    />
+                    <addOfferFetcher.Form>
+                        <input
+                            name={'reminder_name'}
+                            defaultValue={currentWeapon?.displayName}
+                            onChange={(event) => setReminderName(event.target.value)}
+                            className={
+                                'bg-transparent w-full px-3 py-1.5 font-inter border border-white/20 rounded-md text-sm'
+                            }
+                            placeholder={'Reminder name'}
+                        />
+                    </addOfferFetcher.Form>
                     <p className={'mt-2'}>
                         Do you really want to set a reminder for{' '}
                         <span className={'font-semibold'}> {currentWeapon?.displayName}</span>?
@@ -52,10 +105,9 @@ const AddRemindersPage = () => {
                 </Modal.Action>
                 <Modal.Action
                     onClick={() => {
-                        fetch(
-                            `/api/reminder/add/${currentWeapon?.id}?name=${
-                                reminderName ? reminderName : currentWeapon?.displayName
-                            }`
+                        addOfferFetcher.submit(
+                            { name: reminderName!, offerId: currentWeapon?.id! },
+                            { method: 'post' }
                         );
                         setShowModal(false);
                     }}>

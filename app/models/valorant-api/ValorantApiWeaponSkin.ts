@@ -3,7 +3,6 @@ export interface ValorantApiWeaponSkin {
     displayName: string;
     levelItem?: any;
     displayIcon: string;
-    streamedVideo: string;
+    streamedVideo: string | null;
     assetPath: string;
 }
-

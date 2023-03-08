@@ -9,7 +9,20 @@ import type { ValorantApiWeaponSkin } from '~/models/valorant-api/ValorantApiWea
 import { valorantApiEndpoints } from '~/config/valorantApiEndpoints';
 import { RIOT_POINTS_UUID } from '~/config/riot';
 import type { ValorantStoreOffers } from '~/models/valorant/store/ValorantStoreOffers';
-import { of } from 'rxjs';
+import { v4 as uuidv4 } from 'uuid';
+
+function getGenericWeapon() {
+    return {
+        uuid: uuidv4(),
+        displayName: 'Weapon not available',
+        levelItem: null,
+        displayIcon:
+            'https://media.valorant-api.com/weaponskinlevels/1ab72e66-4da3-33a0-164f-908113e075a4/displayicon.png',
+        streamedVideo: null,
+        assetPath:
+            'ShooterGame/Content/Equippables/Guns/Rifles/AK/Standard/AssaultRifle_AK_Standard_Lv1_PrimaryAsset',
+    };
+}
 
 export async function getStoreOffers(user: ValorantUser) {
     const time = getNextStoreRotationTime();
@@ -43,7 +56,7 @@ export async function getAllStoreOffers(user: ValorantUser) {
                     try {
                         return await getItembyItemId(reward.ItemID);
                     } catch (e) {
-                        return undefined;
+                        return getGenericWeapon();
                     }
                 })
             );
@@ -56,7 +69,11 @@ export async function getDailyOffers(storefront: ValorantStoreFront) {
         storefront.SkinsPanelLayout.SingleItemStoreOffers.map(async (offer) => {
             const rewards = await Promise.all(
                 offer.Rewards.map(async (reward) => {
-                    return getItembyItemId(reward.ItemID);
+                    try {
+                        return getItembyItemId(reward.ItemID);
+                    } catch (e) {
+                        return getGenericWeapon();
+                    }
                 })
             );
             return {
@@ -71,24 +88,35 @@ export async function getDailyOffers(storefront: ValorantStoreFront) {
 export async function getFeaturedOffers(storefront: ValorantStoreFront) {
     return await Promise.all(
         storefront.FeaturedBundle.Bundle.Items.map(async (offer) => {
-            const item = await getItembyItemId(offer.Item.ItemID);
-            return {
-                ...offer,
-                Item: item,
-            };
+            try {
+                const item = await getItembyItemId(offer.Item.ItemID);
+                return {
+                    ...offer,
+                    Item: item,
+                };
+            } catch (e) {
+                return {
+                    ...offer,
+                    Item: getGenericWeapon(),
+                };
+            }
         })
     );
 }
 
 export async function getNightMarket(storefront: ValorantStoreFront) {
     if (!storefront.BonusStore) {
-        return undefined;
+        throw new Error('Night market not available');
     }
     return await Promise.all(
         storefront.BonusStore.BonusStoreOffers.map(async (offer) => {
             const rewards = await Promise.all(
                 offer.Offer.Rewards.map((reward) => {
-                    return getItembyItemId(reward.ItemID);
+                    try {
+                        return getItembyItemId(reward.ItemID);
+                    } catch (e) {
+                        return getGenericWeapon();
+                    }
                 })
             );
             return {
