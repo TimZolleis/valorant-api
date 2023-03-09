@@ -64,5 +64,5 @@ model Reminder {
 
 model Cache {
   key   String @id @unique
-  value String @db.VarChar(50000)
+  value String @db.LongText
 }

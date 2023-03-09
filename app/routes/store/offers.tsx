@@ -34,7 +34,9 @@ const StoreOfferPage = () => {
     return (
         <div className={'text-white'}>
             <section>
-                <p className={'font-inter text-title-large font-medium py-2'}>Daily offers</p>
+                <div className={'flex gap-2'}>
+                    <p className={'font-inter text-title-large font-medium py-2'}>Daily offers </p>{' '}
+                </div>
                 <Suspense fallback={<LoadingContainer />}>
                     <Await resolve={dailyOffers}>
                         {(dailyOffers) => (

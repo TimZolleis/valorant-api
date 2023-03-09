@@ -2,7 +2,6 @@ import type { DataFunctionArgs } from '@remix-run/cloudflare';
 import { defer } from '@remix-run/cloudflare';
 import { requireUser } from '~/utils/session/session.server';
 import { Await, useLoaderData } from '@remix-run/react';
-import { MatchHistoryComponent } from '~/ui/match/MatchHistoryComponent';
 import { RiotRequest } from '~/models/Request';
 import { endpoints } from '~/config/endpoints';
 import { RiotGamesApiClient } from '~/utils/riot/RiotGamesApiClient';
@@ -53,8 +52,7 @@ const HistoryPage = () => {
                 <Suspense fallback={<LoadingContainer />}>
                     <Await resolve={history}>
                         {(resolvedHistory) => (
-                            <MatchHistoryComponent
-                                history={resolvedHistory}></MatchHistoryComponent>
+                            <p className={'text-white'}>{JSON.stringify(resolvedHistory)}</p>
                         )}
                     </Await>
                 </Suspense>
