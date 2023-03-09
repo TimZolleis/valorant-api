@@ -16,7 +16,8 @@ export const loader = async ({ request }: DataFunctionArgs) => {
     const user = await requireUser(request);
     await storeWeapons(user);
     const url = new URL(request.url);
-    const query = url.searchParams.get('offer-query') || '';
+    const query = url.searchParams.get('offer-query');
+    if (!query) return json({ skins: [] });
     const skins = await searchWeapons(query);
     return json({ query, skins });
 };
@@ -127,7 +128,7 @@ const AddRemindersPage = () => {
                                 <img className={'h-4'} src={'/resources/icons/search.svg'}></img>
                                 <input
                                     className={
-                                        'border-none focus:outline-none bg-transparent placeholder:text-zinc-400'
+                                        'w-full border-none focus:outline-none bg-transparent placeholder:text-zinc-400'
                                     }
                                     placeholder='Search weapon skin...'
                                     name={'offer-query'}
@@ -140,7 +141,7 @@ const AddRemindersPage = () => {
                             </p>
                         </offerFetcher.Form>
                     </div>
-                    {offerFetcher.data && (
+                    {offerFetcher.data?.skins && (
                         <div className={'flex flex-col gap-2 mt-5'}>
                             {offerFetcher.data?.skins.map((skin) => (
                                 <div
