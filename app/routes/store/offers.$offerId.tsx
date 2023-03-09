@@ -18,7 +18,9 @@ export const loader = async ({ request, params }: DataFunctionArgs) => {
     const offerId = requireParam('offerId', params);
     const offer = await getOfferById(user, offerId);
     if (!offer) throw redirect('/store/offers');
-    const items = Promise.all(offer.Rewards.map((reward) => getItembyItemId(reward.ItemID)));
+    const items = Promise.all(
+        offer.Rewards.map((reward) => getItembyItemId(reward.ItemID, reward.ItemTypeID))
+    );
     const prismaOffers = prisma.offers
         .findMany({
             where: {

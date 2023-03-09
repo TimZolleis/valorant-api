@@ -2,16 +2,18 @@ import type { DataFunctionArgs } from '@remix-run/node';
 import { defer, redirect } from '@remix-run/node';
 import { requireUser } from '~/utils/session/session.server';
 import { prisma } from '~/utils/db/db.server';
-import { Await, Link, Outlet, useLoaderData } from '@remix-run/react';
+import { Await, Form, Link, Outlet, useLoaderData } from '@remix-run/react';
 import { Container } from '~/ui/container/Container';
 import { DefaultButton } from '~/ui/common/DefaultButton';
 import { useNavigate } from 'react-router';
-import React, { Suspense } from 'react';
+import React, { Fragment, Suspense, useState } from 'react';
 import { LoadingContainer } from '~/ui/container/LoadingContainer';
 import { getItembyItemId } from '~/utils/store/storeoffer.server';
 import type { ValorantApiWeaponSkin } from '~/models/valorant-api/ValorantApiWeaponSkin';
 import type { Reminder } from '.prisma/client';
 import { DateTime } from 'luxon';
+import { ITEM_TYPES } from '~/config/skinlevels.';
+import { Popover, Transition } from '@headlessui/react';
 
 export const loader = async ({ request }: DataFunctionArgs) => {
     const user = await requireUser(request);
@@ -29,7 +31,7 @@ export const loader = async ({ request }: DataFunctionArgs) => {
         userWithReminders.reminders.map(async (reminder) => {
             return {
                 reminder,
-                skin: await getItembyItemId(reminder.offerId),
+                skin: await getItembyItemId(reminder.offerId, ITEM_TYPES.SKINLEVEL),
             };
         })
     );
@@ -92,18 +94,21 @@ const ReminderCard = ({ skin, reminder }: { skin: ValorantApiWeaponSkin; reminde
                 <div className={'flex-[0_0_15%] mr-5'}>
                     <img className={'max-h-10'} src={skin.displayIcon} alt='' />
                 </div>
-                <div>
-                    <p className={'font-inter font-medium text-sm text-white mt-3'}>
-                        {reminder.name}
-                    </p>
-                    <span className={'flex text-neutral-600 text-xs'}>
-                        <p>
-                            ADDED{' '}
-                            {DateTime.fromSeconds(parseInt(reminder.createdAt))
-                                .setLocale('de-DE')
-                                .toLocaleString()}
+                <div className={'flex justify-between w-full items-center'}>
+                    <div>
+                        <p className={'font-inter font-medium text-sm text-white mt-3'}>
+                            {reminder.name}
                         </p>
-                    </span>
+                        <span className={'flex text-neutral-600 text-xs'}>
+                            <p>
+                                ADDED{' '}
+                                {DateTime.fromSeconds(parseInt(reminder.createdAt))
+                                    .setLocale('de-DE')
+                                    .toLocaleString()}
+                            </p>
+                        </span>
+                    </div>
+                    <ReminderOptions reminderId={reminder.id}></ReminderOptions>
                 </div>
             </div>
         </Container>
@@ -134,6 +139,30 @@ const NoRemindersComponent = () => {
                 </div>
             </Container>
         </div>
+    );
+};
+
+const ReminderOptions = ({ reminderId }: { reminderId: string }) => {
+    return (
+        <Popover className='relative'>
+            <Popover.Button className={'focus:outline-none'}>
+                <img
+                    className={'h-6 focus:outline-none'}
+                    src='/resources/icons/ellipsis-vertical.svg'
+                    alt=''
+                />
+            </Popover.Button>
+            <Popover.Panel className='absolute z-10 -left-10'>
+                <div className='grid gap-2 p-2 px-5 bg-black rounded-md border-white/30 border'>
+                    <Link to={`${reminderId}/edit`}>Edit</Link>
+                    <Form method={'post'} action={`${reminderId}/delete`}>
+                        <button type={'submit'} className={'appearance-none'}>
+                            <p>Delete</p>
+                        </button>
+                    </Form>
+                </div>
+            </Popover.Panel>
+        </Popover>
     );
 };
 

@@ -37,7 +37,7 @@ export async function storeWeapons(user: ValorantUser) {
             });
             if (!skin) {
                 try {
-                    const item = await getItembyItemId(reward.ItemID);
+                    const item = await getItembyItemId(reward.ItemID, reward.ItemTypeID);
                     return prisma.skin
                         .create({
                             data: {

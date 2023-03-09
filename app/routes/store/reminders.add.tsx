@@ -10,6 +10,7 @@ import type { Skin } from '@prisma/client';
 import { getItembyItemId } from '~/utils/store/storeoffer.server';
 import { prisma } from '~/utils/db/db.server';
 import { DateTime } from 'luxon';
+import { ITEM_TYPES } from '~/config/skinlevels.';
 
 export const loader = async ({ request }: DataFunctionArgs) => {
     const user = await requireUser(request);
@@ -32,7 +33,7 @@ export const action = async ({ request }: DataFunctionArgs) => {
         return json({ error: 'Please provide an offer id' });
     }
 
-    const item = await getItembyItemId(offerId);
+    const item = await getItembyItemId(offerId, ITEM_TYPES.SKINLEVEL);
     prisma.user
         .update({
             where: {

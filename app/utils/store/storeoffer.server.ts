@@ -10,6 +10,7 @@ import { valorantApiEndpoints } from '~/config/valorantApiEndpoints';
 import { RIOT_POINTS_UUID } from '~/config/riot';
 import type { ValorantStoreOffers } from '~/models/valorant/store/ValorantStoreOffers';
 import { v4 as uuidv4 } from 'uuid';
+import { itemTypeToValorantApiUrl } from '~/config/skinlevels.';
 
 function getGenericWeapon() {
     return {
@@ -54,7 +55,7 @@ export async function getAllStoreOffers(user: ValorantUser) {
             return Promise.all(
                 offer.Rewards.map(async (reward) => {
                     try {
-                        return await getItembyItemId(reward.ItemID);
+                        return await getItembyItemId(reward.ItemID, reward.ItemTypeID);
                     } catch (e) {
                         return getGenericWeapon();
                     }
@@ -70,7 +71,7 @@ export async function getDailyOffers(storefront: ValorantStoreFront) {
             const rewards = await Promise.all(
                 offer.Rewards.map(async (reward) => {
                     try {
-                        return getItembyItemId(reward.ItemID);
+                        return getItembyItemId(reward.ItemID, reward.ItemTypeID);
                     } catch (e) {
                         return getGenericWeapon();
                     }
@@ -89,12 +90,16 @@ export async function getFeaturedOffers(storefront: ValorantStoreFront) {
     return await Promise.all(
         storefront.FeaturedBundle.Bundle.Items.map(async (offer) => {
             try {
-                const item = await getItembyItemId(offer.Item.ItemID);
+                const item = await getItembyItemId(offer.Item.ItemID, offer.Item.ItemTypeID);
                 return {
                     ...offer,
                     Item: item,
                 };
             } catch (e) {
+                console.log(e);
+                console.log('Type', offer.Item.ItemTypeID);
+                console.log('Item', offer.Item.ItemID);
+
                 return {
                     ...offer,
                     Item: getGenericWeapon(),
@@ -113,7 +118,7 @@ export async function getNightMarket(storefront: ValorantStoreFront) {
             const rewards = await Promise.all(
                 offer.Offer.Rewards.map((reward) => {
                     try {
-                        return getItembyItemId(reward.ItemID);
+                        return getItembyItemId(reward.ItemID, reward.ItemTypeID);
                     } catch (e) {
                         return getGenericWeapon();
                     }
@@ -131,14 +136,13 @@ export async function getNightMarket(storefront: ValorantStoreFront) {
     );
 }
 
-export async function getItembyItemId(itemId: string) {
-    return await new ValorantApiClient().getDatabaseCached<ValorantApiWeaponSkin>(
-        valorantApiEndpoints.weapon.skinlevel(itemId),
-        {
-            key: 'skinlevel',
-            expiration: 0,
-        }
-    );
+export async function getItembyItemId(itemId: string, itemTypeId: string) {
+    const url = itemTypeToValorantApiUrl[itemTypeId](itemId);
+    if (!url) throw new Error('The provided itemTypeId is invalid');
+    return await new ValorantApiClient().getDatabaseCached<ValorantApiWeaponSkin>(url, {
+        key: 'skinlevel',
+        expiration: 0,
+    });
 }
 
 export async function getOfferById(user: ValorantUser, offerId: string) {
