@@ -6,7 +6,6 @@ import type { Offer, ValorantStoreFront } from '~/models/valorant/store/Valorant
 import { DateTime } from 'luxon';
 import { ValorantApiClient } from '~/utils/valorant-api/ValorantApiClient';
 import type { ValorantApiWeaponSkin } from '~/models/valorant-api/ValorantApiWeaponSkin';
-import { valorantApiEndpoints } from '~/config/valorantApiEndpoints';
 import { RIOT_POINTS_UUID } from '~/config/riot';
 import type { ValorantStoreOffers } from '~/models/valorant/store/ValorantStoreOffers';
 import { v4 as uuidv4 } from 'uuid';
@@ -161,7 +160,7 @@ export async function getOfferById(user: ValorantUser, offerId: string) {
     };
 }
 
-function getNextStoreRotationTime() {
+export function getNextStoreRotationTime() {
     const time = DateTime.now();
     if (time.get('hour') >= 1) {
         return DateTime.now().plus({ day: 1 }).set({ hour: 1, minute: 0, second: 0 });

@@ -4,10 +4,11 @@ import { RiotRequest } from '~/models/Request';
 import { endpoints } from '~/config/endpoints';
 import { RiotGamesApiClient } from '~/utils/riot/RiotGamesApiClient';
 import type { ValorantStoreOffers } from '~/models/valorant/store/ValorantStoreOffers';
-import { getItembyItemId } from '~/utils/store/storeoffer.server';
+import { getItembyItemId, getNextStoreRotationTime } from '~/utils/store/storeoffer.server';
 import { ValorantApiClient } from '~/utils/valorant-api/ValorantApiClient';
 import type { ValorantApiWeaponSkin } from '~/models/valorant-api/ValorantApiWeaponSkin';
 import { valorantApiEndpoints } from '~/config/valorantApiEndpoints';
+import { DateTime } from 'luxon';
 
 export async function searchWeapons(name: string) {
     return await prisma.skin.findMany({
@@ -21,12 +22,14 @@ export async function searchWeapons(name: string) {
 
 export async function storeWeapons(user: ValorantUser) {
     const request = new RiotRequest(user.userData.region).buildBaseUrl(endpoints.store.offers);
+    const time = getNextStoreRotationTime();
+    const cacheExpirationTime = Math.floor(time.diff(DateTime.now(), 'second').get('second'));
     const offers = await new RiotGamesApiClient(
         user.accessToken,
         user.entitlement
     ).getCached<ValorantStoreOffers>(request, {
-        key: 'storeoffers',
-        expiration: 86400,
+        key: 'offers',
+        expiration: cacheExpirationTime,
     });
     offers.Offers.forEach((offer) => {
         offer.Rewards.forEach(async (reward) => {
