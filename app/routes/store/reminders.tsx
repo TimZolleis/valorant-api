@@ -1,19 +1,19 @@
 import type { DataFunctionArgs } from '@remix-run/node';
 import { defer, redirect } from '@remix-run/node';
-import { requireUser } from '~/utils/session/session.server';
+import { commitClientSession, getClientSession, requireUser } from '~/utils/session/session.server';
 import { prisma } from '~/utils/db/db.server';
 import { Await, Form, Link, Outlet, useLoaderData } from '@remix-run/react';
 import { Container } from '~/ui/container/Container';
 import { DefaultButton } from '~/ui/common/DefaultButton';
 import { useNavigate } from 'react-router';
-import React, { Fragment, Suspense, useState } from 'react';
+import React, { Suspense } from 'react';
 import { LoadingContainer } from '~/ui/container/LoadingContainer';
 import { getItembyItemId } from '~/utils/store/storeoffer.server';
 import type { ValorantApiWeaponSkin } from '~/models/valorant-api/ValorantApiWeaponSkin';
 import type { Reminder } from '.prisma/client';
 import { DateTime } from 'luxon';
 import { ITEM_TYPES } from '~/config/skinlevels.';
-import { Popover, Transition } from '@headlessui/react';
+import { Popover } from '@headlessui/react';
 
 export const loader = async ({ request }: DataFunctionArgs) => {
     const user = await requireUser(request);
@@ -26,7 +26,14 @@ export const loader = async ({ request }: DataFunctionArgs) => {
         },
     });
     if (!userWithReminders) throw new Error('You do not have any reminders');
-    if (!userWithReminders.reminder_email) throw redirect('/reminders/setup');
+    const session = await getClientSession(request);
+    if (!userWithReminders.reminder_email && !request.url.includes('setup')) {
+        throw redirect('/store/reminders/setup', {
+            headers: {
+                'Set-Cookie': await commitClientSession(session),
+            },
+        });
+    }
     const reminderItems = Promise.all(
         userWithReminders.reminders.map(async (reminder) => {
             return {
@@ -120,7 +127,7 @@ const NoRemindersComponent = () => {
 
     return (
         <div className={'flex justify-center w-full'}>
-            <Container className={'mt-10 w-1/2 bg-black'}>
+            <Container className={'mt-10 lg:w-1/2 bg-black'}>
                 <div className={'w-full text-center flex flex-col items-center font-inter p-5'}>
                     <div>
                         <p className={'font-medium text-title-medium'}>

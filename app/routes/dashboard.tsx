@@ -4,15 +4,11 @@ import { requireUser } from '~/utils/session/session.server';
 import { getPlayerStatistics } from '~/utils/player/statistics.server';
 import { getPlayerRank } from '~/utils/player/rank.server';
 import { Await, Outlet, useLoaderData } from '@remix-run/react';
-import { Container } from '~/ui/container/Container';
 import { PlayerStatisticsComponent } from '~/ui/player/PlayerStatisticsComponent';
 import { Suspense, useMemo } from 'react';
 import { LoadingContainer } from '~/ui/container/LoadingContainer';
-import { DefaultButton } from '~/ui/common/DefaultButton';
 import type { ValorantUser } from '~/models/user/ValorantUser';
 import { LiveMatchDetectionComponent } from '~/ui/match/LiveMatchDetectionComponent';
-
-export const config = { runtime: 'edge' };
 
 type LoaderData = {
     statisticsPromise: ReturnType<typeof getPlayerStatistics>;

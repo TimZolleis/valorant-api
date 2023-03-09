@@ -1,5 +1,5 @@
-import type { DataFunctionArgs } from '@remix-run/cloudflare';
-import { defer } from '@remix-run/cloudflare';
+import type { DataFunctionArgs } from '@remix-run/node';
+import { defer } from '@remix-run/node';
 import { requireUser } from '~/utils/session/session.server';
 import { Await, useLoaderData } from '@remix-run/react';
 import { RiotRequest } from '~/models/Request';
@@ -12,6 +12,7 @@ import { getRelevantMatchData } from '~/routes/api/player/$playerId/history';
 import { Suspense } from 'react';
 import { LoadingContainer } from '~/ui/container/LoadingContainer';
 import type { ValorantUser } from '~/models/user/ValorantUser';
+import { MatchHistoryComponent } from '~/ui/match/MatchHistoryComponent';
 
 type LoaderData = {
     history: Promise<MatchHistory[]>;
@@ -52,7 +53,8 @@ const HistoryPage = () => {
                 <Suspense fallback={<LoadingContainer />}>
                     <Await resolve={history}>
                         {(resolvedHistory) => (
-                            <p className={'text-white'}>{JSON.stringify(resolvedHistory)}</p>
+                            <MatchHistoryComponent
+                                history={resolvedHistory}></MatchHistoryComponent>
                         )}
                     </Await>
                 </Suspense>

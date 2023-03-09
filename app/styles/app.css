@@ -661,10 +661,6 @@ video {
   min-height: 100%;
 }
 
-.w-1\/2 {
-  width: 50%;
-}
-
 .w-10 {
   width: 2.5rem;
 }
@@ -1624,6 +1620,10 @@ body {
 }
 
 @media (min-width: 1024px) {
+  .lg\:w-1\/2 {
+    width: 50%;
+  }
+
   .lg\:w-4\/12 {
     width: 33.333333%;
   }
