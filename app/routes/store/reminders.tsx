@@ -164,7 +164,7 @@ const ReminderOptions = ({ reminderId }: { reminderId: string }) => {
                     <Link to={`${reminderId}/edit`}>Edit</Link>
                     <Form method={'post'} action={`${reminderId}/delete`}>
                         <button type={'submit'} className={'appearance-none'}>
-                            <p>Delete</p>
+                            <p className={'text-red-500'}>Delete</p>
                         </button>
                     </Form>
                 </div>
