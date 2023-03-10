@@ -62,6 +62,12 @@ model Reminder {
   createdAt      String
 }
 
+model ReminderEmail {
+id String @id
+}
+
+
+
 model Cache {
   key   String @id @unique
   value String @db.LongText

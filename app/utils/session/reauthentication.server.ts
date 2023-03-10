@@ -1,5 +1,8 @@
-import type { ValorantUser } from '~/models/user/ValorantUser';
+import { UserData, ValorantUser } from '~/models/user/ValorantUser';
 import { prisma } from '~/utils/db/db.server';
+import { ReauthenticationCookies } from '~/models/cookies/ReauthenticationCookies';
+import { RiotReauthenticationClient } from '~/utils/auth/RiotReauthenticationClient';
+import type { User } from '@prisma/client';
 
 export async function updateReauthenticationCookies(user: ValorantUser) {
     return await prisma.reauthenticationCookies.upsert({
@@ -39,4 +42,30 @@ export async function updateUser(user: ValorantUser) {
         });
     }
     return await updateReauthenticationCookies(user);
+}
+
+export async function getReauthenticatedUser(user: User) {
+    const reauthenticationCookies = await prisma.reauthenticationCookies.findUnique({
+        where: {
+            puuid: user.puuid,
+        },
+    });
+    if (!reauthenticationCookies)
+        throw new Error('The user does not have any reauthentication service!');
+    const reauthenticationCookieModel = new ReauthenticationCookies(
+        reauthenticationCookies.sub,
+        reauthenticationCookies.ssid,
+        reauthenticationCookies.clid,
+        reauthenticationCookies.csid
+    );
+
+    const valorantUser = new ValorantUser(
+        '',
+        '',
+        reauthenticationCookieModel,
+        new UserData().fromDatabase(user)
+    );
+    return await new RiotReauthenticationClient()
+        .init(valorantUser)
+        .then((client) => client.reauthenticate());
 }

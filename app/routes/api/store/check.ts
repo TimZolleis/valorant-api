@@ -1,17 +1,16 @@
 import type { DataFunctionArgs } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { prisma } from '~/utils/db/db.server';
+import { getReauthenticatedUser } from '~/utils/session/reauthentication.server';
+import { checkStore } from '~/utils/store/storereminders.server';
 
 export const loader = async ({ request }: DataFunctionArgs) => {
     const users = await prisma.user.findMany();
-    const domain = new URL(request.url).host;
-    const prefix = process.env.NODE_ENV === 'development' ? 'http' : 'https';
     try {
-        const errors = Promise.all(
+        const errors = await Promise.all(
             users.map(async (user) => {
-                return fetch(`${prefix}://${domain}/api/store/check/${user.puuid}`).catch((e) => {
-                    return e;
-                });
+                const reauthenticatedUser = await getReauthenticatedUser(user);
+                await checkStore(reauthenticatedUser);
             })
         );
         return json({
