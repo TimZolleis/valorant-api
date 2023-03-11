@@ -1,34 +1,81 @@
-import { Link, NavLink, Path, useMatches } from '@remix-run/react';
-import { DefaultButton } from '~/ui/common/DefaultButton';
+import { Link, NavLink, useMatches } from '@remix-run/react';
 import { useOptionalUser } from '~/utils/hooks/matchesData';
 import type { Ref } from 'react';
+import { useState } from 'react';
 
 const NavBar = ({ ref }: { ref?: Ref<any> }) => {
     const user = useOptionalUser();
+    const [showNavbar, setShowNavbar] = useState(false);
+
     return (
         <div className={'w-full border-b border-zinc-800 bg-black'}>
             <div ref={ref} className={'justify-between flex px-8 py-3'}>
-                <div className={'flex items-center min-w-0 truncate pr-5'}>
-                    <Link className={'font-inter text-title-medium text-white'} to={'/'}>
-                        GunBuddy
-                    </Link>
-                    <img src='/resources/icons/slash-icon.svg' alt='' />
-                    <BreadcrumbNavigation />
-                </div>
-                <div className={'flex items-center font-inter text-white text-sm'}>
-                    <div className={'flex items-center pr-10 gap-5'}>
-                        <Link to={'/dashboard/history '}>Dashboard</Link>
-                        <Link to={'/store/offers '}>Store</Link>
+                <div className='flex items-center w-full justify-between'>
+                    <span className={'flex items-center min-w-0 truncate pr-5 w-full'}>
+                        <Link className={'font-inter text-title-medium text-white'} to={'/'}>
+                            GunBuddy
+                        </Link>
+                        <img src='/resources/icons/slash-icon.svg' alt='' />
+                        <BreadcrumbNavigation />
+                    </span>
+                    <img
+                        onClick={() => setShowNavbar(!showNavbar)}
+                        className={'h-8 hover:cursor-pointer block md:hidden'}
+                        src='/resources/icons/menu-icon.svg'
+                        alt=''
+                    />
+                    <div
+                        className={`backdrop-blur md:backdrop-blur-none p-3 z-50 fixed left-0 top-0 right-0 bottom-0 md:relative w-full ${
+                            showNavbar ? 'flex' : 'hidden'
+                        } md:flex flex-col items-center justify-center`}
+                        onClick={() => setShowNavbar(!showNavbar)}>
+                        <div
+                            onClick={(e) => e.stopPropagation()}
+                            className={
+                                'group fixed md:relative inset-x-0 bottom-0 z-40 w-full cursor-grab md:flex justify-end'
+                            }>
+                            <div className='flex flex-col p-5 md:p-0 gap-5 bg-black border-t border-white/20 md:border-none text-white font-inter '>
+                                <div
+                                    className={'flex w-full items-center justify-center md:hidden'}>
+                                    <div
+                                        className={'h-2 w-20 bg-neutral-800 rounded-full'}
+                                        onClick={() => setShowNavbar(!showNavbar)}></div>
+                                </div>
+                                <div
+                                    className={'p-5 md:p-0 flex flex-col md:flex-row gap-5'}
+                                    onClick={() => setShowNavbar(!showNavbar)}>
+                                    <NavigationLink
+                                        icon={'/resources/icons/chart-icon.svg'}
+                                        to={'/dashboard/history'}
+                                        text={'Dashboard'}
+                                    />
+                                    <NavigationLink
+                                        icon={'/resources/icons/shop-icon.svg'}
+                                        to={'/store/offers'}
+                                        text={'Store'}
+                                    />
+                                    <NavigationLink
+                                        icon={'/resources/icons/user-icon.svg'}
+                                        to={user ? '/logout' : '/login'}
+                                        text={user ? 'Logout' : 'Login'}
+                                    />
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <Link to={user ? '/logout' : '/login'}>
-                        <DefaultButton>
-                            <p className={'text-sm px-2 text-black'}>{user ? 'Logout' : 'Login'}</p>
-                        </DefaultButton>
-                    </Link>
                 </div>
             </div>
             <HorizontalNavigation />
         </div>
+    );
+};
+
+const NavigationLink = ({ icon, to, text }: { icon: string; to: string; text: string }) => {
+    return (
+        <Link to={to} className={'flex items-center gap-2'}>
+            <img className={'h-5'} src={icon} alt='' />
+            <p className={'font-inter text-white text-sm'}>{text}</p>
+        </Link>
     );
 };
 

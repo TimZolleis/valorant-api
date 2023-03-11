@@ -43,7 +43,3 @@ export default function App() {
         </html>
     );
 }
-
-export const CatchBoundary = () => {
-    return <div className={'text-white'}>Oops</div>;
-};
