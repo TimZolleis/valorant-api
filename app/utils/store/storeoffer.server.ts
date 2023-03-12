@@ -164,7 +164,10 @@ export function getNextStoreRotationTime() {
     if (time.get('hour') < 1) {
         return time.set({ hour: 1, minute: 0, second: 0 });
     }
-    return DateTime.now().plus({ day: 1 }).set({ hour: 1, minute: 0, second: 0 });
+    return DateTime.now()
+        .setZone('Europe/Berlin')
+        .plus({ day: 1 })
+        .set({ hour: 1, minute: 0, second: 0 });
 }
 
 function getOfferCost(offer: Offer) {
