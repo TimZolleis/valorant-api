@@ -27,7 +27,6 @@ function getGenericWeapon() {
 export async function getStoreOffers(user: ValorantUser) {
     const time = getNextStoreRotationTime();
     const cacheExpirationTime = Math.floor(time.diff(DateTime.now(), 'second').get('second'));
-    console.log(cacheExpirationTime);
     const request = new RiotRequest(user.userData.region).buildBaseUrl(
         endpoints.store.storefront(user.userData.puuid)
     );
