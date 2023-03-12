@@ -160,7 +160,7 @@ export async function getOfferById(user: ValorantUser, offerId: string) {
 }
 
 export function getNextStoreRotationTime() {
-    const time = DateTime.now();
+    const time = DateTime.now().setZone('Europe/Berlin');
     if (time.get('hour') < 1) {
         return time.set({ hour: 1, minute: 0, second: 0 });
     }
