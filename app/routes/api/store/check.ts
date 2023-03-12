@@ -6,18 +6,22 @@ import { checkStore } from '~/utils/store/storereminders.server';
 
 export const loader = async ({ request }: DataFunctionArgs) => {
     const users = await prisma.user.findMany();
-    try {
-        const errors = await Promise.all(
-            users.map(async (user) => {
+    const failedChecks: string[] = [];
+    const successfulChecks: string[] = [];
+    await Promise.all(
+        users.map(async (user) => {
+            try {
                 const reauthenticatedUser = await getReauthenticatedUser(user);
                 await checkStore(reauthenticatedUser);
-            })
-        );
-        return json({
-            message: 'All user stores checked successfully',
-            errors,
-        });
-    } catch (e) {
-        throw e;
-    }
+                successfulChecks.push(user.puuid);
+            } catch (e) {
+                failedChecks.push(user.puuid);
+            }
+        })
+    );
+    return json({
+        message: 'Ran store checks for all users',
+        successfulChecks,
+        failedChecks,
+    });
 };

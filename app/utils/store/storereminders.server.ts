@@ -8,7 +8,6 @@ import { ITEM_TYPES } from '~/config/skinlevels.';
 
 export async function checkStore(user: ValorantUser) {
     const storeTime = DateTime.now().set({ hour: 1, minute: 0, second: 0, millisecond: 0 });
-
     const storefront = await getStoreOffers(user);
     storefront.SkinsPanelLayout.SingleItemStoreOffers.forEach((offer) => {
         prisma.offers

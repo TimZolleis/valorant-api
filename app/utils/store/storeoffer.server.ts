@@ -27,7 +27,7 @@ function getGenericWeapon() {
 export async function getStoreOffers(user: ValorantUser) {
     const time = getNextStoreRotationTime();
     const cacheExpirationTime = Math.floor(time.diff(DateTime.now(), 'second').get('second'));
-
+    console.log(cacheExpirationTime);
     const request = new RiotRequest(user.userData.region).buildBaseUrl(
         endpoints.store.storefront(user.userData.puuid)
     );
@@ -162,10 +162,10 @@ export async function getOfferById(user: ValorantUser, offerId: string) {
 
 export function getNextStoreRotationTime() {
     const time = DateTime.now();
-    if (time.get('hour') >= 1) {
-        return DateTime.now().plus({ day: 1 }).set({ hour: 1, minute: 0, second: 0 });
+    if (time.get('hour') < 1) {
+        return time.set({ hour: 1, minute: 0, second: 0 });
     }
-    return time.set({ hour: 1, minute: 0, second: 0 });
+    return DateTime.now().plus({ day: 1 }).set({ hour: 1, minute: 0, second: 0 });
 }
 
 function getOfferCost(offer: Offer) {
