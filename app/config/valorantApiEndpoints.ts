@@ -8,5 +8,7 @@ export const valorantApiEndpoints = {
     weapon: {
         skinlevel: (skinlevelId: string) => `/weapons/skinlevels/${skinlevelId}`,
         allSkinlevels: `/weapons/skinlevels`,
+        all: '/weapons',
+        byUuid: (uuid: string) => `/weapons/${uuid}`,
     },
 };

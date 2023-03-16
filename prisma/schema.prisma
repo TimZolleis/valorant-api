@@ -4,7 +4,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -49,8 +49,6 @@ model Skin {
   id          String @id
   displayName String
   imageUrl    String
-
-  @@fulltext([displayName])
 }
 
 model Reminder {
@@ -63,12 +61,46 @@ model Reminder {
 }
 
 model ReminderEmail {
-id String @id
+  id String @id
 }
-
-
 
 model Cache {
   key   String @id @unique
-  value String @db.LongText
+  value Json
 }
+
+model MatchAnalysisSchedule {
+  matchId String @id
+  puuid   String
+}
+
+model PlayerGameStats {
+  puuid         String
+  matchId       String
+  kills         Int
+  deaths        Int
+  assists       Int
+  currentRank   Int
+  roundsPlayed  Int
+  score         Int
+  totalShots    Int
+  headShots     Int
+  bodyShots     Int
+  legShots      Int
+  characterUuid String
+  teamId        String
+
+  @@id([puuid, matchId])
+}
+
+model PlayerWeaponStats {
+  puuid      String
+  weaponId   String
+  kills      Int
+  totalShots Int
+  headShots  Int
+  bodyShots  Int
+
+  @@id([puuid, weaponId])
+}
+

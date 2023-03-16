@@ -15,5 +15,12 @@
       <jdbc-url>jdbc:mariadb://timzolleis.com:3306/gunbuddy</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="gunbuddy@timzolleis.com" uuid="ef22d974-6a3d-4248-bd54-7e5fe724e423">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://timzolleis.com:5432/gunbuddy</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>

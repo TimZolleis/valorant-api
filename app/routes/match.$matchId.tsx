@@ -2,7 +2,8 @@ import type { DataFunctionArgs } from '@remix-run/node';
 import { defer } from '@remix-run/node';
 import { requireParam, requireUser } from '~/utils/session/session.server';
 import { getMatchDetails } from '~/utils/match/match.server';
-import { Await, Link, Outlet, RouteMatch, useLoaderData, useMatches } from '@remix-run/react';
+import type { RouteMatch } from '@remix-run/react';
+import { Await, Link, Outlet, useLoaderData } from '@remix-run/react';
 import { Suspense } from 'react';
 import { getServerRegion } from '~/utils/match/servername';
 import { LoadingContainer } from '~/ui/container/LoadingContainer';
@@ -23,6 +24,10 @@ const links = [
     {
         name: 'Details',
         href: 'details',
+    },
+    {
+        name: 'Analysis',
+        href: 'analysis',
     },
 ];
 
