@@ -2,7 +2,7 @@ import type { DataFunctionArgs } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { requireUser } from '~/utils/session/session.server';
 import { useFetcher } from '@remix-run/react';
-import { searchWeapons, storeWeapons } from '~/utils/redis/weapondictionary.server';
+import { searchSkin } from '~/utils/redis/weapondictionary.server';
 import { DefaultButton } from '~/ui/common/DefaultButton';
 import { Modal } from '@geist-ui/core';
 import { useEffect, useState } from 'react';
@@ -13,12 +13,10 @@ import { DateTime } from 'luxon';
 import { ITEM_TYPES } from '~/config/skinlevels.';
 
 export const loader = async ({ request }: DataFunctionArgs) => {
-    const user = await requireUser(request);
-    await storeWeapons(user);
     const url = new URL(request.url);
     const query = url.searchParams.get('offer-query');
     if (!query) return json({ skins: [] });
-    const skins = await searchWeapons(query);
+    const skins = await searchSkin(query);
     return json({ query, skins });
 };
 
@@ -70,7 +68,6 @@ const AddRemindersPage = () => {
     const [showModal, setShowModal] = useState(false);
     const [currentWeapon, setCurrentWeapon] = useState<Skin | undefined>(undefined);
     const [reminderName, setReminderName] = useState(currentWeapon?.displayName);
-
     useEffect(() => {
         setReminderName(currentWeapon?.displayName);
     }, [currentWeapon]);

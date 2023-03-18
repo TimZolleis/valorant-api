@@ -40,7 +40,7 @@ export async function getDatabaseCachedValue<T>(key: string): Promise<T> {
     while (typeof value === 'string') {
         value = JSON.parse(value);
     }
-    return value;
+    return value as T;
 }
 
 export async function storeDatabaseCachedValue<T>(key: string, expiration: number, value: T) {

@@ -34,6 +34,7 @@ model Offers {
   user    User      @relation(fields: [puuid], references: [puuid])
   date    DateTime  @default(now())
   offerId String
+  itemTypeId String
   type    OfferType
 
   @@unique([puuid, date, offerId], name: "uniqueDailyOffer")

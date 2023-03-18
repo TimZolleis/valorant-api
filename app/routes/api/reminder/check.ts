@@ -51,7 +51,7 @@ export const loader = async ({ request }: DataFunctionArgs) => {
             sentEmails,
         });
     } catch (e) {
-        return json({ error: e });
+        return json({ error: e }, { status: 500 });
     }
 };
 

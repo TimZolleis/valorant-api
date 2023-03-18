@@ -9,29 +9,38 @@ import { ITEM_TYPES } from '~/config/skinlevels.';
 export async function checkStore(user: ValorantUser) {
     const storeTime = DateTime.now().set({ hour: 1, minute: 0, second: 0, millisecond: 0 });
     const storefront = await getStoreOffers(user);
-    storefront.SkinsPanelLayout.SingleItemStoreOffers.forEach((offer) => {
-        prisma.offers
-            .upsert({
-                where: {
-                    uniqueDailyOffer: {
-                        puuid: user.userData.puuid,
-                        offerId: offer.OfferID,
-                        date: storeTime.toJSDate(),
-                    },
-                },
-                create: {
-                    puuid: user.userData.puuid,
-                    offerId: offer.OfferID,
-                    type: 'DAILY',
-                    date: storeTime.toJSDate(),
-                },
-                update: {},
-            })
-            .catch();
-    });
-    storefront.FeaturedBundle.Bundle.Items.forEach((item) => {
-        prisma.offers
-            .upsert({
+    const daily = await Promise.all(
+        storefront.SkinsPanelLayout.SingleItemStoreOffers.map(async (offer) => {
+            const offers = await Promise.all(
+                offer.Rewards.map(async (reward) => {
+                    const storedOffer = await prisma.offers.findUnique({
+                        where: {
+                            uniqueDailyOffer: {
+                                puuid: user.userData.puuid,
+                                offerId: reward.ItemID,
+                                date: storeTime.toJSDate(),
+                            },
+                        },
+                    });
+                    if (!storedOffer) {
+                        return await prisma.offers.create({
+                            data: {
+                                puuid: user.userData.puuid,
+                                offerId: reward.ItemID,
+                                itemTypeId: reward.ItemTypeID,
+                                date: storeTime.toJSDate(),
+                                type: 'DAILY',
+                            },
+                        });
+                    }
+                    return storedOffer;
+                })
+            );
+        })
+    );
+    const featured = await Promise.all(
+        storefront.FeaturedBundle.Bundle.Items.map(async (item) => {
+            const storedOffer = await prisma.offers.findUnique({
                 where: {
                     uniqueDailyOffer: {
                         puuid: user.userData.puuid,
@@ -39,16 +48,22 @@ export async function checkStore(user: ValorantUser) {
                         date: storeTime.toJSDate(),
                     },
                 },
-                create: {
-                    puuid: user.userData.puuid,
-                    offerId: item.Item.ItemID,
-                    type: 'FEATURED',
-                    date: storeTime.toJSDate(),
-                },
-                update: {},
-            })
-            .catch();
-    });
+            });
+            if (!storedOffer) {
+                return await prisma.offers.create({
+                    data: {
+                        puuid: user.userData.puuid,
+                        offerId: item.Item.ItemID,
+                        itemTypeId: item.Item.ItemTypeID,
+                        date: storeTime.toJSDate(),
+                        type: 'FEATURED',
+                    },
+                });
+            }
+            return storedOffer;
+        })
+    );
+    return { featured, daily };
 }
 
 export async function checkIfOfferIsInStore(user: User, offerId: string) {

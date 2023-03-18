@@ -1,7 +1,7 @@
 import type { RouteMatch } from '@remix-run/react';
 import { Outlet } from '@remix-run/react';
 import { BreadCrumbLink } from '~/ui/common/BreadCrumbLink';
-import { redirect } from '@remix-run/node';
+
 const links = [
     {
         name: 'Offers',
@@ -10,6 +10,10 @@ const links = [
     {
         name: 'Reminders',
         href: '/store/reminders',
+    },
+    {
+        name: 'History',
+        href: '/store/history',
     },
 ];
 
