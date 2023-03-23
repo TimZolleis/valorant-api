@@ -1,9 +1,9 @@
 import { Link } from '@remix-run/react';
-import { MatchHistory, MatchHistoryRouteData } from '~/routes/api/player/$playerId/history';
 import { SmallContainer } from '~/ui/container/SmallContainer';
+import type { MatchHistory } from '~/utils/match/match.server';
+import { Match } from '~/models/valorant/competitive/ValorantCompetitiveUpdate';
 
-type Match = MatchHistoryRouteData[number];
-
+type HistoryMatch = MatchHistory;
 export const MatchHistoryComponent = ({ history }: { history: MatchHistory[] }) => {
     return (
         <div className={'grid grid-cols-1 w-full md:grid-cols-2 xl:grid-cols-3 gap-2'}>
@@ -18,7 +18,7 @@ export const MatchHistoryComponent = ({ history }: { history: MatchHistory[] }) 
     );
 };
 
-export const MatchComponent = ({ match }: { match: Match }) => {
+export const MatchComponent = ({ match }: { match: HistoryMatch }) => {
     return (
         <SmallContainer>
             <div
@@ -51,6 +51,24 @@ export const MatchComponent = ({ match }: { match: Match }) => {
                         {match.details.matchInfo.queueID}
                     </p>
                 </div>
+                {!!match.details.competitiveMatchUpdate && (
+                    <div
+                        className={`${
+                            match.details.competitiveMatchUpdate?.RankedRatingEarned > 0
+                                ? 'bg-green-800/50 border-green-500 text-green-500'
+                                : 'bg-red-800/50 border-red-500 text-red-500'
+                        } rounded-md px-3 py-1 border`}>
+                        <p className={'font-inter text-xs capitalize'}>
+                            <span>
+                                {match.details.competitiveMatchUpdate.RankedRatingEarned > 0
+                                    ? '+'
+                                    : ''}
+                            </span>
+                            <span>{match.details.competitiveMatchUpdate?.RankedRatingEarned}</span>
+                            <span>RR</span>
+                        </p>
+                    </div>
+                )}
             </div>
             <div className={'font-inter leading-1 text-end p-2 '}>
                 <div className={'flex justify-between items-center'}>

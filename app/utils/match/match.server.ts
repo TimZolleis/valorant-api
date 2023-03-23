@@ -8,6 +8,8 @@ import { RiotGamesApiClient } from '~/utils/riot/RiotGamesApiClient';
 import type { ValorantUser } from '~/models/user/ValorantUser';
 import type { ValorantApiCharacter } from '~/models/valorant-api/ValorantApiCharacter';
 import { prisma } from '~/utils/db/db.server';
+import type { Match } from '~/models/valorant/competitive/ValorantCompetitiveUpdate';
+import type { getHistory } from '~/routes/__index/index';
 
 export async function getMatchMap(mapId: string) {
     const maps = await new ValorantApiClient().getDatabaseCached<ValorantApiMap[]>(
@@ -119,6 +121,52 @@ export async function getCharacterByUUid(characterId: string | undefined) {
             expiration: 3600,
         }
     );
+}
+
+export type MatchHistory = Awaited<ReturnType<typeof getHistory>>;
+export async function getRelevantMatchData(
+    puuid: string,
+    matchDetails: ValorantMatchDetails,
+    matchMap: ValorantApiMap,
+    competitiveMatchUpdate: Match | undefined
+) {
+    const player = matchDetails.players.find((player) => {
+        return player.subject === puuid;
+    });
+    const playerTeam = matchDetails.teams.find((team) => {
+        return team.teamId === player?.teamId;
+    });
+
+    const enemyTeam = matchDetails.teams.find((team) => {
+        return team.teamId !== player?.teamId;
+    });
+
+    const character = player?.characterId ? await getCharacterByUUid(player?.characterId) : null;
+    const playerDetails = {
+        subject: player?.subject,
+        gameName: player?.gameName,
+        tagLine: player?.tagLine,
+        stats: player?.stats,
+        character,
+    };
+    return {
+        map: matchMap,
+        details: {
+            player: playerDetails,
+            playerTeam: {
+                ...playerTeam,
+                roundsWon: playerTeam?.roundsWon,
+                hasWon: playerTeam?.won,
+            },
+            enemyTeam: {
+                ...enemyTeam,
+                roundsWon: enemyTeam?.roundsWon,
+                hasWon: enemyTeam?.won,
+            },
+            matchInfo: matchDetails.matchInfo,
+            competitiveMatchUpdate,
+        },
+    };
 }
 
 function sum(a: number, b: number) {

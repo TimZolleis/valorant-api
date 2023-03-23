@@ -28,7 +28,7 @@ export const loader = async ({ request }: DataFunctionArgs) => {
     });
 };
 
-const DashboardPage = () => {
+const IndexPage = () => {
     const { user, rankPromise, statisticsPromise } = useLoaderData() as LoaderData;
     const promises = useMemo(
         () => Promise.all([rankPromise, statisticsPromise]),
@@ -65,4 +65,4 @@ const DashboardPage = () => {
         </>
     );
 };
-export default DashboardPage;
+export default IndexPage;

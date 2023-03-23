@@ -39,3 +39,26 @@ export async function getPlayerMMR(user: ValorantUser, playerUuid: string) {
         }
     );
 }
+
+export async function getCompetitiveUpdates(user: ValorantUser, playerUUid: string) {
+    const request = new RiotRequest(user.userData.region).buildBaseUrl(
+        endpoints.player.competitiveupdate(playerUUid)
+    );
+    return await new RiotGamesApiClient(
+        user.accessToken,
+        user.entitlement
+    ).getCached<ValorantCompetitiveUpdate>(
+        request,
+        {
+            key: 'competitive-update',
+            expiration: 300,
+        },
+        {
+            params: {
+                queue: 'competitive',
+                startIndex: 0,
+                endIndex: 20,
+            },
+        }
+    );
+}

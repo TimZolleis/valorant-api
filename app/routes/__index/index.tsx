@@ -6,22 +6,30 @@ import { RiotRequest } from '~/models/Request';
 import { endpoints } from '~/config/endpoints';
 import { RiotGamesApiClient } from '~/utils/riot/RiotGamesApiClient';
 import type { History, ValorantMatchHistory } from '~/models/valorant/match/ValorantMatchHistory';
-import { getMatchDetails, getMatchMap } from '~/utils/match/match.server';
-import type { MatchHistory } from '~/routes/api/player/$playerId/history';
-import { getRelevantMatchData } from '~/routes/api/player/$playerId/history';
+import type { MatchHistory } from '~/utils/match/match.server';
+import { getMatchDetails, getMatchMap, getRelevantMatchData } from '~/utils/match/match.server';
 import { Suspense } from 'react';
 import { LoadingContainer } from '~/ui/container/LoadingContainer';
 import type { ValorantUser } from '~/models/user/ValorantUser';
 import { MatchHistoryComponent } from '~/ui/match/MatchHistoryComponent';
+import type { ValorantCompetitiveUpdate } from '~/models/valorant/competitive/ValorantCompetitiveUpdate';
+import { getCompetitiveUpdates } from '~/utils/player/competitiveupdate.server';
 
 type LoaderData = {
     history: Promise<MatchHistory[]>;
 };
 
-async function getHistory(user: ValorantUser, match: History) {
+export async function getHistory(
+    user: ValorantUser,
+    match: History,
+    competitiveUpdates: ValorantCompetitiveUpdate
+) {
     const details = await getMatchDetails(user, match.MatchID);
     const map = await getMatchMap(details.matchInfo.mapId);
-    return await getRelevantMatchData(user.userData.puuid, details, map!);
+    const competitiveUpdateMatch = competitiveUpdates.Matches.find((match) => {
+        return match.MatchID === details.matchInfo.matchId;
+    });
+    return await getRelevantMatchData(user.userData.puuid, details, map!, competitiveUpdateMatch);
 }
 
 export const loader = async ({ request }: DataFunctionArgs) => {
@@ -36,9 +44,10 @@ export const loader = async ({ request }: DataFunctionArgs) => {
         key: 'match-history',
         expiration: 300,
     });
+    const competitiveUpdates = await getCompetitiveUpdates(user, user.userData.puuid);
     const history = Promise.all(
         matchHistory.History.map((match) => {
-            return getHistory(user, match);
+            return getHistory(user, match, competitiveUpdates);
         })
     );
     return defer<LoaderData>({ history });
