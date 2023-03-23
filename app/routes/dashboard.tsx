@@ -1,5 +1,5 @@
-import type { DataFunctionArgs } from '@remix-run/node';
-import { defer } from '@remix-run/node';
+import type { DataFunctionArgs } from '@vercel/remix';
+import { defer } from '@vercel/remix';
 import { requireUser } from '~/utils/session/session.server';
 import { getPlayerStatistics } from '~/utils/player/statistics.server';
 import { getPlayerRank } from '~/utils/player/rank.server';
@@ -29,40 +29,44 @@ export const loader = async ({ request }: DataFunctionArgs) => {
 };
 
 const DashboardPage = () => {
-    const { user, rankPromise, statisticsPromise } = useLoaderData() as LoaderData;
-    const promises = useMemo(
-        () => Promise.all([rankPromise, statisticsPromise]),
-        [rankPromise, statisticsPromise]
-    );
-
-    return (
-        <>
-            <div className={'flex gap-2 items-center mb-5'}>
-                <p className={'font-inter font-medium text-headline-small text-white'}>
-                    Hello, {user.userData.gameName}
-                </p>
-                <LiveMatchDetectionComponent />
-            </div>
-            <p className={'font-inter font-semibold text-white text-title-large py-2'}>
-                Personal Statistics
-            </p>
-            <div className={'flex gap-2 text-white w-full '}>
-                <Suspense fallback={<LoadingContainer />}>
-                    <Await
-                        resolve={promises}
-                        errorElement={<div className={'text-white'}>An Error occurred</div>}>
-                        {([rank, statistics]) => (
-                            <PlayerStatisticsComponent
-                                statistics={statistics}
-                                rank={rank}></PlayerStatisticsComponent>
-                        )}
-                    </Await>
-                </Suspense>
-            </div>
-            <div className={'mt-5'}>
-                <Outlet></Outlet>
-            </div>
-        </>
-    );
+    // const { user, rankPromise, statisticsPromise } = useLoaderData() as LoaderData;
+    const data = useLoaderData() as LoaderData;
+    console.log('Data', data);
+    return <div>P</div>;
+    //     const promises = useMemo(
+    //         () => Promise.all([rankPromise, statisticsPromise]),
+    //         [rankPromise, statisticsPromise]
+    //     );
+    //
+    //     return (
+    //         <>
+    //             <div className={'flex gap-2 items-center mb-5'}>
+    //                 <p className={'font-inter font-medium text-headline-small text-white'}>
+    //                     Hello, {user.userData.gameName}
+    //                 </p>
+    //                 <LiveMatchDetectionComponent />
+    //             </div>
+    //             <p className={'font-inter font-semibold text-white text-title-large py-2'}>
+    //                 Personal Statistics
+    //             </p>
+    //             <div className={'flex gap-2 text-white w-full '}>
+    //                 <Suspense fallback={<LoadingContainer />}>
+    //                     <Await
+    //                         resolve={promises}
+    //                         errorElement={<div className={'text-white'}>An Error occurred</div>}>
+    //                         {([rank, statistics]) => (
+    //                             <PlayerStatisticsComponent
+    //                                 statistics={statistics}
+    //                                 rank={rank}></PlayerStatisticsComponent>
+    //                         )}
+    //                     </Await>
+    //                 </Suspense>
+    //             </div>
+    //             <div className={'mt-5'}>
+    //                 <Outlet></Outlet>
+    //             </div>
+    //         </>
+    //     );
+    // };
 };
 export default DashboardPage;

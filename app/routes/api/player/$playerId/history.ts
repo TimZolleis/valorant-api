@@ -1,14 +1,14 @@
-import type { DataFunctionArgs } from '@remix-run/node';
+import type { DataFunctionArgs } from '@vercel/remix';
 import { requirePlayerUuidAsParam, requireUser } from '~/utils/session/session.server';
 import { RiotRequest } from '~/models/Request';
 import { endpoints } from '~/config/endpoints';
 import { RiotGamesApiClient } from '~/utils/riot/RiotGamesApiClient';
 import type { ValorantMatchHistory } from '~/models/valorant/match/ValorantMatchHistory';
-import { History } from '~/models/valorant/match/ValorantMatchHistory';
+import type { History } from '~/models/valorant/match/ValorantMatchHistory';
 import { getCharacterByUUid, getMatchDetails, getMatchMap } from '~/utils/match/match.server';
 import type { ValorantMatchDetails } from '~/models/valorant/match/ValorantMatchDetails';
 import type { ValorantApiMap } from '~/models/valorant-api/ValorantApiMap';
-import { ValorantUser } from '~/models/user/ValorantUser';
+import type { ValorantUser } from '~/models/user/ValorantUser';
 
 export type MatchHistoryRouteData = Awaited<ReturnType<typeof loader>>;
 export type MatchHistory = Awaited<ReturnType<typeof getHistory>>;

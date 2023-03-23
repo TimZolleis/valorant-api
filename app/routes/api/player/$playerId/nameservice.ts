@@ -1,4 +1,4 @@
-import { DataFunctionArgs } from '@remix-run/node';
+import type { DataFunctionArgs } from '@vercel/remix';
 import { requirePlayerUuidAsParam, requireUser } from '~/utils/session/session.server';
 import { getPlayerNameService } from '~/utils/player/nameservice.server';
 

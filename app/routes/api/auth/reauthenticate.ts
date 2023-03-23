@@ -1,5 +1,5 @@
-import type { ActionFunction } from '@remix-run/node';
-import { json, redirect } from '@remix-run/node';
+import type { ActionFunction } from '@vercel/remix';
+import { json, redirect } from '@vercel/remix';
 import { commitClientSession, getClientSession, requireUser } from '~/utils/session/session.server';
 import { RiotReauthenticationClient } from '~/utils/auth/RiotReauthenticationClient';
 

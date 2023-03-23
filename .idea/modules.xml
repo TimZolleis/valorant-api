@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/valorant-api.iml" filepath="$PROJECT_DIR$/.idea/valorant-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gunbuddy.iml" filepath="$PROJECT_DIR$/gunbuddy.iml" />
     </modules>
   </component>
 </project>

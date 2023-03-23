@@ -1,5 +1,5 @@
-import type { DataFunctionArgs } from '@remix-run/node';
-import { json } from '@remix-run/node';
+import type { DataFunctionArgs } from '@vercel/remix';
+import { json } from '@vercel/remix';
 import { requireUser } from '~/utils/session/session.server';
 import { getRunningCoregameMatch, getRunningPregameMatch } from '~/utils/match/livematch.server';
 import { NoPregameFoundException } from '~/exceptions/NoPregameFoundException';

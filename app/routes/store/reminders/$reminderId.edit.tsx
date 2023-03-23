@@ -1,5 +1,5 @@
-import type { DataFunctionArgs } from '@remix-run/node';
-import { defer, json, redirect } from '@remix-run/node';
+import type { DataFunctionArgs } from '@vercel/remix';
+import { defer, json, redirect } from '@vercel/remix';
 import { requireParam, requireUser } from '~/utils/session/session.server';
 import { prisma } from '~/utils/db/db.server';
 import { Await, Form, useActionData, useFetcher, useLoaderData } from '@remix-run/react';

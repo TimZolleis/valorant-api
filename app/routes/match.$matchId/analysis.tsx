@@ -1,8 +1,8 @@
 import { Form, useLoaderData } from '@remix-run/react';
 import { Container } from '~/ui/container/Container';
 import { DefaultButton } from '~/ui/common/DefaultButton';
-import type { DataFunctionArgs } from '@remix-run/node';
-import { json } from '@remix-run/node';
+import type { DataFunctionArgs } from '@vercel/remix';
+import { json } from '@vercel/remix';
 import { prisma } from '~/utils/db/db.server';
 import { requireParam, requireUser } from '~/utils/session/session.server';
 import { analyzeMatch } from '~/utils/match/match.server';

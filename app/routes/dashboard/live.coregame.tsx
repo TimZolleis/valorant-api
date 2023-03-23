@@ -1,9 +1,10 @@
-import type { DataFunctionArgs } from '@remix-run/node';
-import { defer, redirect } from '@remix-run/node';
+import type { DataFunctionArgs } from '@vercel/remix';
+import { defer, redirect } from '@vercel/remix';
 import { requireUser } from '~/utils/session/session.server';
 import { getCharacterByUUid, getMatchMap } from '~/utils/match/match.server';
 import { getPlayerRank } from '~/utils/player/rank.server';
-import { Await, Link, Outlet, RouteMatch, useLoaderData } from '@remix-run/react';
+import type { RouteMatch } from '@remix-run/react';
+import { Await, Link, Outlet, useLoaderData } from '@remix-run/react';
 import { Suspense } from 'react';
 import { LoadingContainer } from '~/ui/container/LoadingContainer';
 import { getPlayerNameService } from '~/utils/player/nameservice.server';

@@ -1,5 +1,5 @@
-import type { LoaderFunction } from '@remix-run/node';
-import { json } from '@remix-run/node';
+import type { LoaderFunction } from '@vercel/remix';
+import { json } from '@vercel/remix';
 import { requirePlayerUuidAsParam, requireUser } from '~/utils/session/session.server';
 import { getPlayerRank } from '~/utils/player/rank.server';
 

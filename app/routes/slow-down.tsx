@@ -1,5 +1,6 @@
 import { Container } from '~/ui/container/Container';
-import { DataFunctionArgs, json, redirect } from '@remix-run/node';
+import type { DataFunctionArgs } from '@vercel/remix';
+import { json, redirect } from '@vercel/remix';
 import { commitClientSession, getClientSession } from '~/utils/session/session.server';
 import { of } from 'rxjs';
 import { useFetcher, useLoaderData } from '@remix-run/react';

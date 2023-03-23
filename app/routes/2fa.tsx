@@ -1,11 +1,12 @@
-import { ActionFunction, DataFunctionArgs, json, redirect } from '@remix-run/node';
+import type { ActionFunction, DataFunctionArgs } from '@vercel/remix';
+import { json, redirect } from '@vercel/remix';
 import { requireLoginData } from '~/utils/auth/authrequest.server';
 import { RiotAuthenticationClient } from '~/utils/auth/RiotAuthenticationClient';
 import { commitClientSession, getClientSession } from '~/utils/session/session.server';
 import { Form, useActionData, useLoaderData, useTransition } from '@remix-run/react';
 import base64url from 'base64url';
 import { decode } from 'url-safe-base64';
-import { AuthenticationCookies } from '~/models/cookies/MultifactorCookies';
+import type { AuthenticationCookies } from '~/models/cookies/MultifactorCookies';
 
 export const action: ActionFunction = async ({ request, params }) => {
     const formData = await request.formData();

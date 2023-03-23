@@ -1,8 +1,8 @@
 import type { RouteMatch } from '@remix-run/react';
 import { Await, useLoaderData } from '@remix-run/react';
 import { BreadCrumbLink } from '~/ui/common/BreadCrumbLink';
-import type { DataFunctionArgs } from '@remix-run/node';
-import { defer, redirect } from '@remix-run/node';
+import type { DataFunctionArgs } from '@vercel/remix';
+import { defer, redirect } from '@vercel/remix';
 import { requireParam, requireUser } from '~/utils/session/session.server';
 import { getItembyItemId, getOfferById } from '~/utils/store/storeoffer.server';
 import { Suspense } from 'react';

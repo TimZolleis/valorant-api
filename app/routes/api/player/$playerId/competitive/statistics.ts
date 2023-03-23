@@ -1,7 +1,7 @@
-import type { LoaderFunction } from '@remix-run/node';
+import type { LoaderFunction } from '@vercel/remix';
 import { requirePlayerUuidAsParam, requireUser } from '~/utils/session/session.server';
 import { getPlayerStatistics } from '~/utils/player/statistics.server';
-import { json } from '@remix-run/node';
+import { json } from '@vercel/remix';
 
 export type PlayerStatisticsRoute = {
     statistics: Awaited<ReturnType<typeof getPlayerStatistics>>;

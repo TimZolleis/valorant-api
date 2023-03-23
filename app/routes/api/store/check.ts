@@ -1,5 +1,5 @@
-import type { DataFunctionArgs } from '@remix-run/node';
-import { json } from '@remix-run/node';
+import type { DataFunctionArgs } from '@vercel/remix';
+import { json } from '@vercel/remix';
 import { prisma } from '~/utils/db/db.server';
 import { getReauthenticatedUser } from '~/utils/session/reauthentication.server';
 import { checkStore } from '~/utils/store/storereminders.server';

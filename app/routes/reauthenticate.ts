@@ -1,5 +1,5 @@
-import type { DataFunctionArgs } from '@remix-run/node';
-import { redirect } from '@remix-run/node';
+import type { DataFunctionArgs } from '@vercel/remix';
+import { redirect } from '@vercel/remix';
 import {
     commitClientSession,
     destroyClientSession,

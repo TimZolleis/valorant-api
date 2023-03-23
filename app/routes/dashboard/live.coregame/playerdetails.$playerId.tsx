@@ -1,5 +1,5 @@
-import type { DataFunctionArgs } from '@remix-run/node';
-import { defer } from '@remix-run/node';
+import type { DataFunctionArgs } from '@vercel/remix';
+import { defer } from '@vercel/remix';
 import { requireParam, requireUser } from '~/utils/session/session.server';
 import { getPlayerStatistics } from '~/utils/player/statistics.server';
 import { getPlayerRank } from '~/utils/player/rank.server';

@@ -1,4 +1,4 @@
-import type { DataFunctionArgs } from '@remix-run/node';
+import type { DataFunctionArgs } from '@vercel/remix';
 import { analyzeSampleMatches } from '~/utils/test/test.server';
 import { requireUser } from '~/utils/session/session.server';
 

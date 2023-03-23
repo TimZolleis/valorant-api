@@ -1,5 +1,5 @@
-import type { Session } from '@remix-run/node';
-import { createCookieSessionStorage, json, redirect } from '@remix-run/node';
+import type { Session } from '@vercel/remix';
+import { createCookieSessionStorage, json, redirect } from '@vercel/remix';
 import type { ValorantUser } from '~/models/user/ValorantUser';
 import type { Params } from '@remix-run/react';
 

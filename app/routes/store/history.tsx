@@ -1,4 +1,4 @@
-import type { DataFunctionArgs } from '@remix-run/node';
+import type { DataFunctionArgs } from '@vercel/remix';
 import { requireUser } from '~/utils/session/session.server';
 import { prisma } from '~/utils/db/db.server';
 import { useLoaderData } from '@remix-run/react';

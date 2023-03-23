@@ -1,12 +1,14 @@
-import { defer, LoaderArgs } from '@remix-run/node';
+import type { LoaderArgs } from '@vercel/remix';
+import { defer } from '@vercel/remix';
 import { requireParam, requireUser } from '~/utils/session/session.server';
 import { getCharacterByUUid, getMatchDetails } from '~/utils/match/match.server';
 import { getPlayerRank } from '~/utils/player/rank.server';
 import { getPlayerNameService } from '~/utils/player/nameservice.server';
-import { Await, Link, RouteMatch, useLoaderData } from '@remix-run/react';
+import type { RouteMatch } from '@remix-run/react';
+import { Await, Link, useLoaderData } from '@remix-run/react';
 import { Suspense, useMemo } from 'react';
-import { Player } from '~/models/valorant/match/ValorantMatchDetails';
-import { ValorantUser } from '~/models/user/ValorantUser';
+import type { Player } from '~/models/valorant/match/ValorantMatchDetails';
+import type { ValorantUser } from '~/models/user/ValorantUser';
 import is from '@sindresorhus/is';
 import { PlayerComponent } from '~/ui/player/PlayerComponent';
 import { LoadingContainer } from '~/ui/container/LoadingContainer';

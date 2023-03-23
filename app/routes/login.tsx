@@ -1,4 +1,5 @@
-import { ActionFunction, json, redirect } from '@remix-run/node';
+import type { ActionFunction } from '@vercel/remix';
+import { json, redirect } from '@vercel/remix';
 import { requireLoginData } from '~/utils/auth/authrequest.server';
 import { v4 as uuidv4 } from 'uuid';
 import { RiotAuthenticationClient } from '~/utils/auth/RiotAuthenticationClient';

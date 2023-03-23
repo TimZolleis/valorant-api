@@ -1,5 +1,5 @@
-import type { DataFunctionArgs } from '@remix-run/node';
-import { json, redirect } from '@remix-run/node';
+import type { DataFunctionArgs } from '@vercel/remix';
+import { json, redirect } from '@vercel/remix';
 import { requireParam } from '~/utils/session/session.server';
 import { prisma } from '~/utils/db/db.server';
 

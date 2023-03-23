@@ -1,5 +1,5 @@
-import type { LoaderFunction } from '@remix-run/node';
-import { json } from '@remix-run/node';
+import type { LoaderFunction } from '@vercel/remix';
+import { json } from '@vercel/remix';
 import { requireUser } from '~/utils/session/session.server';
 import { RiotRequest } from '~/models/Request';
 import { endpoints } from '~/config/endpoints';
