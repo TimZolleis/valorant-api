@@ -1,13 +1,9 @@
 import type { ActionFunction } from '@vercel/remix';
 import { json, redirect } from '@vercel/remix';
-import { requireLoginData } from '~/utils/auth/authrequest.server';
-import { v4 as uuidv4 } from 'uuid';
 import { RiotAuthenticationClient } from '~/utils/auth/RiotAuthenticationClient';
 import { commitClientSession, getClientSession } from '~/utils/session/session.server';
-import { Form, useActionData, useTransition } from '@remix-run/react';
+import { Form, useActionData, useNavigation } from '@remix-run/react';
 import { MultifactorAuthenticationRequiredException } from '~/exceptions/MultifactorAuthenticationRequiredException';
-import base64url from 'base64url';
-import { encode } from 'url-safe-base64';
 
 export const action: ActionFunction = async ({ request, params }) => {
     const formData = await request.formData();
@@ -46,7 +42,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 
 const LoginPage = () => {
     const actionData = useActionData();
-    const transition = useTransition();
+    const navigation = useNavigation();
     return (
         <Form method={'post'}>
             <div className={'w-full flex flex-col items-center py-20'}>
@@ -92,8 +88,8 @@ const LoginPage = () => {
                         className={
                             'text-label-medium bg-blue-600 rounded-md flex items-center justify-center transition ease-in-out hover:bg-transparent hover:border-blue-500 hover:text-blue-500 hover:border gap-2 px-3 py-2 text-white font-inter font-medium text-center w-full'
                         }>
-                        {transition.state === 'idle' && <p>Continue</p>}
-                        {transition.state === 'submitting' && (
+                        {navigation.state === 'idle' && <p>Continue</p>}
+                        {navigation.state === 'submitting' && (
                             <img
                                 className={'h-8 animate animate-pulse'}
                                 src='/resources/icons/ellipsis-horizontal.svg'

@@ -35,7 +35,6 @@ export class RiotGamesApiClient {
         useFallback = false
     ): Promise<T> {
         const url = useFallback ? request.getFallback().getUrl() : request.getUrl();
-        console.log('Fetching', url);
         return this.axiosClient
             .get(url, config)
             .then((response) => response.data)

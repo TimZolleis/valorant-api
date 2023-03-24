@@ -1,11 +1,10 @@
 import type { ReactNode } from 'react';
 import NavBar from '~/ui/layout/NavBar';
-import { useTransition } from '@remix-run/react';
+import { useNavigation } from '@remix-run/react';
 import { Loading } from '@geist-ui/core';
-import useMeasure from 'react-use-measure';
 
 const DefaultLayout = ({ children }: { children: ReactNode }) => {
-    const transition = useTransition();
+    const navigation = useNavigation();
     return (
         <>
             <div className={'relative'}>
@@ -13,7 +12,7 @@ const DefaultLayout = ({ children }: { children: ReactNode }) => {
                     <NavBar />
                 </div>
                 <main className={`select-text min-h-full selection:bg-fuchsia-500`}>
-                    {transition.state === 'loading' && <LoadingSpinner />}
+                    {navigation.state === 'loading' && <LoadingSpinner />}
                     <div className={'p-5 md:px-10'}>{children}</div>
                 </main>
             </div>

@@ -2,6 +2,7 @@ import { Link, NavLink, useMatches } from '@remix-run/react';
 import { useOptionalUser } from '~/utils/hooks/matchesData';
 import type { Ref } from 'react';
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 
 const NavBar = ({ ref }: { ref?: Ref<any> }) => {
     const user = useOptionalUser();
@@ -24,7 +25,7 @@ const NavBar = ({ ref }: { ref?: Ref<any> }) => {
                         src='/resources/icons/menu-icon.svg'
                         alt=''
                     />
-                    <div
+                    <motion.div
                         className={`backdrop-blur md:backdrop-blur-none p-3 z-50 fixed left-0 top-0 right-0 bottom-0 md:relative w-full ${
                             showNavbar ? 'flex' : 'hidden'
                         } md:flex flex-col items-center justify-center`}
@@ -62,7 +63,7 @@ const NavBar = ({ ref }: { ref?: Ref<any> }) => {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </motion.div>
                 </div>
             </div>
             <HorizontalNavigation />
@@ -81,7 +82,7 @@ const NavigationLink = ({ icon, to, text }: { icon: string; to: string; text: st
 
 export default NavBar;
 
-const HorizontalNavigation = () => {
+export const HorizontalNavigation = () => {
     const matches = useMatches();
     const filteredMatches = matches.filter((match) => match.handle && match.handle.navbar);
     return (
@@ -92,7 +93,11 @@ const HorizontalNavigation = () => {
                         <NavLink
                             className={'text-white font-inter text-sm '}
                             key={link.href}
-                            to={link.href}
+                            to={
+                                link.href.startsWith('/')
+                                    ? link.href
+                                    : `${match.pathname}/${link.href}`
+                            }
                             prefetch={'intent'}>
                             {({ isActive }) => (
                                 <div

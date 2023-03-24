@@ -4,6 +4,7 @@ import { prisma } from '~/utils/db/db.server';
 import { checkIfOfferIsInStore, sendReminderEmail } from '~/utils/store/storereminders.server';
 import type { User } from '@prisma/client';
 
+//TODO: Revisit and fix logic
 export const loader = async ({ request }: DataFunctionArgs) => {
     const reminders = await prisma.reminder.findMany();
     try {

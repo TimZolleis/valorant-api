@@ -11,7 +11,7 @@ export async function checkStore(user: ValorantUser) {
     const storefront = await getStoreOffers(user);
     const daily = await Promise.all(
         storefront.SkinsPanelLayout.SingleItemStoreOffers.map(async (offer) => {
-            const offers = await Promise.all(
+            return await Promise.all(
                 offer.Rewards.map(async (reward) => {
                     const storedOffer = await prisma.offers.findUnique({
                         where: {
@@ -23,7 +23,7 @@ export async function checkStore(user: ValorantUser) {
                         },
                     });
                     if (!storedOffer) {
-                        return await prisma.offers.create({
+                        return prisma.offers.create({
                             data: {
                                 puuid: user.userData.puuid,
                                 offerId: reward.ItemID,
@@ -50,7 +50,7 @@ export async function checkStore(user: ValorantUser) {
                 },
             });
             if (!storedOffer) {
-                return await prisma.offers.create({
+                return prisma.offers.create({
                     data: {
                         puuid: user.userData.puuid,
                         offerId: item.Item.ItemID,

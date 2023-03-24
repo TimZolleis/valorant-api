@@ -5,7 +5,7 @@ import { RiotReauthenticationClient } from '~/utils/auth/RiotReauthenticationCli
 import type { User } from '@prisma/client';
 
 export async function updateReauthenticationCookies(user: ValorantUser) {
-    return await prisma.reauthenticationCookies.upsert({
+    return prisma.reauthenticationCookies.upsert({
         where: {
             puuid: user.userData.puuid,
         },

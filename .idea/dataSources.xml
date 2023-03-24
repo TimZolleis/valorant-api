@@ -1,25 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="valorant-api@timzolleis.com" uuid="2e3baffa-71ac-4540-bea7-137f8f5650f9">
+    <data-source source="LOCAL" name="gunbuddy-postgres@timzolleis.com" uuid="c69fa072-a463-4929-83c7-7dd6478d37e7">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://timzolleis.com:5432/gunbuddy</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="gunbuddy@timzolleis.com" uuid="095fff62-91f6-4b15-9dff-770337263cd6">
       <driver-ref>mariadb</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.mariadb.jdbc.Driver</jdbc-driver>
       <jdbc-url>jdbc:mariadb://timzolleis.com:3306/gunbuddy</jdbc-url>
-      <working-dir>$ProjectFileDir$</working-dir>
-    </data-source>
-    <data-source source="LOCAL" name="gunbuddy@timzolleis.com" uuid="c69fa072-a463-4929-83c7-7dd6478d37e7">
-      <driver-ref>postgresql</driver-ref>
-      <synchronize>true</synchronize>
-      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://timzolleis.com:5432/gunbuddy</jdbc-url>
-      <working-dir>$ProjectFileDir$</working-dir>
-    </data-source>
-    <data-source source="LOCAL" name="gunbuddy@timzolleis.com" uuid="ef22d974-6a3d-4248-bd54-7e5fe724e423">
-      <driver-ref>postgresql</driver-ref>
-      <synchronize>true</synchronize>
-      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://timzolleis.com:5432/gunbuddy</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>

@@ -61,7 +61,7 @@ export function getDefaultHeaders() {
 }
 
 const AXIOS_CONSTANTS = {
-    USER_AGENT: 'RiotClient/60.0.10.4802528.4749685 rso-auth (Windows;10;;Professional, x64)',
+    USER_AGENT: 'RiotClient/63.0.10.4802528.4749685 rso-auth (Windows;10;;Professional, x64)',
     CONTENT_TYPE: 'application/json',
     CIPHERS: [
         'TLS_CHACHA20_POLY1305_SHA256',

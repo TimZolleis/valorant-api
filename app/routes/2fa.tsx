@@ -3,7 +3,7 @@ import { json, redirect } from '@vercel/remix';
 import { requireLoginData } from '~/utils/auth/authrequest.server';
 import { RiotAuthenticationClient } from '~/utils/auth/RiotAuthenticationClient';
 import { commitClientSession, getClientSession } from '~/utils/session/session.server';
-import { Form, useActionData, useLoaderData, useTransition } from '@remix-run/react';
+import { Form, useActionData, useLoaderData, useNavigation, useTransition } from '@remix-run/react';
 import base64url from 'base64url';
 import { decode } from 'url-safe-base64';
 import type { AuthenticationCookies } from '~/models/cookies/MultifactorCookies';
@@ -62,7 +62,7 @@ export const loader = async ({ request }: DataFunctionArgs) => {
 
 const LoginPage = () => {
     const actionData = useActionData();
-    const transition = useTransition();
+    const navigation = useNavigation();
     const { email } = useLoaderData<typeof loader>();
     return (
         <Form method={'post'}>
@@ -101,8 +101,8 @@ const LoginPage = () => {
                         className={
                             'text-label-medium bg-blue-600 rounded-md flex items-center justify-center transition ease-in-out hover:bg-transparent hover:border-blue-500 hover:text-blue-500 hover:border gap-2 px-3 py-2 text-white font-inter font-medium text-center w-full'
                         }>
-                        {transition.state === 'idle' && <p>Continue</p>}
-                        {transition.state === 'submitting' && (
+                        {navigation.state === 'idle' && <p>Continue</p>}
+                        {navigation.state === 'submitting' && (
                             <img
                                 className={'h-8 animate animate-pulse'}
                                 src='/resources/icons/ellipsis-horizontal.svg'

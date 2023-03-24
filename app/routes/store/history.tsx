@@ -4,11 +4,10 @@ import { prisma } from '~/utils/db/db.server';
 import { useLoaderData } from '@remix-run/react';
 import type { Offers } from '@prisma/client';
 import { getItembyItemId } from '~/utils/store/storeoffer.server';
-import { ITEM_TYPES } from '~/config/skinlevels.';
 import type { ValorantApiWeaponSkin } from '~/models/valorant-api/ValorantApiWeaponSkin';
 import { Container } from '~/ui/container/Container';
 import { DateTime } from 'luxon';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 
 type OfferWithItem = {
@@ -29,7 +28,7 @@ export const loader = async ({ request }: DataFunctionArgs) => {
     const offerWithItems = await Promise.all(
         offers.map(async (offer) => {
             try {
-                const item = await getItembyItemId(offer.offerId, ITEM_TYPES.SKINLEVEL);
+                const item = await getItembyItemId(offer.offerId, offer.itemTypeId);
                 return {
                     offer,
                     item,
@@ -88,9 +87,6 @@ const DailyStoreComponent = ({
         (offerWithItem) => offerWithItem.offer.type === 'FEATURED'
     );
     const [showItems, setShowItems] = useState(false);
-    useEffect(() => {
-        console.log(showItems);
-    }, [showItems]);
     return (
         <div className={'border-b border-white/20 w-full py-2'}>
             <div className={'flex gap-2 items-center'} onClick={() => setShowItems(!showItems)}>

@@ -94,10 +94,6 @@ export async function getFeaturedOffers(storefront: ValorantStoreFront) {
                     Item: item,
                 };
             } catch (e) {
-                console.log(e);
-                console.log('Type', offer.Item.ItemTypeID);
-                console.log('Item', offer.Item.ItemID);
-
                 return {
                     ...offer,
                     Item: getGenericWeapon(),

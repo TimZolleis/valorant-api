@@ -33,6 +33,9 @@ const links = [
 
 export const handle = {
     breadcrumb: (match: RouteMatch) => <Link to={`${match.pathname}`}>Match</Link>,
+    navbar: {
+        links,
+    },
 };
 
 const MatchPage = () => {
@@ -72,7 +75,6 @@ const MatchPage = () => {
                         )}
                     </Await>
                 </Suspense>
-                <HorizontalNavBar links={links}></HorizontalNavBar>
             </div>
             <Outlet />
         </>

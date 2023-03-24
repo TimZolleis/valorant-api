@@ -173,4 +173,8 @@ const ReminderOptions = ({ reminderId }: { reminderId: string }) => {
     );
 };
 
+export const ErrorBoundary = () => {
+    return <NoRemindersComponent />;
+};
+
 export default RemindersPage;

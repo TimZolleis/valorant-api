@@ -2,7 +2,6 @@ import { getRedisInstance } from '~/utils/redis/redis.server';
 import { prisma } from '~/utils/db/db.server';
 
 export async function getCachedValue(key: string) {
-    console.log('Getting from cache');
     const redis = await getRedisInstance();
     const redisValue = await redis.getValue(key);
     if (!redisValue) {

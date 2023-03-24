@@ -1,10 +1,13 @@
-import { ValorantUser } from '~/models/user/ValorantUser';
+import type { ValorantUser } from '~/models/user/ValorantUser';
 import { getPlayerMMR } from '~/utils/player/competitiveupdate.server';
-import { SeasonalInfo, SeasonalInfoBySeasonID } from '~/models/valorant/competitive/ValorantMMR';
+import type {
+    SeasonalInfo,
+    SeasonalInfoBySeasonID,
+} from '~/models/valorant/competitive/ValorantMMR';
 import { getRankByTierNumber } from '~/utils/player/rank.server';
 import { ValorantApiClient } from '~/utils/valorant-api/ValorantApiClient';
 import { valorantApiEndpoints } from '~/config/valorantApiEndpoints';
-import { ValorantApiSeason } from '~/models/valorant-api/ValorantApiSeason';
+import type { ValorantApiSeason } from '~/models/valorant-api/ValorantApiSeason';
 
 export async function getPlayerStatistics(user: ValorantUser, playerUuid: string) {
     const mmr = await getPlayerMMR(user, playerUuid);

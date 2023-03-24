@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { useTransition } from '@remix-run/react';
+import { useNavigation, useTransition } from '@remix-run/react';
 
 type ButtonType = 'primary' | 'secondary';
 
@@ -14,14 +14,14 @@ export const DefaultButton = ({
     className?: string;
     buttonType?: ButtonType;
 }) => {
-    const transition = useTransition();
+    const navigation = useNavigation();
 
     return (
         <button
             onClick={onClick}
             className={`
                ${getButtonStyles(buttonType)} ${className}`}>
-            {transition.state === 'loading' && (
+            {navigation.state === 'loading' && (
                 <img
                     className={'h-5'}
                     src='/resources/icons/ellipsis-horizontal-black.svg'

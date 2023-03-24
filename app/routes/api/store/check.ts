@@ -6,6 +6,7 @@ import { checkStore } from '~/utils/store/storereminders.server';
 import { DateTime } from 'luxon';
 
 export const loader = async ({ request }: DataFunctionArgs) => {
+    const startTime = DateTime.now();
     const users = await prisma.user.findMany();
     const failedChecks: string[] = [];
     const successfulChecks: string[] = [];
@@ -28,8 +29,10 @@ export const loader = async ({ request }: DataFunctionArgs) => {
             }
         })
     );
+    const endTime = DateTime.now();
+    const diff = endTime.diff(startTime, ['milliseconds']).milliseconds;
     return json({
-        message: 'Ran store checks for all users',
+        message: `Ran store checks for all users in ${diff}ms`,
         successfulChecks,
         failedChecks,
         offers,
