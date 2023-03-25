@@ -8,7 +8,7 @@ import { DateTime } from 'luxon';
 export const loader = async ({ request }: DataFunctionArgs) => {
     const startTime = DateTime.now();
     const users = await prisma.user.findMany();
-    const failedChecks: string[] = [];
+    const failedChecks: Object[] = [];
     const successfulChecks: string[] = [];
     const offers = await Promise.all(
         users.map(async (user) => {
@@ -16,6 +16,7 @@ export const loader = async ({ request }: DataFunctionArgs) => {
                 const reauthenticatedUser = await getReauthenticatedUser(user);
                 const { daily, featured } = await checkStore(reauthenticatedUser);
                 successfulChecks.push(user.puuid);
+                console.log(`Check for ${user.puuid} was successful`);
                 return {
                     user: user.puuid,
                     date: DateTime.now()
@@ -25,7 +26,11 @@ export const loader = async ({ request }: DataFunctionArgs) => {
                     featured,
                 };
             } catch (e) {
-                failedChecks.push(user.puuid);
+                console.log(`Check for ${user.puuid} failed because of ${e}`);
+                failedChecks.push({
+                    user: user.puuid,
+                    error: e,
+                });
             }
         })
     );
