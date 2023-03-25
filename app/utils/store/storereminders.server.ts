@@ -1,68 +1,94 @@
 import type { ValorantUser } from '~/models/user/ValorantUser';
-import { getItembyItemId, getStoreOffers } from '~/utils/store/storeoffer.server';
+import { getItembyItemId, getStoreFront, getStoreOffers } from '~/utils/store/storeoffer.server';
 import { prisma } from '~/utils/db/db.server';
 import { DateTime } from 'luxon';
 import type { Reminder, User } from '@prisma/client';
 import { DriftmailClient, Mail, Recipient } from 'driftmail';
 import { ITEM_TYPES } from '~/config/skinlevels.';
+import type {
+    FeaturedItem,
+    SingleItemStoreOffer,
+} from '~/models/valorant/store/ValorantStoreFront';
+import type { Offer } from '~/models/valorant/store/ValorantStoreOffers';
+import { log } from '@remix-run/dev/dist/logging';
 
-export async function checkStore(user: ValorantUser) {
-    const storeTime = DateTime.now().set({ hour: 1, minute: 0, second: 0, millisecond: 0 });
-    const storefront = await getStoreOffers(user);
-    const daily = await Promise.all(
-        storefront.SkinsPanelLayout.SingleItemStoreOffers.map(async (offer) => {
+async function parseDailyItems(user: ValorantUser, storeFrontOffers: SingleItemStoreOffer[]) {
+    const storeTime = DateTime.now()
+        .set({
+            hour: 1,
+            minute: 0,
+            second: 0,
+            millisecond: 0,
+        })
+        .toSeconds();
+    return await Promise.all(
+        storeFrontOffers.map(async (offer) => {
             return await Promise.all(
-                offer.Rewards.map(async (reward) => {
-                    const storedOffer = await prisma.offers.findUnique({
-                        where: {
-                            uniqueDailyOffer: {
-                                puuid: user.userData.puuid,
-                                offerId: reward.ItemID,
-                                date: storeTime.toJSDate(),
+                offer.Rewards.map((reward) => {
+                    return prisma.offers
+                        .upsert({
+                            where: {
+                                uniqueDailyOffer: {
+                                    puuid: user.userData.puuid,
+                                    offerId: reward.ItemID,
+                                    date: storeTime,
+                                },
                             },
-                        },
-                    });
-                    if (!storedOffer) {
-                        return prisma.offers.create({
-                            data: {
+                            update: {},
+                            create: {
                                 puuid: user.userData.puuid,
-                                offerId: reward.ItemID,
+                                offerId: offer.OfferID,
+                                date: storeTime,
                                 itemTypeId: reward.ItemTypeID,
-                                date: storeTime.toJSDate(),
                                 type: 'DAILY',
                             },
-                        });
-                    }
-                    return storedOffer;
+                        })
+                        .catch((e) => console.log('Error inserting daily offers', e));
                 })
             );
         })
     );
-    const featured = await Promise.all(
-        storefront.FeaturedBundle.Bundle.Items.map(async (item) => {
-            const storedOffer = await prisma.offers.findUnique({
-                where: {
-                    uniqueDailyOffer: {
-                        puuid: user.userData.puuid,
-                        offerId: item.Item.ItemID,
-                        date: storeTime.toJSDate(),
+}
+
+async function parseFeaturedItems(user: ValorantUser, featuredOffers: FeaturedItem[]) {
+    const storeTime = DateTime.now()
+        .set({
+            hour: 1,
+            minute: 0,
+            second: 0,
+            millisecond: 0,
+        })
+        .toSeconds();
+
+    return await Promise.all(
+        featuredOffers.map((offer) => {
+            return prisma.offers
+                .upsert({
+                    where: {
+                        uniqueDailyOffer: {
+                            puuid: user.userData.puuid,
+                            offerId: offer.Item.ItemID,
+                            date: storeTime,
+                        },
                     },
-                },
-            });
-            if (!storedOffer) {
-                return prisma.offers.create({
-                    data: {
+                    update: {},
+                    create: {
                         puuid: user.userData.puuid,
-                        offerId: item.Item.ItemID,
-                        itemTypeId: item.Item.ItemTypeID,
-                        date: storeTime.toJSDate(),
+                        offerId: offer.Item.ItemID,
+                        itemTypeId: offer.Item.ItemTypeID,
+                        date: storeTime,
                         type: 'FEATURED',
                     },
-                });
-            }
-            return storedOffer;
+                })
+                .catch((e) => console.log('Error inserting featured offers', e));
         })
     );
+}
+
+export async function checkStore(user: ValorantUser) {
+    const storeFront = await getStoreFront(user);
+    const daily = await parseDailyItems(user, storeFront.SkinsPanelLayout.SingleItemStoreOffers);
+    const featured = await parseFeaturedItems(user, storeFront.FeaturedBundle.Bundle.Items);
     return { featured, daily };
 }
 
@@ -98,7 +124,7 @@ export async function sendReminderEmail(users: User[], reminder: Reminder) {
     });
     mail.addRecipients(recipients);
     const requestId = await new DriftmailClient().send(mail);
-    return await prisma.reminderEmail.create({
+    return prisma.reminderEmail.create({
         data: {
             id: requestId,
         },

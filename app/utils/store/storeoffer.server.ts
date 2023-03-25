@@ -10,6 +10,7 @@ import { RIOT_POINTS_UUID } from '~/config/riot';
 import type { ValorantStoreOffers } from '~/models/valorant/store/ValorantStoreOffers';
 import { v4 as uuidv4 } from 'uuid';
 import { itemTypeToValorantApiUrl } from '~/config/skinlevels.';
+import { useRect } from '@geist-ui/core';
 
 function getGenericWeapon() {
     return {
@@ -24,9 +25,12 @@ function getGenericWeapon() {
     };
 }
 
-export async function getStoreOffers(user: ValorantUser) {
+function getStoreCacheTime() {
     const time = getNextStoreRotationTime();
-    const cacheExpirationTime = Math.floor(time.diff(DateTime.now(), 'second').get('second'));
+    return Math.floor(time.diff(DateTime.now(), 'second').get('second'));
+}
+
+export async function getStoreFront(user: ValorantUser) {
     const request = new RiotRequest(user.userData.region).buildBaseUrl(
         endpoints.store.storefront(user.userData.puuid)
     );
@@ -35,32 +39,19 @@ export async function getStoreOffers(user: ValorantUser) {
         user.entitlement
     ).getCached<ValorantStoreFront>(request, {
         key: 'storefront',
-        expiration: cacheExpirationTime,
+        expiration: getStoreCacheTime(),
     });
 }
 
-export async function getAllStoreOffers(user: ValorantUser) {
+export async function getStoreOffers(user: ValorantUser) {
     const request = new RiotRequest(user.userData.region).buildBaseUrl(endpoints.store.offers);
-    const offers = await new RiotGamesApiClient(
+    return await new RiotGamesApiClient(
         user.accessToken,
         user.entitlement
     ).getCached<ValorantStoreOffers>(request, {
         key: 'storeoffers',
-        expiration: 86400,
+        expiration: getStoreCacheTime(),
     });
-    return await Promise.all(
-        offers.Offers.map((offer) => {
-            return Promise.all(
-                offer.Rewards.map(async (reward) => {
-                    try {
-                        return await getItembyItemId(reward.ItemID, reward.ItemTypeID);
-                    } catch (e) {
-                        return getGenericWeapon();
-                    }
-                })
-            );
-        })
-    );
 }
 
 export async function getDailyOffers(storefront: ValorantStoreFront) {

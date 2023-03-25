@@ -11,7 +11,7 @@ export interface Reward {
 export interface Offer {
     OfferID: string;
     IsDirectPurchase: boolean;
-    StartDate: any;
+    StartDate: string;
     Cost: Cost;
     Rewards: Reward[];
 }

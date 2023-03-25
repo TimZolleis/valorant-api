@@ -9,6 +9,7 @@ import { Container } from '~/ui/container/Container';
 import { DateTime } from 'luxon';
 import React, { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { of } from 'rxjs';
 
 type OfferWithItem = {
     offer: Offers;
@@ -50,14 +51,34 @@ type SortedOffer = {
 
 const StoreHistoryPage = () => {
     const { offerWithItems } = useLoaderData() as unknown as LoaderData;
-    const sortedOffers: SortedOffer = {};
-    offerWithItems.forEach((offerWithItem) => {
-        if (!sortedOffers[offerWithItem.offer.date.toString()]) {
-            sortedOffers[offerWithItem.offer.date.toString()] = [offerWithItem];
-        } else {
-            sortedOffers[offerWithItem.offer.date.toString()].push(offerWithItem);
-        }
+    const dates = [
+        ...new Set(
+            offerWithItems.map((o) =>
+                DateTime.fromSeconds(o.offer.date).setLocale('de-De').toLocaleString()
+            )
+        ),
+    ];
+    const sortedOffers = dates.map((date) => {
+        const daily = offerWithItems
+            .filter((offer) => {
+                return (
+                    DateTime.fromSeconds(offer.offer.date).setLocale('de-De').toLocaleString() ===
+                    date
+                );
+            })
+            .filter((offer) => offer.offer.type === 'DAILY');
+
+        const featured = offerWithItems
+            .filter((offer) => {
+                return (
+                    DateTime.fromSeconds(offer.offer.date).setLocale('de-De').toLocaleString() ===
+                    date
+                );
+            })
+            .filter((offer) => offer.offer.type === 'FEATURED');
+        return { date, daily, featured };
     });
+
     if (offerWithItems.length === 0) {
         return <NoStoreHistoryAvailable />;
     }
@@ -65,8 +86,12 @@ const StoreHistoryPage = () => {
         <main>
             <p className={'font-inter text-title-large font-medium py-2'}>Store history </p>
             <div>
-                {Object.keys(sortedOffers).map((key) => (
-                    <DailyStoreComponent key={key} offersWithItem={sortedOffers[key]} date={key} />
+                {sortedOffers.map((offer) => (
+                    <DailyStoreComponent
+                        key={offer.date}
+                        featuredOffers={offer.featured}
+                        dailyOffers={offer.daily}
+                        date={offer.date}></DailyStoreComponent>
                 ))}
             </div>
         </main>
@@ -74,25 +99,19 @@ const StoreHistoryPage = () => {
 };
 
 const DailyStoreComponent = ({
-    offersWithItem,
+    featuredOffers,
+    dailyOffers,
     date,
 }: {
-    offersWithItem: OfferWithItem[];
+    featuredOffers: OfferWithItem[];
+    dailyOffers: OfferWithItem[];
     date: string;
 }) => {
-    const dailyOffers = offersWithItem.filter(
-        (offerWithItem) => offerWithItem.offer.type === 'DAILY'
-    );
-    const featuredOffers = offersWithItem.filter(
-        (offerWithItem) => offerWithItem.offer.type === 'FEATURED'
-    );
     const [showItems, setShowItems] = useState(false);
     return (
         <div className={'border-b border-white/20 w-full py-2'}>
             <div className={'flex gap-2 items-center'} onClick={() => setShowItems(!showItems)}>
-                <p className={'font-inter text-headline-small'}>
-                    {DateTime.fromISO(date).setLocale('de-De').toLocaleString()}
-                </p>
+                <p className={'font-inter text-headline-small'}>{date}</p>
                 <motion.img
                     className={`${
                         showItems ? 'rotate-180' : 'rotate-0'

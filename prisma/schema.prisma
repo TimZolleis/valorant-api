@@ -29,14 +29,13 @@ model ReauthenticationCookies {
 }
 
 model Offers {
-  id      String    @id @default(uuid())
   puuid   String
   user    User      @relation(fields: [puuid], references: [puuid])
-  date    DateTime  @default(now())
+  date    Float
   offerId String
   itemTypeId String
   type    OfferType
-
+  @@id([puuid, date, offerId])
   @@unique([puuid, date, offerId], name: "uniqueDailyOffer")
 }
 

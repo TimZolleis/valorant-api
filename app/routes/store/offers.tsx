@@ -5,7 +5,7 @@ import {
     getDailyOffers,
     getFeaturedOffers,
     getNightMarket,
-    getStoreOffers,
+    getStoreFront,
 } from '~/utils/store/storeoffer.server';
 import type { RouteMatch } from '@remix-run/react';
 import { Await, useLoaderData } from '@remix-run/react';
@@ -16,7 +16,7 @@ import { BreadCrumbLink } from '~/ui/common/BreadCrumbLink';
 
 export const loader = async ({ request }: DataFunctionArgs) => {
     const user = await requireUser(request);
-    const storefront = await getStoreOffers(user);
+    const storefront = await getStoreFront(user);
     const dailyOffers = getDailyOffers(storefront);
     const featuredOffers = getFeaturedOffers(storefront);
     const nightmarketOffers = getNightMarket(storefront);
