@@ -76,23 +76,13 @@ const LiveMatchPage = () => {
                 <Suspense>
                     <Await resolve={pregame}>
                         {(pregame) => (
-                            <Tag
-                                text={getServerRegion(pregame.GamePodID)}
-                                color={'bg-fuchsia-800/50'}
-                                textColor={'text-fuchsia-500'}
-                                borderColor={'border-fuchsia-500'}></Tag>
+                            <Tag text={getServerRegion(pregame.GamePodID)} color={'fuchsia'}></Tag>
                         )}
                     </Await>
                 </Suspense>
                 <Suspense>
                     <Await resolve={map}>
-                        {(map) => (
-                            <Tag
-                                text={map.displayName}
-                                color={'bg-amber-800/50'}
-                                textColor={'text-amber-500'}
-                                borderColor={'border-amber-500'}></Tag>
-                        )}
+                        {(map) => <Tag text={map.displayName} color={'amber'}></Tag>}
                     </Await>
                 </Suspense>
             </div>

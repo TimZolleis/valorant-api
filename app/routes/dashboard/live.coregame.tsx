@@ -75,24 +75,12 @@ const LiveMatchPage = () => {
                 <p className={'font-inter text-title-medium font-semibold'}>Coregame</p>
                 <Suspense fallback={<LoadingTag />}>
                     <Await resolve={coregame}>
-                        {(pregame) => (
-                            <Tag
-                                text={getServerRegion(pregame.GamePodID)}
-                                color={'bg-fuchsia-800/50'}
-                                textColor={'text-fuchsia-500'}
-                                borderColor={'border-fuchsia-500'}></Tag>
-                        )}
+                        {(pregame) => <Tag text={getServerRegion(pregame.GamePodID)}></Tag>}
                     </Await>
                 </Suspense>
                 <Suspense fallback={<LoadingTag />}>
                     <Await resolve={map}>
-                        {(map) => (
-                            <Tag
-                                text={map.displayName}
-                                color={'bg-amber-800/50'}
-                                textColor={'text-amber-500'}
-                                borderColor={'border-amber-500'}></Tag>
-                        )}
+                        {(map) => <Tag text={map.displayName} color={'amber'}></Tag>}
                     </Await>
                 </Suspense>
             </div>

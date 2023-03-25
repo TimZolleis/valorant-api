@@ -1,7 +1,7 @@
 import type { DataFunctionArgs } from '@vercel/remix';
-import { defer } from '@vercel/remix';
+import { defer, json } from '@vercel/remix';
 import { requireUser } from '~/utils/session/session.server';
-import { Await, useLoaderData } from '@remix-run/react';
+import { Await, useFetcher, useLoaderData } from '@remix-run/react';
 import { RiotRequest } from '~/models/Request';
 import { endpoints } from '~/config/endpoints';
 import { RiotGamesApiClient } from '~/utils/riot/RiotGamesApiClient';
@@ -14,9 +14,15 @@ import type { ValorantUser } from '~/models/user/ValorantUser';
 import { MatchHistoryComponent } from '~/ui/match/MatchHistoryComponent';
 import type { ValorantCompetitiveUpdate } from '~/models/valorant/competitive/ValorantCompetitiveUpdate';
 import { getCompetitiveUpdates } from '~/utils/player/competitiveupdate.server';
+import {
+    commitPreferencesSession,
+    getPreferencesSession,
+} from '~/utils/session/preferences.server';
+import { Select } from '~/ui/common/Select';
 
 type LoaderData = {
     history: Promise<MatchHistory[]>;
+    selectedQueue: string | null;
 };
 
 export async function getHistory(
@@ -34,30 +40,63 @@ export async function getHistory(
 
 export const loader = async ({ request }: DataFunctionArgs) => {
     const user = await requireUser(request);
+    const preferencesSession = await getPreferencesSession(request);
+    const selectedQueue = preferencesSession.get<string>('historyQueue') || null;
     const riotRequest = new RiotRequest(user.userData.region).buildBaseUrl(
         endpoints.match.history(user.userData.puuid)
     );
     const matchHistory = await new RiotGamesApiClient(
         user.accessToken,
         user.entitlement
-    ).getCached<ValorantMatchHistory>(riotRequest, {
-        key: 'match-history',
-        expiration: 300,
-    });
+    ).getCached<ValorantMatchHistory>(
+        riotRequest,
+        {
+            key: `match-history-${selectedQueue?.toLowerCase()}`,
+            expiration: 300,
+        },
+        {
+            params: {
+                queue: selectedQueue?.toLowerCase(),
+            },
+        }
+    );
     const competitiveUpdates = await getCompetitiveUpdates(user, user.userData.puuid);
     const history = Promise.all(
         matchHistory.History.map((match) => {
             return getHistory(user, match, competitiveUpdates);
         })
     );
-    return defer<LoaderData>({ history });
+    return defer<LoaderData>({ history, selectedQueue });
+};
+
+export const action = async ({ request }: DataFunctionArgs) => {
+    const formData = await request.formData();
+    const preferencesSession = await getPreferencesSession(request);
+    const selectedQueue = await formData.get('queue');
+    if (selectedQueue === 'All') {
+        preferencesSession.set('historyQueue', null);
+    } else {
+        preferencesSession.set('historyQueue', selectedQueue);
+    }
+
+    return json(
+        {},
+        {
+            headers: {
+                'Set-Cookie': await commitPreferencesSession(preferencesSession),
+            },
+        }
+    );
 };
 
 const HistoryPage = () => {
-    const { history } = useLoaderData() as unknown as LoaderData;
+    const { history, selectedQueue } = useLoaderData() as unknown as LoaderData;
     return (
         <div className={'text-white'}>
-            <p className={'font-inter font-semibold text-title-large py-2'}>Match history</p>
+            <span className={'flex gap-2 items-center'}>
+                <p className={'font-inter font-semibold text-title-large py-2'}>Match history</p>
+                <QueueSelector selectedQueue={selectedQueue} />
+            </span>
             <div className={'flex gap-2'}>
                 <Suspense fallback={<LoadingContainer />}>
                     <Await resolve={history}>
@@ -69,6 +108,21 @@ const HistoryPage = () => {
                 </Suspense>
             </div>
         </div>
+    );
+};
+
+const QueueSelector = ({ selectedQueue }: { selectedQueue: string | null }) => {
+    const options = ['All', 'Deathmatch', 'Unrated', 'Competitive', 'Swiftplay'];
+    const fetcher = useFetcher<typeof action>();
+    const setQueue = (queue: string) => {
+        fetcher.submit({ queue: queue }, { method: 'post' });
+    };
+    return (
+        <Select
+            options={options}
+            preselect={selectedQueue ? selectedQueue : 'All'}
+            onChange={(queue) => setQueue(queue)}
+        />
     );
 };
 
