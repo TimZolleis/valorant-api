@@ -27,8 +27,8 @@ export function links() {
             sizes: '16x16',
             href: '/favicons/favicon-16x16.png',
         },
-        { rel: 'manifest', href: 'favicons/site.webmanifest' },
-        { rel: 'icon', href: 'favicons/favicon.ico' },
+        { rel: 'manifest', href: '/favicons/site.webmanifest' },
+        { rel: 'icon', href: '/favicons/favicon.ico' },
     ];
 }
 
