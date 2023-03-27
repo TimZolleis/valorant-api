@@ -7,7 +7,10 @@ import { getUserFromSession } from '~/utils/session/session.server';
 import { GeistProvider } from '@geist-ui/core';
 
 export function links() {
-    return [{ rel: 'stylesheet', href: styles }];
+    return [{ rel: 'stylesheet', href: styles }, {
+        rel: "icon",
+        href: "/favicon.ico"
+    }];
 }
 
 export const meta: MetaFunction = () => ({
