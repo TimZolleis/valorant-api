@@ -10,6 +10,8 @@ import type { ValorantApiCharacter } from '~/models/valorant-api/ValorantApiChar
 import { prisma } from '~/utils/db/db.server';
 import type { Match } from '~/models/valorant/competitive/ValorantCompetitiveUpdate';
 import type { getHistory } from '~/routes/__index/index';
+import { getPlayerRank } from '~/utils/player/rank.server';
+import { getCompetitiveUpdates } from '~/utils/player/competitiveupdate.server';
 
 export async function getMatchMap(mapId: string) {
     const maps = await new ValorantApiClient().getDatabaseCached<ValorantApiMap[]>(
@@ -53,37 +55,46 @@ async function storePlayerPerformance(
     player: Player,
     details: ValorantMatchDetails
 ) {
-    const playerGameStats = await prisma.playerGameStats.findUnique({
+    const competitiveUpdate = await getCompetitiveUpdates(user, player.subject);
+    const competitiveMatch = competitiveUpdate.Matches.find(
+        (match) => match.MatchID === details.matchInfo.matchId
+    );
+    const { headShots, bodyShots, legShots } = analyzePlayerShots(player.subject, details);
+    await prisma.matchPerformance.upsert({
         where: {
             puuid_matchId: {
                 puuid: player.subject,
                 matchId: details.matchInfo.matchId,
             },
         },
-    });
-    if (playerGameStats) return;
-    const { headShots, bodyShots, legShots } = getPlayerShotsInMatch(player.subject, details);
-    await prisma.playerGameStats.create({
-        data: {
-            matchId: details.matchInfo.matchId,
+        update: {},
+        create: {
             puuid: player.subject,
+            matchId: details.matchInfo.matchId,
+
             score: player.stats.score,
             kills: player.stats.kills,
             deaths: player.stats.deaths,
             assists: player.stats.assists,
-            currentRank: player.competitiveTier,
-            characterUuid: player.characterId,
-            teamId: player.teamId,
-            roundsPlayed: player.stats.roundsPlayed,
+
             headShots: headShots,
             bodyShots: bodyShots,
             legShots: legShots,
             totalShots: headShots + bodyShots + legShots,
+
+            rankedRatingBeforeUpdate: competitiveMatch?.RankedRatingBeforeUpdate || 0,
+            rankedRatingAfterUpdate: competitiveMatch?.RankedRatingAfterUpdate || 0,
+            tierBeforeUpdate: competitiveMatch?.TierBeforeUpdate || 0,
+            tierAfterUpdate: competitiveMatch?.TierAfterUpdate || 0,
+
+            roundsPlayed: player.stats.roundsPlayed,
+            teamId: player.teamId,
+            characterUuid: player.characterId,
         },
     });
 }
 
-function getPlayerShotsInMatch(puuid: string, details: ValorantMatchDetails) {
+function analyzePlayerShots(puuid: string, details: ValorantMatchDetails) {
     const relevantPlayerStats = details.roundResults.map((roundResult) => {
         return roundResult.playerStats.filter((playerStats) => {
             return playerStats.subject === puuid;
@@ -124,6 +135,7 @@ export async function getCharacterByUUid(characterId: string | undefined) {
 }
 
 export type MatchHistory = Awaited<ReturnType<typeof getHistory>>;
+
 export async function getRelevantMatchData(
     puuid: string,
     matchDetails: ValorantMatchDetails,

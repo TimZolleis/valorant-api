@@ -33,17 +33,11 @@ export const LiveMatchDetectionComponent = () => {
     }, [fetcher.state]);
 
     useEffect(() => {
-        if (
-            fetcher.data?.status === 'pregame' &&
-            !window.location.pathname.includes('/dashboard/live/pregame')
-        ) {
-            return navigate('/dashboard/live/pregame');
+        if (fetcher.data?.status === 'pregame' && !window.location.pathname.includes('/live')) {
+            return navigate('/live');
         }
-        if (
-            fetcher.data?.status === 'coregame' &&
-            !window.location.pathname.includes('/dashboard/live/coregame')
-        ) {
-            return navigate('/dashboard/live/coregame');
+        if (fetcher.data?.status === 'coregame' && !window.location.pathname.includes('/live')) {
+            return navigate('/live');
         }
     }, [fetcher.data?.status]);
 

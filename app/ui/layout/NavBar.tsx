@@ -47,7 +47,7 @@ const NavBar = ({ ref }: { ref?: Ref<any> }) => {
                                     onClick={() => setShowNavbar(!showNavbar)}>
                                     <NavigationLink
                                         icon={'/resources/icons/chart-icon.svg'}
-                                        to={'/dashboard/history'}
+                                        to={'/'}
                                         text={'Dashboard'}
                                     />
                                     <NavigationLink

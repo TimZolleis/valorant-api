@@ -29,12 +29,13 @@ model ReauthenticationCookies {
 }
 
 model Offers {
-  puuid   String
-  user    User      @relation(fields: [puuid], references: [puuid])
-  date    Float
-  offerId String
+  puuid      String
+  user       User      @relation(fields: [puuid], references: [puuid])
+  date       Float
+  offerId    String
   itemTypeId String
-  type    OfferType
+  type       OfferType
+
   @@id([puuid, date, offerId])
   @@unique([puuid, date, offerId], name: "uniqueDailyOffer")
 }
@@ -45,12 +46,6 @@ enum OfferType {
   BONUS
 }
 
-model Skin {
-  id          String @id
-  displayName String
-  imageUrl    String
-}
-
 model Reminder {
   id             String  @id @default(uuid())
   offerId        String  @unique
@@ -58,10 +53,6 @@ model Reminder {
   expirationDate String?
   users          User[]
   createdAt      String
-}
-
-model ReminderEmail {
-  id String @id
 }
 
 model Cache {
@@ -74,13 +65,17 @@ model MatchAnalysisSchedule {
   puuid   String
 }
 
-model PlayerGameStats {
-  puuid         String
-  matchId       String
+model MatchPerformance {
+  puuid                    String
+  matchId                  String
+  rankedRatingBeforeUpdate Int
+  rankedRatingAfterUpdate  Int
+  tierBeforeUpdate         Int
+  tierAfterUpdate          Int
+
   kills         Int
   deaths        Int
   assists       Int
-  currentRank   Int
   roundsPlayed  Int
   score         Int
   totalShots    Int
@@ -103,4 +98,3 @@ model PlayerWeaponStats {
 
   @@id([puuid, weaponId])
 }
-

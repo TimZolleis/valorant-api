@@ -1,15 +1,9 @@
-import { InterpolatedCoregamePlayer, InterpolatedPregamePlayer } from '~/routes/api/match/live';
-import { useFetcherData } from '~/utils/hooks/fetcher';
 import { Container } from '~/ui/container/Container';
-import { LoadingContainer } from '~/ui/container/LoadingContainer';
-import { PlayerDetailsRoute } from '~/routes/api/player/$playerId/nameservice';
-import { useNavigate } from 'react-router';
-import { ValorantApiCharacter } from '~/models/valorant-api/ValorantApiCharacter';
-import { PlayerRank } from '~/utils/player/rank.server';
-import { ValorantNameService } from '~/models/valorant/player/ValorantNameService';
-import { Link } from '@remix-run/react';
-import { PregamePlayer } from '~/models/valorant/match/ValorantPregameMatch';
-import { CoregamePlayer } from '~/models/valorant/match/ValorantCoregameMatch';
+import type { ValorantApiCharacter } from '~/models/valorant-api/ValorantApiCharacter';
+import type { PlayerRank } from '~/utils/player/rank.server';
+import type { ValorantNameService } from '~/models/valorant/player/ValorantNameService';
+import type { PregamePlayer } from '~/models/valorant/match/ValorantPregameMatch';
+import type { CoregamePlayer } from '~/models/valorant/match/ValorantCoregameMatch';
 
 export const PlayerInGameComponent = ({
     player,
@@ -23,7 +17,7 @@ export const PlayerInGameComponent = ({
     nameService: ValorantNameService;
 }) => {
     return (
-        <Container>
+        <Container className={'bg-black'}>
             <div className={'flex gap-2 items-center'}>
                 <div className={'p-1.5 rounded-md border border-gray-600/40'}>
                     <img className={'h-8'} src={character?.displayIconSmall} alt='' />

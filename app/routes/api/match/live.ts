@@ -7,21 +7,21 @@ import { NoCoregameFoundException } from '~/exceptions/NoCoregameFoundException'
 import type { ValorantUser } from '~/models/user/ValorantUser';
 import { get } from '@vercel/edge-config';
 
-export type LiveMatchRoute = Awaited<LoaderData>;
 export type GameStatus = 'pregame' | 'coregame' | 'not in game';
-type LoaderData = {
-    status: GameStatus;
-};
+export type LiveMatchRoute = Awaited<ReturnType<typeof loader>>;
 
-async function detectGame(user: ValorantUser, puuid: string) {
+export async function detectGame(
+    user: ValorantUser,
+    puuid: string
+): Promise<{ status: GameStatus }> {
     try {
         const mockPregame = await get('mockPregame');
         const pregame = mockPregame
             ? true
             : await getRunningPregameMatch(user, user.userData.puuid);
-        return json<LoaderData>({
+        return {
             status: 'pregame',
-        });
+        };
     } catch (e) {
         if (!(e instanceof NoPregameFoundException)) {
             throw e;
@@ -32,17 +32,17 @@ async function detectGame(user: ValorantUser, puuid: string) {
         const coregame = mockCoregame
             ? true
             : await getRunningCoregameMatch(user, user.userData.puuid);
-        return json<LoaderData>({
+        return {
             status: 'coregame',
-        });
+        };
     } catch (e) {
         if (!(e instanceof NoCoregameFoundException)) {
             throw e;
         }
     }
-    return json<LoaderData>({
+    return {
         status: 'not in game',
-    });
+    };
 }
 
 export const loader = async ({ request, params }: DataFunctionArgs) => {
