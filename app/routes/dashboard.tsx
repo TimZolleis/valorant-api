@@ -38,19 +38,17 @@ const DashboardPage = () => {
     return (
         <>
             <div className={'flex gap-2 items-center mb-5'}>
-                <p className={'font-inter font-medium text-headline-small text-white'}>
+                <p className={' font-medium text-headline-small '}>
                     Hello, {user.userData.gameName}
                 </p>
                 <LiveMatchDetectionComponent />
             </div>
-            <p className={'font-inter font-semibold text-white text-title-large py-2'}>
-                Personal Statistics
-            </p>
-            <div className={'flex gap-2 text-white w-full '}>
+            <p className={' font-semibold  text-title-large py-2'}>Personal Statistics</p>
+            <div className={'flex gap-2  w-full '}>
                 <Suspense fallback={<LoadingContainer />}>
                     <Await
                         resolve={promises}
-                        errorElement={<div className={'text-white'}>An Error occurred</div>}>
+                        errorElement={<div className={''}>An Error occurred</div>}>
                         {([rank, statistics]) => (
                             <PlayerStatisticsComponent
                                 statistics={statistics}

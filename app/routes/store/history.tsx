@@ -84,7 +84,7 @@ const StoreHistoryPage = () => {
     }
     return (
         <main>
-            <p className={'font-inter text-title-large font-medium py-2'}>Store history </p>
+            <p className={' text-title-large font-medium py-2'}>Store history </p>
             <div>
                 {sortedOffers.map((offer) => (
                     <DailyStoreComponent
@@ -111,7 +111,7 @@ const DailyStoreComponent = ({
     return (
         <div className={'border-b border-white/20 w-full py-2'}>
             <div className={'flex gap-2 items-center'} onClick={() => setShowItems(!showItems)}>
-                <p className={'font-inter text-headline-small'}>{date}</p>
+                <p className={' text-headline-small'}>{date}</p>
                 <motion.img
                     className={`${
                         showItems ? 'rotate-180' : 'rotate-0'
@@ -136,7 +136,7 @@ const DailyStoreComponent = ({
                             height: 0,
                             opacity: 0,
                         }}>
-                        <p className={'font-inter text-title-small'}>Daily</p>
+                        <p className={' text-title-small'}>Daily</p>
                         {dailyOffers.map((offerWithItem) => (
                             <Container className={'bg-black'} key={offerWithItem.offer.offerId}>
                                 <div className={'flex p-2 items-center'}>
@@ -149,10 +149,7 @@ const DailyStoreComponent = ({
                                     </div>
                                     <div className={'flex justify-between w-full items-center'}>
                                         <div>
-                                            <p
-                                                className={
-                                                    'font-inter font-medium text-sm text-white mt-3'
-                                                }>
+                                            <p className={' font-medium text-sm  mt-3'}>
                                                 {offerWithItem.item?.displayName}
                                             </p>
                                             <span className={'flex text-neutral-600 text-xs'}>
@@ -164,7 +161,7 @@ const DailyStoreComponent = ({
                             </Container>
                         ))}
 
-                        <p className={'font-inter text-title-small'}>Featured</p>
+                        <p className={' text-title-small'}>Featured</p>
                         {featuredOffers.map((offerWithItem) => (
                             <Container className={'bg-black'} key={offerWithItem.offer.offerId}>
                                 <div className={'flex p-2 items-center'}>
@@ -177,10 +174,7 @@ const DailyStoreComponent = ({
                                     </div>
                                     <div className={'flex justify-between w-full items-center'}>
                                         <div>
-                                            <p
-                                                className={
-                                                    'font-inter font-medium text-sm text-white mt-3'
-                                                }>
+                                            <p className={' font-medium text-sm  mt-3'}>
                                                 {offerWithItem.item?.displayName}
                                             </p>
                                             <span className={'flex text-neutral-600 text-xs'}>
@@ -202,9 +196,7 @@ const NoStoreHistoryAvailable = () => {
     return (
         <Container>
             <div className={'text-center'}>
-                <p className={'font-inter text-title-medium font-medium'}>
-                    No store history available
-                </p>
+                <p className={' text-title-medium font-medium'}>No store history available</p>
                 <p className={'text-neutral-500 text-sm'}>
                     It seems like you just recently started using this app. We track your store
                     everyday when rotation changes.{' '}

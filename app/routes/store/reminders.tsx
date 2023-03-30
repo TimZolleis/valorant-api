@@ -52,9 +52,9 @@ const RemindersPage = () => {
         <div>
             <Outlet />
             <div className={'flex w-full justify-between'}>
-                <span className={'w-full pl-1 text-sm flex flex-col font-inter text-neutral-600'}>
+                <span className={'w-full pl-1 text-sm flex flex-col  text-neutral-600'}>
                     <p>REMINDER ADDRESS</p>
-                    <p className={'text-white'}>{userWithReminders.reminder_email}</p>
+                    <p className={''}>{userWithReminders.reminder_email}</p>
                 </span>
                 <div className={'flex w-full justify-end gap-2 items-center'}>
                     <Link to={'add'}>
@@ -103,9 +103,7 @@ const ReminderCard = ({ skin, reminder }: { skin: ValorantApiWeaponSkin; reminde
                 </div>
                 <div className={'flex justify-between w-full items-center'}>
                     <div>
-                        <p className={'font-inter font-medium text-sm text-white mt-3'}>
-                            {reminder.name}
-                        </p>
+                        <p className={' font-medium text-sm  mt-3'}>{reminder.name}</p>
                         <span className={'flex text-neutral-600 text-xs'}>
                             <p>
                                 ADDED{' '}
@@ -128,7 +126,7 @@ const NoRemindersComponent = () => {
     return (
         <div className={'flex justify-center w-full'}>
             <Container className={'mt-10 lg:w-1/2 bg-black'}>
-                <div className={'w-full text-center flex flex-col items-center font-inter p-5'}>
+                <div className={'w-full text-center flex flex-col items-center  p-5'}>
                     <div>
                         <p className={'font-medium text-title-medium'}>
                             You do no not have any reminders

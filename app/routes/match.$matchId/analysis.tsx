@@ -30,7 +30,7 @@ const MatchDetailsPage = () => {
     if (playerGameStats.length > 0) return <p>Showing data</p>;
 
     return (
-        <div className={'text-white mt-5'}>
+        <div className={' mt-5'}>
             <NoDetailsComponent></NoDetailsComponent>
         </div>
     );
@@ -40,7 +40,7 @@ const NoDetailsComponent = () => {
     return (
         <Container>
             <p className={'font-semibold text-center text-title-large'}>No Analytics to show</p>
-            <p className={'text-center font-inter text-label-medium text-gray-400'}>
+            <p className={'text-center  text-label-medium text-gray-400'}>
                 This match has not yet been analysed.
             </p>
             <div className={'flex w-full items-center justify-center mt-3'}>

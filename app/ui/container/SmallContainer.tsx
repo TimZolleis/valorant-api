@@ -4,7 +4,7 @@ export const SmallContainer = ({ children }: { children: ReactNode }) => {
     return (
         <div
             className={
-                'bg-black font-inter border border-zinc-800 rounded-md p-3 w-full transition ease-in-out delay-150 duration-300'
+                'bg-black  border border-zinc-800 rounded-md p-3 w-full transition ease-in-out delay-150 duration-300'
             }>
             {children}
         </div>

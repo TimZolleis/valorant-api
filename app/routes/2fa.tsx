@@ -69,22 +69,19 @@ const LoginPage = () => {
             <div className={'w-full flex flex-col items-center py-20'}>
                 <p
                     className={
-                        'text-white font-bold font-inter text-center text-headline-small md:text-headline-medium'
+                        ' font-bold  text-center text-headline-small md:text-headline-medium'
                     }>
                     Multifactor authentication
                 </p>
-                <p
-                    className={
-                        'font-inter text-gray-400/50 text-label-small text-center md:w-4/12 '
-                    }>
+                <p className={' text-gray-400/50 text-label-small text-center md:w-4/12 '}>
                     Please provide the 2fa code that has been sent to{' '}
                     <span className={'font-bold '}>{email}</span>
                 </p>
-                <div className={'mt-5 lg:w-4/12 space-y-2 text-white'}>
+                <div className={'mt-5 lg:w-4/12 space-y-2 '}>
                     <input
                         name={'multifactor'}
                         className={
-                            'bg-transparent focus:outline-none focus:border-blue-500 placeholder:font-inter border rounded-md border-zinc-800 px-3 py-2 w-full'
+                            'bg-transparent focus:outline-none focus:border-blue-500 placeholder: border rounded-md border-zinc-800 px-3 py-2 w-full'
                         }
                         placeholder={'Code'}
                         type='text'
@@ -99,7 +96,7 @@ const LoginPage = () => {
                     )}
                     <button
                         className={
-                            'text-label-medium bg-blue-600 rounded-md flex items-center justify-center transition ease-in-out hover:bg-transparent hover:border-blue-500 hover:text-blue-500 hover:border gap-2 px-3 py-2 text-white font-inter font-medium text-center w-full'
+                            'text-label-medium bg-blue-600 rounded-md flex items-center justify-center transition ease-in-out hover:bg-transparent hover:border-blue-500 hover:text-blue-500 hover:border gap-2 px-3 py-2   font-medium text-center w-full'
                         }>
                         {navigation.state === 'idle' && <p>Continue</p>}
                         {navigation.state === 'submitting' && (

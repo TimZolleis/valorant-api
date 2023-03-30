@@ -42,12 +42,12 @@ const MatchPage = () => {
     const { detailsPromise } = useLoaderData<typeof loader>();
     return (
         <>
-            <div className={'text-white'}>
+            <div className={''}>
                 <Suspense fallback={<LoadingContainer />}>
                     <Await resolve={detailsPromise}>
                         {(details) => (
                             <div className={'border-b border-zinc-800 py-2'}>
-                                <h1 className={'font-medium text-headline-medium font-inter'}>
+                                <h1 className={'font-medium text-headline-medium '}>
                                     Match details
                                 </h1>
                                 <div className={'flex items-center gap-2'}>
@@ -55,7 +55,7 @@ const MatchPage = () => {
                                         className={
                                             'bg-amber-800/50 border border-amber-500 px-3 py-1 rounded-md'
                                         }>
-                                        <p className={'font-inter text-label-small text-amber-500'}>
+                                        <p className={' text-label-small text-amber-500'}>
                                             {getServerRegion(details.matchInfo.gamePodId)}
                                         </p>
                                     </div>
@@ -63,10 +63,7 @@ const MatchPage = () => {
                                         className={
                                             'bg-rose-800/50 border border-rose-500 px-3 py-1 rounded-md'
                                         }>
-                                        <p
-                                            className={
-                                                'font-inter text-label-small text-rose-500 capitalize'
-                                            }>
+                                        <p className={' text-label-small text-rose-500 capitalize'}>
                                             {details.matchInfo.queueID}
                                         </p>
                                     </div>

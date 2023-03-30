@@ -35,7 +35,7 @@ export const Select = ({
                                 key={option}
                                 className={({ active }) =>
                                     `relative cursor-default select-none py-2 px-3 ${
-                                        active ? 'bg-zinc-500/30 text-white' : 'text-zinc-500'
+                                        active ? 'bg-zinc-500/30 ' : 'text-zinc-500'
                                     }`
                                 }
                                 value={option}>

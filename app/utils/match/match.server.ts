@@ -184,3 +184,16 @@ export async function getRelevantMatchData(
 function sum(a: number, b: number) {
     return a + b;
 }
+
+export async function scheduleMatchForAnalysis(user: ValorantUser, matchId: string) {
+    return prisma.matchAnalysisSchedule.upsert({
+        where: {
+            matchId: matchId,
+        },
+        update: {},
+        create: {
+            matchId,
+            puuid: user.userData.puuid,
+        },
+    });
+}

@@ -3,9 +3,9 @@ import { Player } from '~/models/valorant/match/ValorantMatchDetails';
 import { useFetcherData } from '~/utils/hooks/fetcher';
 import { PlayerRankRoute } from '~/routes/api/player/$playerId/competitive/rank';
 import { CharacterRoute } from '~/routes/api/character/$characterId';
-import { PlayerRank } from '~/utils/player/rank.server';
-import { ValorantApiCharacter } from '~/models/valorant-api/ValorantApiCharacter';
-import { ValorantNameService } from '~/models/valorant/player/ValorantNameService';
+import type { PlayerRank } from '~/utils/player/rank.server';
+import type { ValorantApiCharacter } from '~/models/valorant-api/ValorantApiCharacter';
+import type { ValorantNameService } from '~/models/valorant/player/ValorantNameService';
 
 export const PlayerComponent = ({
     rank,
@@ -24,17 +24,14 @@ export const PlayerComponent = ({
                         <img className={'h-8'} src={character?.displayIconSmall} alt='' />
                     </div>
                     <div>
-                        <p className={'font-inter font-semibold text-title-small'}>
+                        <p className={' font-semibold text-title-small'}>
                             {nameservice.GameName}
                             <span className={'text-neutral-600'}>#{nameservice.TagLine}</span>
                         </p>
                         <div className={'flex gap-2 items-center'}>
                             <>
                                 <img className={'h-6'} src={rank?.tier?.smallIcon} alt='' />
-                                <p
-                                    className={
-                                        'font-inter text-body-medium font-semibold capitalize'
-                                    }>
+                                <p className={' text-body-medium font-semibold capitalize'}>
                                     {rank?.tier?.tierName.toLowerCase()}
                                     <span className={' pl-2 text-gray-400 font-light'}>
                                         {rank?.latestRR}RR

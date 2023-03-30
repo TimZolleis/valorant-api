@@ -92,9 +92,9 @@ export const action = async ({ request }: DataFunctionArgs) => {
 const HistoryPage = () => {
     const { history, selectedQueue } = useLoaderData() as unknown as LoaderData;
     return (
-        <div className={'text-white'}>
+        <div className={''}>
             <span className={'flex gap-2 items-center'}>
-                <p className={'font-inter font-semibold text-title-large py-2'}>Match history</p>
+                <p className={' font-semibold text-title-large py-2'}>Match history</p>
                 <QueueSelector selectedQueue={selectedQueue} />
             </span>
             <div className={'flex gap-2'}>

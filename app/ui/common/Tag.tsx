@@ -21,7 +21,7 @@ const tag = cva('rounded-md px-3 py-1 border', {
 export const Tag = ({ text, color }: TagProps) => {
     return (
         <div className={tag({ color })}>
-            <p className={'font-inter text-xs'}>{text}</p>
+            <p className={' text-xs'}>{text}</p>
         </div>
     );
 };

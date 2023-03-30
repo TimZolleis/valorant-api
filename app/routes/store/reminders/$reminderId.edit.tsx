@@ -78,14 +78,14 @@ const EditReminderPage = () => {
                                     onChange={(event) => setReminderName(event.target.value)}
                                     type={'text'}
                                     className={
-                                        'bg-transparent w-full px-3 py-1.5 font-inter border border-white/20 rounded-md text-sm focus:outline-none'
+                                        'bg-transparent w-full px-3 py-1.5  border border-white/20 rounded-md text-sm focus:outline-none'
                                     }
                                     placeholder={'Send reminder to...'}
                                     defaultValue={reminderName}
                                 />
                             </fetcher.Form>
                             <div>
-                                <p className={'text-xs font-inter text-red-500 font-light mt-2'}>
+                                <p className={'text-xs  text-red-500 font-light mt-2'}>
                                     {fetcher.data?.error}
                                 </p>
                             </div>

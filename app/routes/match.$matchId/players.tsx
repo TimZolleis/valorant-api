@@ -69,12 +69,10 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 const MatchPlayersPage = () => {
     const { enemyTeamDetailsPromise, playerTeamDetailsPromise } = useLoaderData<LoaderData>();
     return (
-        <div className={'text-white'}>
+        <div className={''}>
             <section className={'mt-5 grid gap-2 md:grid-cols-2'}>
                 <section>
-                    <p className={'text-white font-inter text-title-medium font-semibold py-2'}>
-                        Ally team
-                    </p>
+                    <p className={'  text-title-medium font-semibold py-2'}>Ally team</p>
                     <div>
                         <Suspense fallback={<LoadingContainer />}>
                             <div className={'space-y-2'}>
@@ -94,9 +92,7 @@ const MatchPlayersPage = () => {
                     </div>
                 </section>
                 <section>
-                    <p className={'text-white font-inter text-title-medium font-semibold py-2'}>
-                        Enemy team
-                    </p>
+                    <p className={'  text-title-medium font-semibold py-2'}>Enemy team</p>
                     <Suspense fallback={<LoadingContainer />}>
                         <div className={'space-y-2'}>
                             <Await resolve={enemyTeamDetailsPromise}>

@@ -42,17 +42,19 @@ const OfferIdPage = () => {
     return (
         <>
             <div className={'py-2 w-full border-b border-white/20'}>
-                <p className={'font-inter font-medium text-white text-headline-medium '}>
-                    Offer details
-                </p>
+                <p className={' font-medium  text-headline-medium '}>Offer details</p>
                 <Suspense>
                     <Await resolve={prismaOffers}>
                         {(prismaOffers) => (
                             <Detail
                                 title={'LAST SEEN'}
                                 value={
-                                    prismaOffers[0]?.date
-                                        ? DateTime.fromISO(prismaOffers[0].date)
+                                    prismaOffers[1]?.date
+                                        ? DateTime.fromSeconds(prismaOffers[1].date)
+                                              .setLocale('de-DE')
+                                              .toLocaleString()
+                                        : prismaOffers[0]?.date
+                                        ? DateTime.fromSeconds(prismaOffers[0].date)
                                               .setLocale('de-DE')
                                               .toLocaleString()
                                         : 'NEVER'
@@ -64,7 +66,7 @@ const OfferIdPage = () => {
             </div>
             <main className={'flex flex-col w-full'}>
                 <div className={'mt-5'}>
-                    <p className={'font-inter text-title-medium'}>Rewards</p>
+                    <p className={' text-title-medium'}>Rewards</p>
                     <div className={'flex mt-2'}>
                         <Suspense>
                             <Await resolve={items}>
@@ -88,8 +90,8 @@ const OfferIdPage = () => {
 const Detail = ({ title, value }: { title: string; value: string }) => {
     return (
         <div className={'flex gap-1'}>
-            <p className={'text-zinc-500 text-label-medium font-inter font-medium'}>{title}:</p>
-            <p className={'font-medium font-inter  text-label-medium'}>{value}</p>
+            <p className={'text-zinc-500 text-label-medium  font-medium'}>{title}:</p>
+            <p className={'font-medium   text-label-medium'}>{value}</p>
         </div>
     );
 };

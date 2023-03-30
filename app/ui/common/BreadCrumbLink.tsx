@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { Link } from '@remix-run/react';
 
 export const BreadCrumbLink = ({
@@ -11,7 +11,7 @@ export const BreadCrumbLink = ({
     children: ReactNode;
 }) => {
     return (
-        <Link className={`truncate min-w-0 font-inter ${className}`} to={to}>
+        <Link className={`truncate min-w-0  ${className}`} to={to}>
             {children}
         </Link>
     );

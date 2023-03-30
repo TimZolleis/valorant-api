@@ -4,7 +4,7 @@ import { DefaultButton } from '~/ui/common/DefaultButton';
 
 const MatchDetailsPage = () => {
     return (
-        <div className={'text-white mt-5'}>
+        <div className={' mt-5'}>
             <NoDetailsComponent></NoDetailsComponent>
         </div>
     );
@@ -14,7 +14,7 @@ const NoDetailsComponent = () => {
     return (
         <Container>
             <p className={'font-semibold text-center text-title-large'}>No details to show</p>
-            <p className={'text-center font-inter text-label-medium text-gray-400'}>
+            <p className={'text-center  text-label-medium text-gray-400'}>
                 There are currently no match details to show.
             </p>
             <div className={'flex w-full items-center justify-center mt-3'}>

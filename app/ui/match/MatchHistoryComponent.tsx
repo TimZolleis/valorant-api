@@ -21,11 +21,8 @@ export const MatchHistoryComponent = ({ history }: { history: MatchHistory[] }) 
 export const MatchComponent = ({ match }: { match: HistoryMatch }) => {
     return (
         <SmallContainer>
-            <div
-                className={
-                    'flex items-center w-full border-b border-white/20 pb-2 gap-2 font-inter'
-                }>
-                <p className={'text-label-medium leading-none font-inter font-medium'}>
+            <div className={'flex items-center w-full border-b border-white/20 pb-2 gap-2 '}>
+                <p className={'text-label-medium leading-none  font-medium'}>
                     {match.map.displayName}
                 </p>
                 <div className={'rounded-md text-label-small'}>
@@ -36,7 +33,7 @@ export const MatchComponent = ({ match }: { match: HistoryMatch }) => {
                     ) : null}
                 </div>
                 <div className={'bg-amber-800/50 rounded-md px-3 py-1 border border-amber-500'}>
-                    <p className={'text-amber-500 font-inter text-xs capitalize'}>
+                    <p className={'text-amber-500  text-xs capitalize'}>
                         {match.details.matchInfo.queueID}
                     </p>
                 </div>
@@ -54,7 +51,7 @@ export const MatchComponent = ({ match }: { match: HistoryMatch }) => {
                         }></Tag>
                 )}
             </div>
-            <div className={'font-inter leading-1 text-end p-2 '}>
+            <div className={' leading-1 text-end p-2 '}>
                 <div className={'flex justify-between items-center'}>
                     <div className={'flex gap-3 items-center'}>
                         <img

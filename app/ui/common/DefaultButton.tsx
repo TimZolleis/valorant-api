@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { useNavigation, useTransition } from '@remix-run/react';
+import { useNavigation } from '@remix-run/react';
 
 type ButtonType = 'primary' | 'secondary';
 
@@ -34,7 +34,7 @@ export const DefaultButton = ({
 };
 
 const getButtonStyles = (type: ButtonType) => {
-    return ` px-3 flex items-center gap-1 select-none rounded-md py-2 font-inter active:scale-95 transition ease-in-out ${
+    return ` px-3 flex items-center gap-1 select-none rounded-md py-2  active:scale-95 transition ease-in-out ${
         type === 'primary' ? 'bg-white' : 'border border-white/50'
     }`;
 };

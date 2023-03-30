@@ -9,7 +9,7 @@ if (!process.env.SECRET) {
 
 const { getSession, commitSession, destroySession } = createCookieSessionStorage({
     cookie: {
-        name: '__valorant-api-session',
+        name: 'gunbuddy-authentication',
         path: '/',
         sameSite: 'lax',
         maxAge: 60 * 60 * 24 * 90,
@@ -32,6 +32,7 @@ export async function requireUser(
     useApiResponse = false
 ) {
     const user = await getUserFromSession(request);
+    const origin = new URL(request.url).pathname;
     if (!user) {
         if (useApiResponse) {
             throw json(
@@ -50,7 +51,11 @@ export async function requireUser(
         const reauthenticatedAt = session.get('reauthenticated-at') / 1000;
         const currentTimeInSeconds = Date.now() / 1000;
         if (!reauthenticatedAt || currentTimeInSeconds - reauthenticatedAt > 3200) {
-            throw redirect('/reauthenticate');
+            throw redirect('/reauthenticate', {
+                headers: {
+                    'X-Remix-Redirect': origin,
+                },
+            });
         }
     }
     return user;

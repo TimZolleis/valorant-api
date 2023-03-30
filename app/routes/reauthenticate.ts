@@ -12,6 +12,7 @@ import { updateUser } from '~/utils/session/reauthentication.server';
 export const loader = async ({ request }: DataFunctionArgs) => {
     const user = await requireUser(request, false);
     const session = await getClientSession(request);
+    const origin = request.headers.get('X-Remix-Redirect');
     try {
         const reauthenticatedUser = await new RiotReauthenticationClient()
             .init(user)
@@ -20,12 +21,13 @@ export const loader = async ({ request }: DataFunctionArgs) => {
         updateUser(reauthenticatedUser).then(() => console.log('User updated'));
         session.set('user', reauthenticatedUser);
         session.set('reauthenticated-at', Date.now());
-        return redirect('/', {
+        return redirect(origin ? origin : '/', {
             headers: {
                 'Set-Cookie': await commitClientSession(session),
             },
         });
     } catch (e) {
+        console.log(e);
         return redirect('/login', {
             headers: {
                 'Set-Cookie': await destroyClientSession(session),

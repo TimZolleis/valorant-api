@@ -26,7 +26,7 @@ export const handle = {
 
 const StorePage = () => {
     return (
-        <div className={'text-white'}>
+        <div className={''}>
             <Outlet />
         </div>
     );

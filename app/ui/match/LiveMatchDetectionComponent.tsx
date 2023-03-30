@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import type { LiveMatchRoute } from '~/routes/api/match/live';
 import { useNavigate } from 'react-router';
 import { Loading } from '@geist-ui/core';
+import { Button } from '~/ui/common/Button';
 
 function checkForGame(fetcher: FetcherWithComponents<LiveMatchRoute>) {
     fetcher.load('/api/match/live');
@@ -43,18 +44,14 @@ export const LiveMatchDetectionComponent = () => {
 
     return (
         <>
-            <button
-                onClick={() => checkForGame(fetcher)}
-                className={
-                    'px-3 h-12 md:h-10 flex items-center gap-1 select-none rounded-md py-2 bg-white font-inter active:scale-95 transition ease-in-out'
-                }>
+            <Button onClick={() => checkForGame(fetcher)} height={'normal'}>
                 {isLoading && (
                     <div className={'w-10 flex items-center'}>
                         <Loading color={'#000000'} type='error' />
                     </div>
                 )}
                 {!isLoading && <p className={'text-sm'}>Check for live game</p>}
-            </button>
+            </Button>
         </>
     );
 };

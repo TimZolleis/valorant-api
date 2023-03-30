@@ -48,7 +48,7 @@ const SetupRemindersComponent = () => {
                 <Modal visible={showModal} onClose={() => setShowModal(false)}>
                     <Modal.Title>Set Reminder email</Modal.Title>
                     <Modal.Content>
-                        <p className={'mb-2 font-inter text-neutral-600 text-sm'}>
+                        <p className={'mb-2  text-neutral-600 text-sm'}>
                             In order to receive reminders, you are required to set an email where a
                             notification can be sent to
                         </p>
@@ -58,12 +58,12 @@ const SetupRemindersComponent = () => {
                             type={'email'}
                             required={true}
                             className={
-                                'bg-transparent w-full px-3 py-1.5 font-inter border border-white/20 rounded-md text-sm focus:outline-none'
+                                'bg-transparent w-full px-3 py-1.5  border border-white/20 rounded-md text-sm focus:outline-none'
                             }
                             placeholder={'Send reminder to...'}
                         />
                         <div>
-                            <p className={'text-xs font-inter text-red-500 font-light mt-2'}>
+                            <p className={'text-xs  text-red-500 font-light mt-2'}>
                                 {fetcher.data?.error}
                             </p>
                         </div>

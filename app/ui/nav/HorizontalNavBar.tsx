@@ -11,7 +11,7 @@ export const HorizontalNavBar = ({ links }: { links: HorizontalNavBarLink[] }) =
             <div className={'flex space-x-2 border-b border-white/20 w-full'}>
                 {links.map((link) => (
                     <NavLink
-                        className={'text-white font-inter font-semibold '}
+                        className={'  font-semibold '}
                         key={link.href}
                         to={link.href}
                         prefetch={'intent'}>

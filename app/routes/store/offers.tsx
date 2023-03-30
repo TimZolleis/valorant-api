@@ -32,10 +32,10 @@ const StoreOfferPage = () => {
     const { dailyOffers, featuredOffers, nightmarketOffers } = useLoaderData<typeof loader>();
 
     return (
-        <div className={'text-white'}>
+        <div className={''}>
             <section>
                 <div className={'flex gap-2'}>
-                    <p className={'font-inter text-title-large font-medium py-2'}>Daily offers </p>
+                    <p className={' text-title-large font-medium py-2'}>Daily offers </p>
                 </div>
                 <Suspense fallback={<LoadingContainer />}>
                     <Await resolve={dailyOffers}>
@@ -62,7 +62,7 @@ const StoreOfferPage = () => {
             <div className={'w-full h-5 border-b border-white/20'}></div>
 
             <section>
-                <p className={'font-inter text-title-large font-medium py-2'}>Featured offers</p>
+                <p className={' text-title-large font-medium py-2'}>Featured offers</p>
                 <Suspense fallback={<LoadingContainer />}>
                     <Await resolve={featuredOffers}>
                         {(featuredOffers) => (
@@ -87,9 +87,7 @@ const StoreOfferPage = () => {
             {!!featuredOffers && (
                 <section>
                     <Suspense fallback={<LoadingContainer />}>
-                        <p className={'font-inter text-title-large font-medium py-2'}>
-                            Nightmarket offers
-                        </p>
+                        <p className={' text-title-large font-medium py-2'}>Nightmarket offers</p>
                         <Await
                             resolve={nightmarketOffers}
                             errorElement={<div>No nightmarket available</div>}>

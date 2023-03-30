@@ -2,11 +2,11 @@ import type { DataFunctionArgs } from '@vercel/remix';
 import { json } from '@vercel/remix';
 import { requireUser } from '~/utils/session/session.server';
 import { useFetcher } from '@remix-run/react';
+import type { SkinInDictionary } from '~/utils/redis/weapondictionary.server';
 import { searchSkin } from '~/utils/redis/weapondictionary.server';
 import { DefaultButton } from '~/ui/common/DefaultButton';
 import { Modal } from '@geist-ui/core';
 import { useEffect, useState } from 'react';
-import type { Skin } from '@prisma/client';
 import { getItembyItemId } from '~/utils/store/storeoffer.server';
 import { prisma } from '~/utils/db/db.server';
 import { DateTime } from 'luxon';
@@ -66,13 +66,13 @@ const AddRemindersPage = () => {
     const offerFetcher = useFetcher<typeof loader>();
     const addOfferFetcher = useFetcher();
     const [showModal, setShowModal] = useState(false);
-    const [currentWeapon, setCurrentWeapon] = useState<Skin | undefined>(undefined);
+    const [currentWeapon, setCurrentWeapon] = useState<SkinInDictionary | undefined>(undefined);
     const [reminderName, setReminderName] = useState(currentWeapon?.displayName);
     useEffect(() => {
         setReminderName(currentWeapon?.displayName);
     }, [currentWeapon]);
 
-    function addReminder(skin: Skin) {
+    function addReminder(skin: SkinInDictionary) {
         setCurrentWeapon(skin);
         setShowModal(true);
     }
@@ -89,7 +89,7 @@ const AddRemindersPage = () => {
                             defaultValue={currentWeapon?.displayName}
                             onChange={(event) => setReminderName(event.target.value)}
                             className={
-                                'bg-transparent w-full px-3 py-1.5 font-inter border border-white/20 rounded-md text-sm'
+                                'bg-transparent w-full px-3 py-1.5  border border-white/20 rounded-md text-sm'
                             }
                             placeholder={'Reminder name'}
                         />
@@ -114,13 +114,13 @@ const AddRemindersPage = () => {
                 </Modal.Action>
             </Modal>
             <div className={'flex flex-col mt-5'}>
-                <p className={'font-inter text-title-large font-medium py-2'}>Add reminder</p>
+                <p className={' text-title-large font-medium py-2'}>Add reminder</p>
                 <div className={'flex flex-col'}>
                     <div>
                         <offerFetcher.Form method={'get'}>
                             <div
                                 className={
-                                    'flex gap-2 items-center w-full min-w-0 mt-2 border rounded-md border-white/20 px-3 py-2 font-inter text-white text-sm'
+                                    'flex gap-2 items-center w-full min-w-0 mt-2 border rounded-md border-white/20 px-3 py-2   text-sm'
                                 }>
                                 <img className={'h-4'} src={'/resources/icons/search.svg'}></img>
                                 <input
@@ -132,7 +132,7 @@ const AddRemindersPage = () => {
                                     onChange={(event) => offerFetcher.submit(event.target.form)}
                                 />
                             </div>
-                            <p className={'font-inter mt-2 text-sm text-zinc-400'}>
+                            <p className={' mt-2 text-sm text-zinc-400'}>
                                 {' '}
                                 {offerFetcher.data?.skins.length || '0'} Results
                             </p>
@@ -157,10 +157,7 @@ const AddRemindersPage = () => {
                                                 />
                                             </div>
                                             <div className={'flex items-center'}>
-                                                <p
-                                                    className={
-                                                        'font-inter font-medium text-sm text-white mt-3'
-                                                    }>
+                                                <p className={' font-medium text-sm  mt-3'}>
                                                     {skin.displayName}
                                                 </p>
                                             </div>

@@ -50,7 +50,7 @@ export async function storeDatabaseCachedValue<T>(key: string, expiration: numbe
         },
     });
     if (hasValue) {
-        return await prisma.cache.update({
+        return prisma.cache.update({
             where: {
                 key,
             },
@@ -59,7 +59,7 @@ export async function storeDatabaseCachedValue<T>(key: string, expiration: numbe
             },
         });
     } else {
-        return await prisma.cache.create({
+        return prisma.cache.create({
             data: {
                 key,
                 value: stringValue,

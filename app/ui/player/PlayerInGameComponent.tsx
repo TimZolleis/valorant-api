@@ -23,13 +23,13 @@ export const PlayerInGameComponent = ({
                     <img className={'h-8'} src={character?.displayIconSmall} alt='' />
                 </div>
                 <div>
-                    <p className={'font-inter font-semibold text-title-small'}>
+                    <p className={' font-semibold text-title-small'}>
                         {nameService.GameName}
                         <span className={'text-neutral-600'}>#{nameService.TagLine}</span>
                     </p>
                     <div className={'flex gap-2 items-center'}>
                         <img className={'h-6'} src={rank?.tier?.smallIcon} alt='' />
-                        <p className={'font-inter text-body-medium font-semibold capitalize'}>
+                        <p className={' text-body-medium font-semibold capitalize'}>
                             {rank?.tier?.tierName.toLowerCase()}
                             <span className={' pl-2 text-gray-400 font-light'}>
                                 {rank?.latestRR}RR
