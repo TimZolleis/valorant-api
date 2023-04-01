@@ -116,6 +116,9 @@ export class RiotGamesApiClient {
             return await getDatabaseCachedValue(key);
         } catch (error: any) {
             const result = await this.get<T>(request, config, useFallback);
+            if (!result) {
+                throw error;
+            }
             await storeDatabaseCachedValue<T>(key, cacheConfig.expiration, result);
             return result;
         }

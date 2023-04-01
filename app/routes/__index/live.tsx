@@ -5,11 +5,7 @@ import type { ValorantUser } from '~/models/user/ValorantUser';
 import { TEST_COREGAME } from '~/test/TEST_COREGAME';
 import { getRunningCoregameMatch, getRunningPregameMatch } from '~/utils/match/livematch.server';
 import { getPlayerNameService } from '~/utils/player/nameservice.server';
-import {
-    getCharacterByUUid,
-    getMatchMap,
-    scheduleMatchForAnalysis,
-} from '~/utils/match/match.server';
+import { getCharacterByUUid, getMatchMap } from '~/utils/match/match.server';
 import { getPlayerRank } from '~/utils/player/rank.server';
 import { get } from '@vercel/edge-config';
 import { PREGAME_MATCH } from '~/test/TEST_PREGAME';
@@ -26,13 +22,7 @@ import type { VariantProps } from 'class-variance-authority';
 import { cva } from 'class-variance-authority';
 import { PlayerInGameComponent } from '~/ui/player/PlayerInGameComponent';
 import { detectGame } from '~/routes/api/match/live';
-import {
-    commitMatchSession,
-    getCurrentMatch,
-    getLastMatch,
-    setCurrentMatch,
-    setLastMatch,
-} from '~/utils/session/match.server';
+import { getCurrentMatch } from '~/utils/session/match.server';
 
 type TeamType = 'playerTeam' | 'enemyTeam';
 
@@ -104,58 +94,21 @@ export const loader = async ({ request }: DataFunctionArgs) => {
     if (matchType === 'coregame') {
         try {
             const { match, playerTeam, enemyTeam, map } = await getCoregame(user);
-            const session = await setCurrentMatch(request, match.MatchID);
-            return defer(
-                { match, playerTeam, enemyTeam, map, type: matchType },
-                {
-                    headers: {
-                        'Set-Cookie': await commitMatchSession(session),
-                    },
-                }
-            );
+            return defer({ match, playerTeam, enemyTeam, map, type: matchType });
         } catch (e) {
-            const currentMatch = await getCurrentMatch(request);
-            const session = await setLastMatch(request, currentMatch);
-            throw redirect('/', {
-                headers: {
-                    'Set-Cookie': await commitMatchSession(session),
-                },
-            });
+            throw redirect('/');
         }
     }
     if (matchType === 'pregame') {
         try {
             const { match, playerTeam, map } = await getPregame(user);
             const enemyTeam = null;
-            const session = await setCurrentMatch(request, match.ID);
-            return defer(
-                { match, playerTeam, enemyTeam, map, type: matchType },
-                {
-                    headers: {
-                        'Set-Cookie': await commitMatchSession(session),
-                    },
-                }
-            );
+            return defer({ match, playerTeam, enemyTeam, map, type: matchType });
         } catch (e) {
-            const currentMatch = await getCurrentMatch(request);
-            const session = await setLastMatch(request, currentMatch);
-            throw redirect('/', {
-                headers: {
-                    'Set-Cookie': await commitMatchSession(session),
-                },
-            });
+            throw redirect('/');
         }
     }
-    const currentMatch = await getCurrentMatch(request);
-    const session = await setLastMatch(request, currentMatch);
-    if (currentMatch) {
-        await scheduleMatchForAnalysis(user, currentMatch);
-    }
-    throw redirect('/', {
-        headers: {
-            'Set-Cookie': await commitMatchSession(session),
-        },
-    });
+    throw redirect('/');
 };
 
 const LiveMatchPage = () => {

@@ -5,13 +5,14 @@ import type { LiveMatchRoute } from '~/routes/api/match/live';
 import { useNavigate } from 'react-router';
 import { Loading } from '@geist-ui/core';
 import { Button } from '~/ui/common/Button';
+import type { loader } from '~/routes/api/match/live';
 
-function checkForGame(fetcher: FetcherWithComponents<LiveMatchRoute>) {
+function checkForGame(fetcher: FetcherWithComponents<unknown>) {
     fetcher.load('/api/match/live');
 }
 
 export const LiveMatchDetectionComponent = () => {
-    const fetcher = useFetcher<LiveMatchRoute>();
+    const fetcher = useFetcher<typeof loader>();
     const [remainingTime, setRemainingTime] = useState(10);
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();

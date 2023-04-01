@@ -1,26 +1,32 @@
 import type { DataFunctionArgs } from '@vercel/remix';
 import { json } from '@vercel/remix';
-import { requireUser } from '~/utils/session/session.server';
+import { commitClientSession, requireUser } from '~/utils/session/session.server';
 import { getRunningCoregameMatch, getRunningPregameMatch } from '~/utils/match/livematch.server';
 import { NoPregameFoundException } from '~/exceptions/NoPregameFoundException';
 import { NoCoregameFoundException } from '~/exceptions/NoCoregameFoundException';
 import type { ValorantUser } from '~/models/user/ValorantUser';
 import { get } from '@vercel/edge-config';
+import { commitMatchSession, getMatchSession, setCurrentMatch } from '~/utils/session/match.server';
+import type { ValorantPregameMatch } from '~/models/valorant/match/ValorantPregameMatch';
+import type { ValorantCoregameMatch } from '~/models/valorant/match/ValorantCoregameMatch';
+import { PREGAME_MATCH } from '~/test/TEST_PREGAME';
+import { TEST_COREGAME } from '~/test/TEST_COREGAME';
 
-export type GameStatus = 'pregame' | 'coregame' | 'not in game';
+export type GameStatus = 'pregame' | 'coregame' | 'no-game';
 export type LiveMatchRoute = Awaited<ReturnType<typeof loader>>;
 
 export async function detectGame(
     user: ValorantUser,
     puuid: string
-): Promise<{ status: GameStatus }> {
+): Promise<{ status: GameStatus; match: ValorantPregameMatch | ValorantCoregameMatch | null }> {
     try {
         const mockPregame = await get('mockPregame');
         const pregame = mockPregame
-            ? true
+            ? PREGAME_MATCH
             : await getRunningPregameMatch(user, user.userData.puuid);
         return {
             status: 'pregame',
+            match: pregame,
         };
     } catch (e) {
         if (!(e instanceof NoPregameFoundException)) {
@@ -30,10 +36,11 @@ export async function detectGame(
     try {
         const mockCoregame = await get('mockCoregame');
         const coregame = mockCoregame
-            ? true
+            ? TEST_COREGAME
             : await getRunningCoregameMatch(user, user.userData.puuid);
         return {
             status: 'coregame',
+            match: coregame,
         };
     } catch (e) {
         if (!(e instanceof NoCoregameFoundException)) {
@@ -41,11 +48,43 @@ export async function detectGame(
         }
     }
     return {
-        status: 'not in game',
+        status: 'no-game',
+        match: null,
     };
+}
+
+function isPregame(
+    match: ValorantPregameMatch | ValorantCoregameMatch
+): match is ValorantPregameMatch {
+    return 'ID' in match ? match.ID !== undefined : false;
+}
+
+function isCoregame(
+    match: ValorantPregameMatch | ValorantCoregameMatch
+): match is ValorantCoregameMatch {
+    return 'MatchID' in match ? match.MatchID !== undefined : false;
 }
 
 export const loader = async ({ request, params }: DataFunctionArgs) => {
     const user = await requireUser(request);
-    return await detectGame(user, user.userData.puuid);
+    const { status, match } = await detectGame(user, user.userData.puuid);
+    if ((status === 'pregame' || status === 'coregame') && match !== null) {
+        const session = isPregame(match)
+            ? await setCurrentMatch(request, match.ID)
+            : isCoregame(match)
+            ? await setCurrentMatch(request, match.MatchID)
+            : await getMatchSession(request);
+        return json(
+            {
+                status,
+            },
+            {
+                headers: {
+                    'Set-Cookie': await commitMatchSession(session),
+                },
+            }
+        );
+    }
+
+    return json({ status });
 };

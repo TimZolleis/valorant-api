@@ -8,7 +8,6 @@ import {
 } from '~/utils/session/session.server';
 import { RiotReauthenticationClient } from '~/utils/auth/RiotReauthenticationClient';
 import { updateUser } from '~/utils/session/reauthentication.server';
-
 export const loader = async ({ request }: DataFunctionArgs) => {
     const user = await requireUser(request, false);
     const session = await getClientSession(request);
