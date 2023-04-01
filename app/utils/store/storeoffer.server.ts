@@ -11,6 +11,7 @@ import type { ValorantStoreOffers } from '~/models/valorant/store/ValorantStoreO
 import { v4 as uuidv4 } from 'uuid';
 import { itemTypeToValorantApiUrl } from '~/config/skinlevels.';
 import { useRect } from '@geist-ui/core';
+import { constructCacheKey, getCachedValue, storeCachedValue } from '~/utils/cache/cache.server';
 
 function getGenericWeapon() {
     return {
@@ -34,13 +35,17 @@ export async function getStoreFront(user: ValorantUser) {
     const request = new RiotRequest(user.userData.region).buildBaseUrl(
         endpoints.store.storefront(user.userData.puuid)
     );
-    return await new RiotGamesApiClient(
+    const cacheKey = constructCacheKey(request.getUrl(), 'storefront');
+    const value = (await getCachedValue(cacheKey)) as ValorantStoreFront | undefined;
+    if (value) return value;
+    const storeFront = await new RiotGamesApiClient(
         user.accessToken,
         user.entitlement
-    ).getCached<ValorantStoreFront>(request, {
-        key: 'storefront',
-        expiration: getStoreCacheTime(),
-    });
+    ).get<ValorantStoreFront>(request);
+    const cacheExpirationTime =
+        storeFront.SkinsPanelLayout.SingleItemOffersRemainingDurationInSeconds;
+    await storeCachedValue(cacheKey, cacheExpirationTime, storeFront);
+    return value;
 }
 
 export async function getStoreOffers(user: ValorantUser) {

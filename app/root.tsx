@@ -42,19 +42,6 @@ export const meta: MetaFunction = () => ({
 
 export const loader: LoaderFunction = async ({ request }) => {
     const user = await getUserFromSession(request);
-    if (user) {
-        const session = await checkUserMatchesForAnalysis(user, request);
-        return json(
-            {
-                user,
-            },
-            {
-                headers: {
-                    'Set-Cookie': await commitMatchSession(session),
-                },
-            }
-        );
-    }
     return json({
         user,
     });
