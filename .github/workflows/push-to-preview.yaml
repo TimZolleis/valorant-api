@@ -5,6 +5,7 @@ on:
     branches:
       - "*"
       - "!master" # Trigger on any branch other than master
+      - "!preview" # Trigger on any branch other than preview
 
 jobs:
   push_to_preview:
