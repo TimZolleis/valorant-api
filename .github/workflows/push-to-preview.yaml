@@ -27,5 +27,4 @@ jobs:
         uses: ad-m/github-push-action@master
         with:
           branch: preview
-        env:
-          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          token:  ${{ secrets.ACCESS_TOKEN }}
