@@ -36,16 +36,18 @@ export async function getStoreFront(user: ValorantUser) {
         endpoints.store.storefront(user.userData.puuid)
     );
     const cacheKey = constructCacheKey(request.getUrl(), 'storefront');
-    const value = (await getCachedValue(cacheKey)) as ValorantStoreFront | undefined;
-    if (value) return value;
-    const storeFront = await new RiotGamesApiClient(
-        user.accessToken,
-        user.entitlement
-    ).get<ValorantStoreFront>(request);
-    const cacheExpirationTime =
-        storeFront.SkinsPanelLayout.SingleItemOffersRemainingDurationInSeconds;
-    await storeCachedValue(cacheKey, cacheExpirationTime, storeFront);
-    return value;
+    try {
+        return (await getCachedValue(cacheKey)) as ValorantStoreFront;
+    } catch (e) {
+        const storeFront = await new RiotGamesApiClient(
+            user.accessToken,
+            user.entitlement
+        ).get<ValorantStoreFront>(request);
+        const cacheExpirationTime =
+            storeFront.SkinsPanelLayout.SingleItemOffersRemainingDurationInSeconds;
+        await storeCachedValue(cacheKey, cacheExpirationTime, storeFront);
+        return storeFront;
+    }
 }
 
 export async function getStoreOffers(user: ValorantUser) {
