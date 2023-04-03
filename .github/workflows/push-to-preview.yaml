@@ -5,8 +5,7 @@ on:
     branches:
       - "!master" # Trigger on any branch other than master
 
-env:
-  GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+
 jobs:
   push_to_preview:
     runs-on: ubuntu-latest
