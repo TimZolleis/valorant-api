@@ -23,6 +23,7 @@ import { Select } from '~/ui/common/Select';
 type LoaderData = {
     history: Promise<MatchHistory[]>;
     selectedQueue: string | null;
+    competitiveUpdate: ValorantCompetitiveUpdate;
 };
 
 export async function getHistory(
@@ -60,13 +61,13 @@ export const loader = async ({ request }: DataFunctionArgs) => {
             },
         }
     );
-    const competitiveUpdates = await getCompetitiveUpdates(user, user.userData.puuid);
+    const competitiveUpdate = await getCompetitiveUpdates(user, user.userData.puuid);
     const history = Promise.all(
         matchHistory.History.map((match) => {
-            return getHistory(user, match, competitiveUpdates);
+            return getHistory(user, match, competitiveUpdate);
         })
     );
-    return defer<LoaderData>({ history, selectedQueue });
+    return defer<LoaderData>({ history, selectedQueue, competitiveUpdate });
 };
 
 export const action = async ({ request }: DataFunctionArgs) => {
@@ -90,7 +91,7 @@ export const action = async ({ request }: DataFunctionArgs) => {
 };
 
 const HistoryPage = () => {
-    const { history, selectedQueue } = useLoaderData() as unknown as LoaderData;
+    const { history, selectedQueue, competitiveUpdate } = useLoaderData() as unknown as LoaderData;
     return (
         <div className={''}>
             <span className={'flex gap-2 items-center'}>

@@ -6,12 +6,12 @@ import { getPlayerRank } from '~/utils/player/rank.server';
 import { getPlayerNameService } from '~/utils/player/nameservice.server';
 import type { RouteMatch } from '@remix-run/react';
 import { Await, Link, useLoaderData } from '@remix-run/react';
-import { Suspense, useMemo } from 'react';
+import { Suspense } from 'react';
 import type { Player } from '~/models/valorant/match/ValorantMatchDetails';
 import type { ValorantUser } from '~/models/user/ValorantUser';
-import is from '@sindresorhus/is';
 import { PlayerComponent } from '~/ui/player/PlayerComponent';
 import { LoadingContainer } from '~/ui/container/LoadingContainer';
+import { getCompetitiveUpdates } from '~/utils/player/competitiveupdate.server';
 
 type LoaderData = ReturnType<typeof loader>;
 
@@ -23,9 +23,10 @@ export const handle = {
 
 function getPlayerData(user: ValorantUser, player: Player) {
     const rank = getPlayerRank(user, player.subject);
+    const competitiveUpdate = getCompetitiveUpdates(user, player.subject);
     const character = getCharacterByUUid(player.characterId);
     const nameservice = getPlayerNameService(user, player.subject);
-    return { rank, character, nameservice };
+    return { rank, character, nameservice, competitiveUpdate };
 }
 
 export const loader = async ({ request, params }: LoaderArgs) => {
@@ -53,21 +54,32 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 
     const playerTeamDetailsPromise = Promise.all(
         playerTeamPlayerDetails.map((details) =>
-            Promise.all([details.rank, details.nameservice, details.character])
+            Promise.all([
+                details.rank,
+                details.nameservice,
+                details.character,
+                details.competitiveUpdate,
+            ])
         )
     );
 
     const enemyTeamDetailsPromise = Promise.all(
         enemyTeamPlayerDetails.map((details) =>
-            Promise.all([details.rank, details.nameservice, details.character])
+            Promise.all([
+                details.rank,
+                details.nameservice,
+                details.character,
+                details.competitiveUpdate,
+            ])
         )
     );
 
-    return defer({ playerTeamDetailsPromise, enemyTeamDetailsPromise });
+    return defer({ playerTeamDetailsPromise, enemyTeamDetailsPromise, matchId });
 };
 
 const MatchPlayersPage = () => {
-    const { enemyTeamDetailsPromise, playerTeamDetailsPromise } = useLoaderData<LoaderData>();
+    const { enemyTeamDetailsPromise, playerTeamDetailsPromise, matchId } =
+        useLoaderData<LoaderData>();
     return (
         <div className={''}>
             <section className={'mt-5 grid gap-2 md:grid-cols-2'}>
@@ -78,13 +90,18 @@ const MatchPlayersPage = () => {
                             <div className={'space-y-2'}>
                                 <Await resolve={playerTeamDetailsPromise}>
                                     {(value) =>
-                                        value.map(([rank, nameservice, character]) => (
-                                            <PlayerComponent
-                                                key={nameservice.Subject}
-                                                rank={rank}
-                                                character={character}
-                                                nameservice={nameservice}></PlayerComponent>
-                                        ))
+                                        value.map(
+                                            ([rank, nameservice, character, competitiveUpdate]) => (
+                                                <PlayerComponent
+                                                    key={nameservice.Subject}
+                                                    rank={rank}
+                                                    character={character}
+                                                    nameservice={nameservice}
+                                                    competitiveUpdate={competitiveUpdate}
+                                                    matchId={matchId}
+                                                />
+                                            )
+                                        )
                                     }
                                 </Await>
                             </div>
@@ -97,13 +114,18 @@ const MatchPlayersPage = () => {
                         <div className={'space-y-2'}>
                             <Await resolve={enemyTeamDetailsPromise}>
                                 {(value) =>
-                                    value.map(([rank, nameservice, character]) => (
-                                        <PlayerComponent
-                                            key={nameservice.Subject}
-                                            rank={rank}
-                                            character={character}
-                                            nameservice={nameservice}></PlayerComponent>
-                                    ))
+                                    value.map(
+                                        ([rank, nameservice, character, competitiveUpdate]) => (
+                                            <PlayerComponent
+                                                key={nameservice.Subject}
+                                                rank={rank}
+                                                character={character}
+                                                nameservice={nameservice}
+                                                competitiveUpdate={competitiveUpdate}
+                                                matchId={matchId}
+                                            />
+                                        )
+                                    )
                                 }
                             </Await>
                         </div>

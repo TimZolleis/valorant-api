@@ -2,7 +2,7 @@ export interface Match {
     MatchID: string;
     MapID: string;
     SeasonID: string;
-    MatchStartTime: any;
+    MatchStartTime?: any;
     TierAfterUpdate: number;
     TierBeforeUpdate: number;
     RankedRatingAfterUpdate: number;
@@ -18,5 +18,3 @@ export interface ValorantCompetitiveUpdate {
     Subject: string;
     Matches: Match[];
 }
-
-

@@ -5,8 +5,6 @@ import styles from './styles/app.css';
 import DefaultLayout from '~/ui/layout/DefaultLayout';
 import { getUserFromSession } from '~/utils/session/session.server';
 import { GeistProvider } from '@geist-ui/core';
-import { checkUserMatchesForAnalysis } from '~/utils/match/match.server';
-import { commitMatchSession } from '~/utils/session/match.server';
 
 export function links() {
     return [

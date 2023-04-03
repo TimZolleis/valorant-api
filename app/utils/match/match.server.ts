@@ -7,12 +7,9 @@ import { endpoints } from '~/config/endpoints';
 import { RiotGamesApiClient } from '~/utils/riot/RiotGamesApiClient';
 import type { ValorantUser } from '~/models/user/ValorantUser';
 import type { ValorantApiCharacter } from '~/models/valorant-api/ValorantApiCharacter';
-import { prisma } from '~/utils/db/db.server';
 import type { Match } from '~/models/valorant/competitive/ValorantCompetitiveUpdate';
 import type { getHistory } from '~/routes/__index/index';
-import { getPlayerRank } from '~/utils/player/rank.server';
 import { getCompetitiveUpdates } from '~/utils/player/competitiveupdate.server';
-import { getMatchSession, unsetCurrentMatch } from '~/utils/session/match.server';
 
 export async function getMatchMap(mapId: string) {
     const maps = await new ValorantApiClient().getDatabaseCached<ValorantApiMap[]>(
@@ -46,7 +43,6 @@ export async function getMatchDetails(user: ValorantUser, matchId: string) {
 
 export async function analyzeMatch(user: ValorantUser, matchId: string) {
     const details = await getMatchDetails(user, matchId);
-
     return await Promise.all(
         details.players.map((player) => {
             return getPlayerPerformance(user, player, details);
@@ -178,39 +174,4 @@ export async function getRelevantMatchData(
 
 function sum(a: number, b: number) {
     return a + b;
-}
-
-export async function scheduleMatchForAnalysis(user: ValorantUser, matchId: string) {
-    return prisma.matchAnalysisSchedule.upsert({
-        where: {
-            matchId: matchId,
-        },
-        update: {},
-        create: {
-            matchId,
-            puuid: user.userData.puuid,
-        },
-    });
-}
-
-export async function checkUserMatchesForAnalysis(user: ValorantUser, request: Request) {
-    const matchSession = await getMatchSession(request);
-    const matchInSession = matchSession.get('current-game') as string;
-    if (matchSession.get('current-game')) {
-        const match = await prisma.matchAnalysisSchedule.findUnique({
-            where: {
-                matchId: matchInSession,
-            },
-        });
-        if (!match) {
-            await prisma.matchAnalysisSchedule.create({
-                data: {
-                    matchId: matchInSession,
-                    puuid: user.userData.puuid,
-                },
-            });
-        }
-        return unsetCurrentMatch(request);
-    }
-    return matchSession;
 }
