@@ -3,6 +3,7 @@ name: Push to Preview
 on:
   push:
     branches:
+      - "*"
       - "!master" # Trigger on any branch other than master
 
 jobs:
