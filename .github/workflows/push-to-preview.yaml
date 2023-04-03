@@ -3,6 +3,7 @@ name: Push to Preview
 on:
   push:
     branches:
+      - "*"
       - "!master"
 
 jobs:
