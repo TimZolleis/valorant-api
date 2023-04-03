@@ -1,0 +1,27 @@
+name: Push to Preview
+
+on:
+  push:
+    branches:
+      - "!master"
+
+jobs:
+  push_to_preview:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Create preview branch
+        run: |
+          git config user.email "actions@github.com"
+          git config user.name "Action"
+          git checkout -b preview
+          git push origin preview
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          branch: preview
+          force: true # Push changes even if the branch already exists
