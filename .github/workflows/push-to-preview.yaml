@@ -5,7 +5,6 @@ on:
     branches:
       - "!master" # Trigger on any branch other than master
 
-
 jobs:
   push_to_preview:
     runs-on: ubuntu-latest
