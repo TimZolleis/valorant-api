@@ -69,19 +69,5 @@ function isCoregame(
 export const loader = async ({ request, params }: DataFunctionArgs) => {
     const user = await requireUser(request);
     const { status, match } = await detectGame(user, user.userData.puuid);
-    if (status === 'coregame' && match && isCoregame(match)) {
-        const matchStartTime = DateTime.fromMillis(match.Version);
-        await prisma.matchAnalysisSchedule.upsert({
-            where: {
-                matchId: match.MatchID,
-            },
-            update: {},
-            create: {
-                matchId: match.MatchID,
-                matchStartTime: matchStartTime.toJSDate(),
-                puuid: user.userData.puuid,
-            },
-        });
-    }
     return json({ status });
 };

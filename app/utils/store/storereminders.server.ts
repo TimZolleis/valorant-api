@@ -101,7 +101,7 @@ export async function checkIfOfferIsInStore(user: User, offerId: string) {
     return !!offers.find((offer) => offer.offerId === offerId);
 }
 
-export async function sendReminderEmail(users: User[], reminder: Reminder) {
+export async function sendReminderEmail(user: User, reminder: Reminder) {
     const item = await getItembyItemId(reminder.offerId, ITEM_TYPES.SKINLEVEL);
     const mail = new Mail('StoreReminder');
     mail.addVariables([
@@ -115,18 +115,13 @@ export async function sendReminderEmail(users: User[], reminder: Reminder) {
             itemImage: item.displayIcon,
         },
     ]);
-    const recipients = users.map((user) => {
-        if (!user.reminder_email)
-            throw new Error('The user has not set up an email for receiving reminders');
-        return new Recipient(user.reminder_email, {
-            playerName: user.gameName,
-        });
+    if (!user.reminder_email)
+        throw new Error('The user has not set up an email for receiving reminders');
+
+    const recipient = new Recipient(user.reminder_email, {
+        playerName: user.gameName,
     });
-    mail.addRecipients(recipients);
+    mail.addRecipient(recipient);
     const requestId = await new DriftmailClient().send(mail);
-    return prisma.reminderEmail.create({
-        data: {
-            id: requestId,
-        },
-    });
+    return { user, reminder, requestId };
 }

@@ -61,9 +61,14 @@ model Cache {
 }
 
 model MatchAnalysisSchedule {
-  matchId        String   @id
-  puuid          String
+  matchId        String         @id
   matchStartTime DateTime
+  status         AnalysisStatus
+}
+
+enum AnalysisStatus {
+  QUEUED
+  COMPLETE
 }
 
 model MatchPerformance {

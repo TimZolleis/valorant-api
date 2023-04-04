@@ -1,66 +1,58 @@
 import type { DataFunctionArgs } from '@vercel/remix';
+import { json } from '@vercel/remix';
 import { prisma } from '~/utils/db/db.server';
 import { getReauthenticatedUser } from '~/utils/session/reauthentication.server';
 import { analyzeMatch } from '~/utils/match/match.server';
-import { json } from '@vercel/remix';
-import { DateTime } from 'luxon';
+
+async function getRandomUser() {
+    const users = await prisma.user.findMany();
+    const randomIndex = Math.floor(Math.random() * users.length);
+    return users[randomIndex];
+}
 
 export const loader = async ({ request }: DataFunctionArgs) => {
-    // Check for queued matches
-    const queuedMatchIds = await prisma.matchAnalysisSchedule.findMany();
-    //filter for matches that are not completed yet
-    const filteredMatchIds = queuedMatchIds.filter((matchID) => {
-        const matchStartTimeDiff = DateTime.now().diff(
-            DateTime.fromJSDate(matchID.matchStartTime),
-            'minutes'
-        );
-        return matchStartTimeDiff.get('minutes') > 20;
-    });
-    const successfulMatches: Awaited<ReturnType<typeof analyzeMatch>> = [];
+    const successfullyAnalyzedMatches: Awaited<ReturnType<typeof analyzeMatch>> = [];
     const failedMatches: string[] = [];
-
-    try {
-        await Promise.all(
-            filteredMatchIds.map(async (queuedMatch) => {
-                try {
-                    const matchId = queuedMatch.matchId;
-                    const user = await prisma.user.findUnique({
-                        where: { puuid: queuedMatch.puuid },
-                    });
-                    if (!user) {
-                        throw new Error('The requested user is not available');
-                    }
-                    const reauthenticatedUser = await getReauthenticatedUser(user);
-                    const playerPerformances = await analyzeMatch(reauthenticatedUser, matchId);
-                    successfulMatches.push(...playerPerformances);
-                } catch (e) {
-                    failedMatches.push(queuedMatch.matchId);
-                }
-            })
-        );
-        const storedPerformances = await Promise.all(
-            successfulMatches.map(async (playerPerformance) => {
-                try {
-                    await prisma.matchAnalysisSchedule.delete({
-                        where: {
-                            matchId: playerPerformance.matchId,
-                        },
-                    });
-                } catch (e) {}
-                return prisma.matchPerformance.upsert({
-                    where: {
-                        puuid_matchId: {
-                            puuid: playerPerformance.puuid,
-                            matchId: playerPerformance.matchId,
-                        },
-                    },
-                    update: {},
-                    create: { ...playerPerformance },
-                });
-            })
-        );
-        return json({ storedPerformances, failedMatches });
-    } catch (e) {
-        return json({ error: e }, { status: 500 });
+    //Get all the queued matches that have a waiting status
+    const queuedMatches = await prisma.matchAnalysisSchedule.findMany({
+        where: { status: 'QUEUED' },
+    });
+    //Loop all through the matches, pick a random user to use the api and then store the analysis
+    for (const queuedMatch of queuedMatches) {
+        try {
+            const randomUser = await getRandomUser();
+            const reauthenticatedUser = await getReauthenticatedUser(randomUser);
+            const playerPerformances = await analyzeMatch(reauthenticatedUser, queuedMatch.matchId);
+            successfullyAnalyzedMatches.push(...playerPerformances);
+        } catch (e) {
+            failedMatches.push(queuedMatch.matchId);
+        }
     }
+    //Now that we have successfully analyzed the matches and logged the failed ones, we can store them in the database
+    for (const successfullyAnalyzedMatch of successfullyAnalyzedMatches) {
+        //Store the players performance
+        try {
+            await prisma.matchPerformance.create({
+                data: {
+                    ...successfullyAnalyzedMatch,
+                },
+            });
+            // Set the queued match to status "complete"
+            await prisma.matchAnalysisSchedule.update({
+                where: {
+                    matchId: successfullyAnalyzedMatch.matchId,
+                },
+                data: {
+                    status: 'COMPLETE',
+                },
+            });
+        } catch (e) {
+            console.log('Error with storing player performance', e);
+        }
+    }
+    return json({
+        message: 'Successfully ran analysis on matches',
+        successfullyAnalyzedMatches,
+        failedMatches,
+    });
 };
