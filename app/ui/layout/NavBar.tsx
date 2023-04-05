@@ -57,6 +57,11 @@ const NavBar = ({ ref }: { ref?: Ref<any> }) => {
                                         text={'Store'}
                                     />
                                     <NavigationLink
+                                        icon={'/resources/icons/search.svg'}
+                                        to={'/search'}
+                                        text={'Search Player'}
+                                    />
+                                    <NavigationLink
                                         icon={'/resources/icons/user-icon.svg'}
                                         to={user ? '/logout' : '/login'}
                                         text={user ? 'Logout' : 'Login'}

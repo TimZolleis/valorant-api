@@ -1,5 +1,5 @@
 //This endpoint checks the match history of each registered user against the queue and the analyzed matches and decides if there are new matches to analyze
-//This only regards competitive matches since unrated or deathmatch would screw with the statistics that are only important for competitive play
+//This only regards competitive matches since unrated or deathmatch would screw with the statistics that are only important for competitive gamemodes
 import type { DataFunctionArgs } from '@vercel/remix';
 import { json } from '@vercel/remix';
 import { prisma } from '~/utils/db/db.server';

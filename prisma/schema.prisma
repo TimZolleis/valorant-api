@@ -74,6 +74,8 @@ enum AnalysisStatus {
 model MatchPerformance {
   puuid                    String
   matchId                  String
+  matchStartTime           DateTime
+  matchDuration            Float
   rankedRatingBeforeUpdate Int
   rankedRatingAfterUpdate  Int
   tierBeforeUpdate         Int

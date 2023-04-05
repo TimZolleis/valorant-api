@@ -11,4 +11,7 @@ export const valorantApiEndpoints = {
         all: '/weapons',
         byUuid: (uuid: string) => `/weapons/${uuid}`,
     },
+    playerCards: {
+        byUuid: (uuid: string) => `/playercards/${uuid}`,
+    },
 };

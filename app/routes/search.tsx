@@ -1,9 +1,16 @@
-import { Form, useFetcher } from '@remix-run/react';
+import { Form, useFetcher, useNavigation } from '@remix-run/react';
 import type { DataFunctionArgs } from '@vercel/remix';
-import { json } from '@vercel/remix';
+import { json, redirect } from '@vercel/remix';
 import axios from 'axios';
 import type { TrackerPlayerNameQueryResult } from '~/models/trn/searchquery';
 import { Button } from '~/ui/common/Button';
+import { UnofficialValorantApi } from '~/utils/unofficial-valorant-api/client.server';
+import type { UnofficalValorantApiAccountDetails } from '~/models/unofficial-valorant-api/AccountDetails';
+import { unofficalValorantApiEndpoints } from '~/config/unofficialValorantApiEndpoints';
+import { Loading } from '@geist-ui/core';
+import { id } from 'postcss-selector-parser';
+import { LoadingComponent } from '~/ui/common/LoadingComponent';
+import { Container } from '~/ui/container/Container';
 
 async function searchPlayerByName(name: string) {
     return await axios
@@ -18,6 +25,16 @@ async function searchPlayerByName(name: string) {
             }
         )
         .then((res) => res.data.data);
+}
+
+async function getAccountDetailsByPlayerNameAndTag(name: string, tag: string) {
+    return await new UnofficialValorantApi().getCached<UnofficalValorantApiAccountDetails>(
+        unofficalValorantApiEndpoints.getAccountByNameAndTag(name, tag),
+        {
+            key: `account-details-${name}`,
+            expiration: 86400,
+        }
+    );
 }
 
 function parsePlayerName(playerName: string) {
@@ -45,12 +62,16 @@ export const action = async ({ request }: DataFunctionArgs) => {
         throw new Error('Please provide a valid player name');
     }
     const { name, tag } = parsePlayerName(playerName.toString());
-
+    const result = await getAccountDetailsByPlayerNameAndTag(name, tag);
+    if (result) {
+        return redirect(`/search/player/${result.puuid}`);
+    }
     return null;
 };
 
 const SearchPage = () => {
     const fetcher = useFetcher<typeof loader>();
+    const navigation = useNavigation();
     return (
         <div>
             <p className={'text-headline-medium'}>Search Players</p>
@@ -80,6 +101,12 @@ const SearchPage = () => {
                       ))
                     : null}
             </div>
+            {fetcher.state !== 'idle' ? (
+                <LoadingComponent text={'Searching for players'}></LoadingComponent>
+            ) : null}
+            {navigation.state !== 'idle' ? (
+                <LoadingComponent text={'Loading player statistics'}></LoadingComponent>
+            ) : null}
         </div>
     );
 };
@@ -100,6 +127,27 @@ const PlayerComponent = ({ playerName }: { playerName: string }) => {
                 <Button>Check player</Button>
             </div>
         </Form>
+    );
+};
+
+export const ErrorBoundary = () => {
+    return (
+        <div className={'flex items-center justify-center w-full'}>
+            <Container className={'bg-black md:w-2/4'}>
+                <div className={'flex flex-col items-center justify-center'}>
+                    <p className={'text-title-medium font-medium'}>
+                        Oh shoot, something failed here.
+                    </p>
+                    <p className={'text-sm text-gray-400'}>
+                        Something went sideways processing your search. Please try again, but this
+                        player seems crooked
+                    </p>
+                    <Button className={'mt-2'} onClick={() => window.location.reload()}>
+                        <p>Try again</p>
+                    </Button>
+                </div>
+            </Container>
+        </div>
     );
 };
 
