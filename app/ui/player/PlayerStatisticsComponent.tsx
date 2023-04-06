@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { SmallContainer } from '~/ui/container/SmallContainer';
 import type { PlayerRank } from '~/utils/player/rank.server';
 import type { ValorantCompetitiveUpdate } from '~/models/valorant/competitive/ValorantCompetitiveUpdate';
+import { DateTime } from 'luxon';
 
 export const PlayerStatisticsComponent = ({
     statistics,
@@ -34,6 +35,55 @@ export const PlayerStatisticsComponent = ({
             </StatisticsContainer>
             <StatisticsContainer title={'Player Rank'}>
                 <PlayerRankComponent rank={rank}></PlayerRankComponent>
+            </StatisticsContainer>
+        </div>
+    );
+};
+
+export const DailyStatisticsComponent = ({
+    competitiveUpdate,
+}: {
+    competitiveUpdate: ValorantCompetitiveUpdate;
+}) => {
+    const filteredCompetitiveUpdate = competitiveUpdate.Matches.filter((match) => {
+        return DateTime.fromMillis(match.MatchStartTime).toISODate() === DateTime.now().toISODate();
+    });
+
+    const dailyWinrate = () => {
+        const playedGames = filteredCompetitiveUpdate.length;
+        const wonGames = filteredCompetitiveUpdate.filter((match) => {
+            return match.RankedRatingEarned >= 0;
+        }).length;
+        const lostGames = playedGames - wonGames;
+        const winPercentage = (wonGames / playedGames) * 100;
+        const lossPercentage = (lostGames / playedGames) * 100;
+        return { playedGames, wonGames, lostGames, winPercentage, lossPercentage };
+    };
+
+    const dailyRRGain = () => {
+        let RR = 0;
+        filteredCompetitiveUpdate.forEach((match) => {
+            RR += match.RankedRatingEarned;
+        });
+        return RR;
+    };
+
+    return (
+        <div className={'grid md:grid-cols-2 lg:grid-cols-3 gap-2 w-full'}>
+            <StatisticsContainer title={'Daily Winrate'}>
+                <div
+                    className={
+                        'flex gap-2 items-center font-semibold text-title-large p-2 capitalize'
+                    }>
+                    <p>{dailyWinrate().winPercentage || 0}%</p>
+                    <span className={'flex gap-2'}>
+                        <p className={'text-green-800'}> {dailyWinrate().wonGames}</p> /{' '}
+                        <p className={'text-red-800'}> {dailyWinrate().lostGames}</p>
+                    </span>
+                </div>
+            </StatisticsContainer>
+            <StatisticsContainer title={'Daily RR'}>
+                <p className={'font-semibold text-title-large p-2 capitalize'}>{dailyRRGain()}RR</p>
             </StatisticsContainer>
         </div>
     );
