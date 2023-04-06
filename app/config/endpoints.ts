@@ -15,6 +15,7 @@ export const endpoints = {
         competitiveupdate: (puuid: string) => `/mmr/v1/players/${puuid}/competitiveupdates`,
         mmr: (puuid: string) => `/mmr/v1/players/${puuid}`,
         nameservice: '/name-service/v2/players',
+        loadout: (puuid: string) => `/personalization/v2/players/${puuid}/playerloadout`,
     },
     party: {
         player: (puuid: string) => `/parties/v1/players/${puuid}`,

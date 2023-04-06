@@ -10,6 +10,7 @@ import type { ValorantApiCharacter } from '~/models/valorant-api/ValorantApiChar
 import type { Match } from '~/models/valorant/competitive/ValorantCompetitiveUpdate';
 import type { getHistory } from '~/routes/__index/index';
 import { getCompetitiveUpdates } from '~/utils/player/competitiveupdate.server';
+import { DateTime } from 'luxon';
 
 export async function getMatchMap(mapId: string) {
     const maps = await new ValorantApiClient().getDatabaseCached<ValorantApiMap[]>(
@@ -63,7 +64,8 @@ async function getPlayerPerformance(
     return {
         puuid: player.subject,
         matchId: details.matchInfo.matchId,
-
+        matchStartTime: DateTime.fromMillis(details.matchInfo.gameStartMillis).toJSDate(),
+        matchDuration: details.matchInfo.gameLengthMillis,
         score: player.stats.score,
         kills: player.stats.kills,
         deaths: player.stats.deaths,

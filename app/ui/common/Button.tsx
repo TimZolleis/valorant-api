@@ -32,15 +32,16 @@ const button = cva(
 
 interface ButtonProps extends VariantProps<typeof button> {
     children: ReactNode;
+    className?: string;
     onClick?: (e: React.MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => any;
 }
 
-export const Button = ({ children, color, height, loading, onClick }: ButtonProps) => {
+export const Button = ({ children, color, height, loading, onClick, className }: ButtonProps) => {
     const navigation = useNavigation();
     return (
         <button
             onClick={onClick ? (e) => onClick(e) : () => void 0}
-            className={button({ color, height })}>
+            className={`${button({ color, height })} ${className}`}>
             {loading ? (
                 navigation.state === 'loading' ? (
                     <img

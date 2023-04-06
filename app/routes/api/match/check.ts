@@ -14,10 +14,14 @@ export const loader = async ({ request }: DataFunctionArgs) => {
     const successfullyAnalyzedMatches: Awaited<ReturnType<typeof analyzeMatch>> = [];
     const failedMatches: string[] = [];
     //Get all the queued matches that have a waiting status
-    const queuedMatches = await prisma.matchAnalysisSchedule.findMany({
-        where: { status: 'QUEUED' },
-    });
+    const queuedMatches = await prisma.matchAnalysisSchedule
+        .findMany({
+            where: { status: 'QUEUED' },
+        })
+        .then((arr) => arr.slice(0, 2));
+    //We do not analyze more than 2 matches at a time because otherwise riot limit will kick in and the function would run too long
     //Loop all through the matches, pick a random user to use the api and then store the analysis
+
     for (const queuedMatch of queuedMatches) {
         try {
             const randomUser = await getRandomUser();
@@ -25,6 +29,7 @@ export const loader = async ({ request }: DataFunctionArgs) => {
             const playerPerformances = await analyzeMatch(reauthenticatedUser, queuedMatch.matchId);
             successfullyAnalyzedMatches.push(...playerPerformances);
         } catch (e) {
+            console.log('Failed because of', e);
             failedMatches.push(queuedMatch.matchId);
         }
     }

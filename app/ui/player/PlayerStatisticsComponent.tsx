@@ -13,15 +13,6 @@ export const PlayerStatisticsComponent = ({
     rank: PlayerRank;
     competitiveUpdate: ValorantCompetitiveUpdate;
 }) => {
-    const lostMatches = competitiveUpdate.Matches?.filter((match) => match.RankedRatingEarned < 0);
-    const wonMatches = competitiveUpdate.Matches?.filter((match) => match.RankedRatingEarned > 0);
-    const RRGained = wonMatches.reduce((total, match) => {
-        return total + match.RankedRatingEarned;
-    }, 0);
-    const RRLost = lostMatches.reduce((total, match) => {
-        return total + match.RankedRatingEarned;
-    }, 0);
-
     return (
         <div className={'grid md:grid-cols-2 lg:grid-cols-3 gap-2 w-full'}>
             <StatisticsContainer title={'Total Winrate'}>
@@ -41,35 +32,20 @@ export const PlayerStatisticsComponent = ({
                     </p>
                 </div>
             </StatisticsContainer>
-            <StatisticsContainer title={'Current Rank'}>
-                <div className={'flex items-center py-2'}>
-                    <img className={'h-10'} src={rank?.tier?.smallIcon} alt='' />
-                    <div className={'flex flex-col p-2'}>
-                        <p className={'font-semibold  text-title-large capitalize'}>
-                            {rank?.tier?.tierName.toLowerCase()}
-                        </p>
-                        <div className={'flex items-center gap-2'}>
-                            <p className={'text-label-medium leading-none text-neutral-400'}>
-                                {rank?.latestRR}RR
-                            </p>
-                            <span className={'text-label-medium text-neutral-400 flex gap-2'}>
-                                |
-                                <p className={'text-red-500'}>
-                                    ({RRLost} / {(RRLost / lostMatches.length).toFixed(2)}avg)
-                                </p>
-                                <p className={'text-green-500'}>
-                                    ({RRGained} / {(RRGained / wonMatches.length).toFixed(2)}avg)
-                                </p>
-                            </span>
-                        </div>
-                    </div>
-                </div>
+            <StatisticsContainer title={'Player Rank'}>
+                <PlayerRankComponent rank={rank}></PlayerRankComponent>
             </StatisticsContainer>
         </div>
     );
 };
 
-const StatisticsContainer = ({ title, children }: { title: string; children: ReactNode }) => {
+export const StatisticsContainer = ({
+    title,
+    children,
+}: {
+    title: string;
+    children: ReactNode;
+}) => {
     return (
         <SmallContainer>
             <p className={'pb-2 text-label-medium border-b border-white/20'}>{title}</p>
@@ -78,18 +54,21 @@ const StatisticsContainer = ({ title, children }: { title: string; children: Rea
     );
 };
 
-export const WinrateComponent = ({
-    statistics,
-}: {
-    statistics: PlayerStatisticsRoute['statistics'];
-}) => {
+export const PlayerRankComponent = ({ rank }: { rank: PlayerRank }) => {
     return (
-        <SmallContainer>
-            <p className={'pb-2 text-label-medium border-b border-white/20'}>Total Winrate</p>
-            <p className={'font-semibold text-title-large p-2'}>
-                {statistics.totalStatistics.winrate.toFixed(2)}%
-            </p>
-        </SmallContainer>
+        <div className={'flex items-center py-2'}>
+            <img className={'h-10'} src={rank?.tier?.smallIcon} alt='' />
+            <div className={'flex flex-col p-2'}>
+                <p className={'font-semibold  text-title-large capitalize'}>
+                    {rank?.tier?.tierName.toLowerCase()}
+                </p>
+                <div className={'flex items-center gap-2'}>
+                    <p className={'text-label-medium leading-none text-neutral-400'}>
+                        {rank?.latestRR}RR
+                    </p>
+                </div>
+            </div>
+        </div>
     );
 };
 
