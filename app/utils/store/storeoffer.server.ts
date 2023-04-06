@@ -2,7 +2,11 @@ import type { ValorantUser } from '~/models/user/ValorantUser';
 import { RiotRequest } from '~/models/Request';
 import { endpoints } from '~/config/endpoints';
 import { RiotGamesApiClient } from '~/utils/riot/RiotGamesApiClient';
-import type { Offer, ValorantStoreFront } from '~/models/valorant/store/ValorantStoreFront';
+import type {
+    BonusStoreOffer,
+    Offer,
+    ValorantStoreFront,
+} from '~/models/valorant/store/ValorantStoreFront';
 import { DateTime } from 'luxon';
 import { ValorantApiClient } from '~/utils/valorant-api/ValorantApiClient';
 import type { ValorantApiWeaponSkin } from '~/models/valorant-api/ValorantApiWeaponSkin';
@@ -121,7 +125,7 @@ export async function getNightMarket(storefront: ValorantStoreFront) {
                 Offer: {
                     ...offer.Offer,
                     Rewards: rewards,
-                    Cost: getOfferCost(offer.Offer),
+                    Cost: getDiscountedCost(offer),
                 },
             };
         })
@@ -166,4 +170,7 @@ export function getNextStoreRotationTime() {
 
 function getOfferCost(offer: Offer) {
     return offer.Cost[RIOT_POINTS_UUID];
+}
+function getDiscountedCost(offer: BonusStoreOffer) {
+    return offer.DiscountCosts[RIOT_POINTS_UUID];
 }
