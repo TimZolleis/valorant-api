@@ -4,6 +4,12 @@ import { SmallContainer } from '~/ui/container/SmallContainer';
 import type { PlayerRank } from '~/utils/player/rank.server';
 import type { ValorantCompetitiveUpdate } from '~/models/valorant/competitive/ValorantCompetitiveUpdate';
 import { DateTime } from 'luxon';
+import type { getDailyRoundPerformance } from '~/utils/player/statistics.server';
+import { useMemo } from 'react';
+
+function getPercentage(total: number, fraction: number) {
+    return (fraction / total) * 100;
+}
 
 export const PlayerStatisticsComponent = ({
     statistics,
@@ -42,23 +48,25 @@ export const PlayerStatisticsComponent = ({
 
 export const DailyStatisticsComponent = ({
     competitiveUpdate,
+    dailyRoundPerformance,
 }: {
     competitiveUpdate: ValorantCompetitiveUpdate;
+    dailyRoundPerformance: Awaited<ReturnType<typeof getDailyRoundPerformance>>;
 }) => {
     const filteredCompetitiveUpdate = competitiveUpdate.Matches.filter((match) => {
         return DateTime.fromMillis(match.MatchStartTime).toISODate() === DateTime.now().toISODate();
     });
 
-    const dailyWinrate = () => {
+    const dailyWinrate = useMemo(() => {
         const playedGames = filteredCompetitiveUpdate.length;
         const wonGames = filteredCompetitiveUpdate.filter((match) => {
             return match.RankedRatingEarned >= 0;
         }).length;
         const lostGames = playedGames - wonGames;
-        const winPercentage = (wonGames / playedGames) * 100;
-        const lossPercentage = (lostGames / playedGames) * 100;
+        const winPercentage = getPercentage(playedGames, wonGames);
+        const lossPercentage = getPercentage(playedGames, lostGames);
         return { playedGames, wonGames, lostGames, winPercentage, lossPercentage };
-    };
+    }, [filteredCompetitiveUpdate]);
 
     const dailyRRGain = () => {
         let RR = 0;
@@ -75,15 +83,104 @@ export const DailyStatisticsComponent = ({
                     className={
                         'flex gap-2 items-center font-semibold text-title-large p-2 capitalize'
                     }>
-                    <p>{dailyWinrate().winPercentage || 0}%</p>
+                    <p>{dailyWinrate.winPercentage.toFixed(2) || 0}%</p>
                     <span className={'flex gap-2'}>
-                        <p className={'text-green-800'}> {dailyWinrate().wonGames}</p> /{' '}
-                        <p className={'text-red-800'}> {dailyWinrate().lostGames}</p>
+                        <p className={'text-green-800'}> {dailyWinrate.wonGames}</p> /{' '}
+                        <p className={'text-red-800'}> {dailyWinrate.lostGames}</p>
                     </span>
                 </div>
             </StatisticsContainer>
             <StatisticsContainer title={'Daily RR'}>
                 <p className={'font-semibold text-title-large p-2 capitalize'}>{dailyRRGain()}RR</p>
+            </StatisticsContainer>
+            <StatisticsContainer title={'Daily Round Performance'}>
+                <div className={'flex flex-wrap gap-5 justify-between pr-5 mt-2'}>
+                    <div>
+                        <p className={'text-gray-400 text-sm'}>Average Score</p>
+                        <p>
+                            {(
+                                dailyRoundPerformance.dailyAcs.averageScore /
+                                dailyRoundPerformance.gamesPlayed
+                            ).toFixed(2)}
+                        </p>
+                    </div>
+                    <div>
+                        <p className={'text-gray-400 text-sm'}>Average KDA</p>
+                        <span className={'flex'}>
+                            <p>
+                                {Math.ceil(
+                                    dailyRoundPerformance.dailyKDA.kills /
+                                        dailyRoundPerformance.gamesPlayed
+                                )}
+                            </p>
+                            /
+                            <p>
+                                {Math.ceil(
+                                    dailyRoundPerformance.dailyKDA.deaths /
+                                        dailyRoundPerformance.gamesPlayed
+                                )}
+                            </p>
+                            /
+                            <p>
+                                {Math.ceil(
+                                    dailyRoundPerformance.dailyKDA.assists /
+                                        dailyRoundPerformance.gamesPlayed
+                                )}
+                            </p>
+                        </span>
+                    </div>
+                    <div>
+                        <p className={'text-gray-400 text-sm'}>Shot accuracy</p>
+                        <span className={'flex flex-col  text-sm'}>
+                            <span className={'flex gap-1'}>
+                                <p className={'font-bold'}>HS:</p>
+                                <p>
+                                    {dailyRoundPerformance.dailyAccuracy.headShots /
+                                        dailyRoundPerformance.gamesPlayed}
+                                </p>
+                                <p>
+                                    (
+                                    {getPercentage(
+                                        dailyRoundPerformance.dailyAccuracy.totalShots,
+                                        dailyRoundPerformance.dailyAccuracy.headShots
+                                    ).toFixed(2)}
+                                    %)
+                                </p>
+                            </span>
+                            <span className={'flex gap-1'}>
+                                <p className={'font-bold'}>BS:</p>
+                                <p>
+                                    {dailyRoundPerformance.dailyAccuracy.bodyShots /
+                                        dailyRoundPerformance.gamesPlayed}
+                                </p>
+                                <p>
+                                    (
+                                    {getPercentage(
+                                        dailyRoundPerformance.dailyAccuracy.totalShots,
+                                        dailyRoundPerformance.dailyAccuracy.bodyShots
+                                    ).toFixed(2)}
+                                    %)
+                                </p>
+                            </span>
+
+                            <span className={'flex gap-1'}>
+                                <p className={'font-bold'}>LS:</p>
+                                <p>
+                                    {dailyRoundPerformance.dailyAccuracy.legShots /
+                                        dailyRoundPerformance.gamesPlayed}
+                                </p>
+                                <p>
+                                    (
+                                    {getPercentage(
+                                        dailyRoundPerformance.dailyAccuracy.totalShots,
+                                        dailyRoundPerformance.dailyAccuracy.legShots
+                                    ).toFixed(2)}
+                                    %)
+                                </p>
+                            </span>
+                        </span>
+                    </div>
+                </div>
             </StatisticsContainer>
         </div>
     );

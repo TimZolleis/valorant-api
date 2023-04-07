@@ -1,6 +1,6 @@
 import type { DataFunctionArgs } from '@vercel/remix';
 import { requireUser } from '~/utils/session/session.server';
-import { getPlayerStatistics } from '~/utils/player/statistics.server';
+import { getDailyRoundPerformance, getPlayerStatistics } from '~/utils/player/statistics.server';
 import { getPlayerRank } from '~/utils/player/rank.server';
 import { Await, Outlet, useLoaderData } from '@remix-run/react';
 import {
@@ -19,20 +19,33 @@ export const loader = async ({ request }: DataFunctionArgs) => {
     const statisticsPromise = getPlayerStatistics(user, user.userData.puuid);
     const competitiveUpdatePromise = getCompetitiveUpdates(user, user.userData.puuid);
     const rankPromise = getPlayerRank(user, user.userData.puuid);
+    const dailyRoundPerformance = getDailyRoundPerformance(user.userData.puuid);
     return defer({
         user,
         statisticsPromise,
         rankPromise,
         competitiveUpdatePromise,
+        dailyRoundPerformance,
     });
 };
 
 const IndexPage = () => {
-    const { user, rankPromise, statisticsPromise, competitiveUpdatePromise } =
-        useLoaderData<typeof loader>();
+    const {
+        user,
+        rankPromise,
+        statisticsPromise,
+        competitiveUpdatePromise,
+        dailyRoundPerformance,
+    } = useLoaderData<typeof loader>();
     const promises = useMemo(
-        () => Promise.all([rankPromise, statisticsPromise, competitiveUpdatePromise]),
-        [rankPromise, statisticsPromise, competitiveUpdatePromise]
+        () =>
+            Promise.all([
+                rankPromise,
+                statisticsPromise,
+                competitiveUpdatePromise,
+                dailyRoundPerformance,
+            ]),
+        [rankPromise, statisticsPromise, competitiveUpdatePromise, dailyRoundPerformance]
     );
 
     return (
@@ -66,8 +79,11 @@ const IndexPage = () => {
                     <Await
                         resolve={promises}
                         errorElement={<div className={''}>An Error occurred</div>}>
-                        {([rank, statistics, competitiveUpdate]) => (
-                            <DailyStatisticsComponent competitiveUpdate={competitiveUpdate} />
+                        {([rank, statistics, competitiveUpdate, dailyRoundPerformance]) => (
+                            <DailyStatisticsComponent
+                                dailyRoundPerformance={dailyRoundPerformance}
+                                competitiveUpdate={competitiveUpdate}
+                            />
                         )}
                     </Await>
                 </Suspense>

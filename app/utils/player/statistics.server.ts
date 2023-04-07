@@ -8,6 +8,8 @@ import { getRankByTierNumber } from '~/utils/player/rank.server';
 import { ValorantApiClient } from '~/utils/valorant-api/ValorantApiClient';
 import { valorantApiEndpoints } from '~/config/valorantApiEndpoints';
 import type { ValorantApiSeason } from '~/models/valorant-api/ValorantApiSeason';
+import { prisma } from '~/utils/db/db.server';
+import { DateTime } from 'luxon';
 
 export async function getPlayerStatistics(user: ValorantUser, playerUuid: string) {
     const mmr = await getPlayerMMR(user, playerUuid);
@@ -91,6 +93,54 @@ function getTotalGamesAndWins(seasonalInfoBySeasonID: SeasonalInfoBySeasonID) {
         totalWins += season.NumberOfWins;
     });
     return { totalGames, totalWins };
+}
+
+export async function getDailyRoundPerformance(puuid: string) {
+    const dailyMatches = await prisma.matchPerformance.findMany({
+        where: {
+            puuid: puuid,
+            matchStartTime: {
+                gte: DateTime.now().startOf('day').toJSDate(),
+                lt: DateTime.now().endOf('day').toJSDate(),
+            },
+        },
+    });
+    const dailyAcs = dailyMatches.reduce(
+        (a, b) => {
+            const score = b.score;
+            const averageScore = b.score / b.roundsPlayed;
+            return {
+                totalScore: a.totalScore + score,
+                averageScore: a.averageScore + averageScore,
+            };
+        },
+        { totalScore: 0, averageScore: 0 }
+    );
+
+    const dailyKDA = dailyMatches.reduce(
+        (a, b) => {
+            return {
+                kills: a.kills + b.kills,
+                deaths: a.deaths + b.deaths,
+                assists: a.assists + b.assists,
+            };
+        },
+        { kills: 0, deaths: 0, assists: 0 }
+    );
+
+    const dailyAccuracy = dailyMatches.reduce(
+        (a, b) => {
+            return {
+                headShots: a.headShots + b.headShots,
+                bodyShots: a.bodyShots + b.bodyShots,
+                legShots: a.legShots + b.legShots,
+                totalShots: a.totalShots + b.totalShots,
+            };
+        },
+        { headShots: 0, bodyShots: 0, legShots: 0, totalShots: 0 }
+    );
+
+    return { dailyAcs, dailyKDA, dailyAccuracy, gamesPlayed: dailyMatches.length };
 }
 
 function calculateWinrate(gamesWon: number, gamesPlayed: number) {
