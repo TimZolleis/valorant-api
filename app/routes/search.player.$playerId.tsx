@@ -5,12 +5,10 @@ import { getPlayerRank } from '~/utils/player/rank.server';
 import { getCompetitiveUpdates } from '~/utils/player/competitiveupdate.server';
 import { Await, useLoaderData } from '@remix-run/react';
 import { Suspense, useMemo } from 'react';
-import { getPlayerNameService } from '~/utils/player/nameservice.server';
 import { UnofficialValorantApi } from '~/utils/unofficial-valorant-api/client.server';
 import type { UnofficalValorantApiAccountDetails } from '~/models/unofficial-valorant-api/AccountDetails';
 import { unofficalValorantApiEndpoints } from '~/config/unofficialValorantApiEndpoints';
 import {
-    PlayerRankComponent,
     PlayerStatisticsComponent,
     StatisticsContainer,
 } from '~/ui/player/PlayerStatisticsComponent';
@@ -61,7 +59,7 @@ const SearchedPlayerDetailsPage = () => {
                                     #{details.tag}
                                 </p>
                                 <img
-                                    className={'rounded-full w-12 ml-2 '}
+                                    className={'ml-2 w-12 rounded-full '}
                                     src={details.card.small}
                                     alt=''
                                 />
@@ -91,7 +89,7 @@ const SearchedPlayerDetailsPage = () => {
                         <Await resolve={competitiveUpdate}>
                             {(competitiveUpdate) => (
                                 <StatisticsContainer title={'Competitive history'}>
-                                    <div className={'space-y-2 mt-2'}>
+                                    <div className={'mt-2 space-y-2'}>
                                         {competitiveUpdate.Matches.map((match) => (
                                             <Tag
                                                 text={match.RankedRatingEarned.toString()}

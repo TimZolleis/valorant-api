@@ -10,46 +10,46 @@ const NavBar = ({ ref }: { ref?: Ref<any> }) => {
 
     return (
         <div className={'w-full border-b border-zinc-800 bg-black'}>
-            <div ref={ref} className={'justify-between flex px-8 py-3'}>
-                <div className='flex items-center w-full justify-between'>
-                    <span className={'flex items-center min-w-0 truncate pr-5 w-full'}>
+            <div ref={ref} className={'flex justify-between px-8 py-3'}>
+                <div className='flex w-full items-center justify-between'>
+                    <span className={'flex w-full min-w-0 items-center truncate pr-5'}>
                         <Link className={' text-title-medium '} to={'/'}>
                             GunBuddy
                         </Link>
-                        <p className={'pl-1 uppercase text-xs text-amber-600'}>Beta</p>
+                        <p className={'pl-1 text-xs uppercase text-amber-600'}>Beta</p>
                         <img src='/resources/icons/slash-icon.svg' alt='' />
                         <BreadcrumbNavigation />
                     </span>
                     <img
                         onClick={() => setShowNavbar(!showNavbar)}
-                        className={'h-8 hover:cursor-pointer block md:hidden'}
+                        className={'block h-8 hover:cursor-pointer md:hidden'}
                         src='/resources/icons/menu-icon.svg'
                         alt=''
                     />
                     <motion.div
-                        className={`backdrop-blur md:backdrop-blur-none p-3 z-50 fixed left-0 top-0 right-0 bottom-0 md:relative w-full ${
+                        className={`fixed bottom-0 left-0 right-0 top-0 z-50 w-full p-3 backdrop-blur md:relative md:backdrop-blur-none ${
                             showNavbar ? 'flex' : 'hidden'
-                        } md:flex flex-col items-center justify-center`}
+                        } flex-col items-center justify-center md:flex`}
                         onClick={() => setShowNavbar(!showNavbar)}>
                         <div
                             onClick={(e) => e.stopPropagation()}
                             className={
-                                'group fixed md:relative inset-x-0 bottom-0 z-40 w-full cursor-grab md:flex justify-end'
+                                'group fixed inset-x-0 bottom-0 z-40 w-full cursor-grab justify-end md:relative md:flex'
                             }>
-                            <div className='flex flex-col p-5 md:p-0 gap-5 bg-black border-t border-white/20 md:border-none   '>
+                            <div className='flex flex-col gap-5 border-t border-white/20 bg-black p-5 md:border-none md:p-0   '>
                                 <div
                                     className={'flex w-full items-center justify-center md:hidden'}>
                                     <div
-                                        className={'h-2 w-20 bg-neutral-800 rounded-full'}
+                                        className={'h-2 w-20 rounded-full bg-neutral-800'}
                                         onClick={() => setShowNavbar(!showNavbar)}></div>
                                 </div>
                                 <div
-                                    className={'p-5 md:p-0 flex flex-col md:flex-row gap-5'}
+                                    className={'flex flex-col gap-5 p-5 md:flex-row md:p-0'}
                                     onClick={() => setShowNavbar(!showNavbar)}>
                                     <NavigationLink
                                         icon={'/resources/icons/chart-icon.svg'}
-                                        to={'/'}
-                                        text={'Dashboard'}
+                                        to={'/insights'}
+                                        text={'Insights'}
                                     />
                                     <NavigationLink
                                         icon={'/resources/icons/shop-icon.svg'}
@@ -92,7 +92,7 @@ export const HorizontalNavigation = () => {
     return (
         <nav className={'w-full'}>
             {filteredMatches.map((match) => (
-                <div key={match.id} className={'flex gap-2 border-b border-white/20 px-5 w-full'}>
+                <div key={match.id} className={'flex w-full gap-2 border-b border-white/20 px-5'}>
                     {match.handle?.navbar.links.map((link: { href: string; name: string }) => (
                         <NavLink
                             className={'  text-sm '}
@@ -107,8 +107,8 @@ export const HorizontalNavigation = () => {
                                 <div
                                     className={
                                         isActive
-                                            ? 'border-b-2 p-1 border-white'
-                                            : 'border-b-2 p-1 border-transparent'
+                                            ? 'border-b-2 border-white p-1'
+                                            : 'border-b-2 border-transparent p-1'
                                     }>
                                     <div
                                         className={`rounded-md px-3 py-2 transition-all duration-75 hover:bg-neutral-800 ${
@@ -130,10 +130,10 @@ const BreadcrumbNavigation = () => {
     const matches = useMatches();
     const filteredMatches = matches.filter((match) => match.handle && match.handle.breadcrumb);
     return (
-        <nav className={'flex gap-1 min-w-0 '}>
+        <nav className={'flex min-w-0 gap-1 '}>
             {filteredMatches.map((match, index) => (
-                <div className={'flex items-center  min-w-0'} key={index}>
-                    <p className={' min-w-0 flex '}>{match.handle?.breadcrumb(match)}</p>
+                <div className={'flex min-w-0  items-center'} key={index}>
+                    <p className={' flex min-w-0 '}>{match.handle?.breadcrumb(match)}</p>
                     {index < filteredMatches.length - 1 && (
                         <img src='/resources/icons/slash-icon.svg' alt='' />
                     )}
