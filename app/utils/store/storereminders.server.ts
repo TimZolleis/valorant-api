@@ -123,5 +123,6 @@ export async function sendReminderEmail(user: User, reminder: Reminder) {
     });
     mail.addRecipient(recipient);
     const requestId = await new DriftmailClient().send(mail);
+    console.log('Request Id', requestId);
     return { user, reminder, requestId };
 }

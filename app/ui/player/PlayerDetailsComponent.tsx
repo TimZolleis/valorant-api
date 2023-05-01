@@ -1,9 +1,5 @@
 import type { getPlayerStatistics } from '~/utils/player/statistics.server';
 import type { getPlayerRank } from '~/utils/player/rank.server';
-import { Container } from '~/ui/container/Container';
-import { Suspense } from 'react';
-import { LoadingContainer } from '~/ui/container/LoadingContainer';
-import { Await } from '@remix-run/react';
 import { PlayerStatisticsComponent } from '~/ui/player/PlayerStatisticsComponent';
 import type { ValorantNameService } from '~/models/valorant/player/ValorantNameService';
 

@@ -13,6 +13,7 @@ import { DateTime } from 'luxon';
 
 export async function getPlayerStatistics(user: ValorantUser, playerUuid: string) {
     const mmr = await getPlayerMMR(user, playerUuid);
+    console.log(mmr);
     const competitiveSkills = mmr.QueueSkills.competitive;
     const seasonalStatistics = await getSeasonalStatistics(
         competitiveSkills.SeasonalInfoBySeasonID

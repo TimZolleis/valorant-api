@@ -45,7 +45,7 @@ export const LiveMatchDetectionComponent = () => {
 
     return (
         <>
-            <Button onClick={() => checkForGame(fetcher)} height={'normal'}>
+            <Button onClick={() => checkForGame(fetcher)}  height={'normal'}>
                 {isLoading && (
                     <div className={'w-10 flex items-center'}>
                         <Loading color={'#000000'} type='error' />

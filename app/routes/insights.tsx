@@ -1,14 +1,12 @@
 import type { DataFunctionArgs } from '@vercel/remix';
-import { getDailyRoundPerformance } from '~/utils/player/statistics.server';
+import { defer } from '@vercel/remix';
 import { prisma } from '~/utils/db/db.server';
 import { DateTime } from 'luxon';
 import { requireUser } from '~/utils/session/session.server';
-import { defer } from '@vercel/remix';
 import { useLoaderData } from '@remix-run/react';
 import type { MatchPerformance } from '.prisma/client';
 import { AreaChart, BarChart, LineChart } from '@tremor/react';
 import { Container } from '~/ui/container/Container';
-import { da } from 'date-fns/locale';
 import { getCharacterByUUid } from '~/utils/match/match.server';
 import type { ValorantApiCharacter } from '~/models/valorant-api/ValorantApiCharacter';
 
@@ -70,10 +68,6 @@ export const loader = async ({ request, params }: DataFunctionArgs) => {
     );
 
     return defer({ matchesWithCharacter });
-};
-
-export const action = async ({ request, params }: DataFunctionArgs) => {
-    return null;
 };
 const InsightPage = () => {
     const { matchesWithCharacter } = useLoaderData<typeof loader>();
