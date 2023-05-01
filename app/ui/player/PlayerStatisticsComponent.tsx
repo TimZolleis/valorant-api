@@ -6,6 +6,7 @@ import type { ValorantCompetitiveUpdate } from '~/models/valorant/competitive/Va
 import { DateTime } from 'luxon';
 import type { getDailyRoundPerformance } from '~/utils/player/statistics.server';
 import { useMemo } from 'react';
+import type { PlayerStatistics } from '~/ui/player/PlayerDetailsComponent';
 
 function getPercentage(total: number, fraction: number) {
     return (fraction / total) * 100;
@@ -14,16 +15,14 @@ function getPercentage(total: number, fraction: number) {
 export const PlayerStatisticsComponent = ({
     statistics,
     rank,
-    competitiveUpdate,
 }: {
-    statistics: PlayerStatisticsRoute['statistics'];
+    statistics: PlayerStatistics;
     rank: PlayerRank;
-    competitiveUpdate: ValorantCompetitiveUpdate;
 }) => {
     return (
-        <div className={'grid md:grid-cols-2 lg:grid-cols-3 gap-2 w-full'}>
+        <div className={'grid w-full gap-2 md:grid-cols-2 lg:grid-cols-3'}>
             <StatisticsContainer title={'Total Winrate'}>
-                <p className={'font-semibold text-title-large p-2'}>
+                <p className={'p-2 text-title-large font-semibold'}>
                     {statistics.totalStatistics.winrate.toFixed(2)}%
                 </p>
             </StatisticsContainer>
@@ -34,7 +33,7 @@ export const PlayerStatisticsComponent = ({
                         src={statistics.totalStatistics.topRank?.smallIcon}
                         alt=''
                     />
-                    <p className={'font-semibold text-title-large p-2 capitalize'}>
+                    <p className={'p-2 text-title-large font-semibold capitalize'}>
                         {statistics.totalStatistics?.topRank?.tierName.toLowerCase()}
                     </p>
                 </div>
@@ -77,11 +76,11 @@ export const DailyStatisticsComponent = ({
     };
 
     return (
-        <div className={'grid md:grid-cols-2 lg:grid-cols-3 gap-2 w-full'}>
+        <div className={'grid w-full gap-2 md:grid-cols-2 lg:grid-cols-3'}>
             <StatisticsContainer title={'Daily Winrate'}>
                 <div
                     className={
-                        'flex gap-2 items-center font-semibold text-title-large p-2 capitalize'
+                        'flex items-center gap-2 p-2 text-title-large font-semibold capitalize'
                     }>
                     <p>{dailyWinrate.winPercentage.toFixed(2) || 0}%</p>
                     <span className={'flex gap-2'}>
@@ -91,12 +90,12 @@ export const DailyStatisticsComponent = ({
                 </div>
             </StatisticsContainer>
             <StatisticsContainer title={'Daily RR'}>
-                <p className={'font-semibold text-title-large p-2 capitalize'}>{dailyRRGain()}RR</p>
+                <p className={'p-2 text-title-large font-semibold capitalize'}>{dailyRRGain()}RR</p>
             </StatisticsContainer>
             <StatisticsContainer title={'Daily Round Performance'}>
-                <div className={'flex flex-wrap gap-5 justify-between pr-5 mt-2'}>
+                <div className={'mt-2 flex flex-wrap justify-between gap-5 pr-5'}>
                     <div>
-                        <p className={'text-gray-400 text-sm'}>Average Score</p>
+                        <p className={'text-sm text-gray-400'}>Average Score</p>
                         <p>
                             {(
                                 dailyRoundPerformance.dailyAcs.averageScore /
@@ -105,7 +104,7 @@ export const DailyStatisticsComponent = ({
                         </p>
                     </div>
                     <div>
-                        <p className={'text-gray-400 text-sm'}>Average KDA</p>
+                        <p className={'text-sm text-gray-400'}>Average KDA</p>
                         <span className={'flex'}>
                             <p>
                                 {Math.ceil(
@@ -130,7 +129,7 @@ export const DailyStatisticsComponent = ({
                         </span>
                     </div>
                     <div>
-                        <p className={'text-gray-400 text-sm'}>Shot accuracy</p>
+                        <p className={'text-sm text-gray-400'}>Shot accuracy</p>
                         <span className={'flex flex-col  text-sm'}>
                             <span className={'flex gap-1'}>
                                 <p className={'font-bold'}>HS:</p>
@@ -195,7 +194,7 @@ export const StatisticsContainer = ({
 }) => {
     return (
         <SmallContainer>
-            <p className={'pb-2 text-label-medium border-b border-white/20'}>{title}</p>
+            <p className={'border-b border-white/20 pb-2 text-label-medium'}>{title}</p>
             {children}
         </SmallContainer>
     );
@@ -206,7 +205,7 @@ export const PlayerRankComponent = ({ rank }: { rank: PlayerRank }) => {
         <div className={'flex items-center py-2'}>
             <img className={'h-10'} src={rank?.tier?.smallIcon} alt='' />
             <div className={'flex flex-col p-2'}>
-                <p className={'font-semibold  text-title-large capitalize'}>
+                <p className={'text-title-large  font-semibold capitalize'}>
                     {rank?.tier?.tierName.toLowerCase()}
                 </p>
                 <div className={'flex items-center gap-2'}>
@@ -226,14 +225,14 @@ export const TopRankComponent = ({
 }) => {
     return (
         <SmallContainer>
-            <p className={'pb-2 text-label-medium border-b border-white/20'}>Top Rank</p>
+            <p className={'border-b border-white/20 pb-2 text-label-medium'}>Top Rank</p>
             <div className={'flex items-center py-2'}>
                 <img
                     className={'h-10'}
                     src={statistics.totalStatistics.topRank?.smallIcon}
                     alt=''
                 />
-                <p className={'font-semibold text-title-large p-2 capitalize'}>
+                <p className={'p-2 text-title-large font-semibold capitalize'}>
                     {statistics.totalStatistics?.topRank?.tierName.toLowerCase()}
                 </p>
             </div>
