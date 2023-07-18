@@ -1,6 +1,6 @@
 import type { DataFunctionArgs } from '@vercel/remix';
 import { defer, redirect } from '@vercel/remix';
-import { commitClientSession, getClientSession, requireUser } from '~/utils/session/session.server';
+import { commitSession, getSession, requireUser } from '~/utils/session/session.server';
 import { prisma } from '~/utils/db/db.server';
 import { Await, Form, Link, Outlet, useLoaderData } from '@remix-run/react';
 import { Container } from '~/ui/container/Container';
@@ -26,11 +26,11 @@ export const loader = async ({ request }: DataFunctionArgs) => {
         },
     });
     if (!userWithReminders) throw new Error('You do not have any reminders');
-    const session = await getClientSession(request);
+    const session = await getSession(request);
     if (!userWithReminders.reminder_email && !request.url.includes('setup')) {
         throw redirect('/store/reminders/setup', {
             headers: {
-                'Set-Cookie': await commitClientSession(session),
+                'Set-Cookie': await commitSession(session),
             },
         });
     }

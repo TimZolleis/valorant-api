@@ -1,4 +1,5 @@
 import type { DataFunctionArgs } from '@vercel/remix';
+import { defer } from '@vercel/remix';
 import { requireUser } from '~/utils/session/session.server';
 import { getDailyRoundPerformance, getPlayerStatistics } from '~/utils/player/statistics.server';
 import { getPlayerRank } from '~/utils/player/rank.server';
@@ -9,9 +10,7 @@ import {
 } from '~/ui/player/PlayerStatisticsComponent';
 import { Suspense, useMemo } from 'react';
 import { LoadingContainer } from '~/ui/container/LoadingContainer';
-import type { ValorantUser } from '~/models/user/ValorantUser';
 import { LiveMatchDetectionComponent } from '~/ui/match/LiveMatchDetectionComponent';
-import { defer } from '@vercel/remix';
 import { getCompetitiveUpdates } from '~/utils/player/competitiveupdate.server';
 
 export const loader = async ({ request }: DataFunctionArgs) => {

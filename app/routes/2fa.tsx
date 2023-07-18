@@ -2,7 +2,7 @@ import type { ActionFunction, DataFunctionArgs } from '@vercel/remix';
 import { json, redirect } from '@vercel/remix';
 import { requireLoginData } from '~/utils/auth/authrequest.server';
 import { RiotAuthenticationClient } from '~/utils/auth/RiotAuthenticationClient';
-import { commitClientSession, getClientSession } from '~/utils/session/session.server';
+import { commitSession, getSession } from '~/utils/session/session.server';
 import { Form, useActionData, useLoaderData, useNavigation, useTransition } from '@remix-run/react';
 import base64url from 'base64url';
 import { decode } from 'url-safe-base64';
@@ -31,12 +31,12 @@ export const action: ActionFunction = async ({ request, params }) => {
             multifactorCode,
             decodedCookies
         );
-        const session = await getClientSession(request);
+        const session = await getSession(request);
         session.set('user', user);
         session.set('reauthenticated-at', Date.now());
         return redirect('/', {
             headers: {
-                'Set-Cookie': await commitClientSession(session),
+                'Set-Cookie': await commitSession(session),
             },
         });
     } catch (e) {

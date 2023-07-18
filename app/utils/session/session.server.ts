@@ -7,7 +7,11 @@ if (!process.env.SECRET) {
     throw new Error('Session secret missing from ENV');
 }
 
-const { getSession, commitSession, destroySession } = createCookieSessionStorage({
+const {
+    getSession: getInternalSession,
+    commitSession: commitInternalSession,
+    destroySession: destroyInternalSession,
+} = createCookieSessionStorage({
     cookie: {
         name: 'gunbuddy-authentication',
         path: '/',
@@ -17,12 +21,12 @@ const { getSession, commitSession, destroySession } = createCookieSessionStorage
     },
 });
 
-export async function getClientSession(request: Request) {
-    return await getSession(request.headers.get('Cookie'));
+export async function getSession(request: Request) {
+    return await getInternalSession(request.headers.get('Cookie'));
 }
 
 export async function getUserFromSession(request: Request): Promise<ValorantUser | undefined> {
-    const session = await getClientSession(request);
+    const session = await getSession(request);
     return session.get('user');
 }
 
@@ -47,7 +51,7 @@ export async function requireUser(
         throw redirect('/login');
     }
     if (verifyValidAuthentication) {
-        const session = await getClientSession(request);
+        const session = await getSession(request);
         const reauthenticatedAt = session.get('reauthenticated-at') / 1000;
         const currentTimeInSeconds = Date.now() / 1000;
         if (!reauthenticatedAt || currentTimeInSeconds - reauthenticatedAt > 3200) {
@@ -95,10 +99,10 @@ export function requireParam(param: string, params: Params) {
     return value;
 }
 
-export async function commitClientSession(session: Session) {
-    return await commitSession(session);
+export async function commitSession(session: Session) {
+    return await commitInternalSession(session);
 }
 
-export async function destroyClientSession(session: Session) {
-    return await destroySession(session);
+export async function destroySession(session: Session) {
+    return await destroyInternalSession(session);
 }

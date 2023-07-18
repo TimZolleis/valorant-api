@@ -1,14 +1,14 @@
 import type { LoaderFunction, MetaFunction } from '@vercel/remix';
 import { json } from '@vercel/remix';
 import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration } from '@remix-run/react';
-import styles from './styles/app.css';
+import stylesheet from '~/tailwind.css';
 import DefaultLayout from '~/ui/layout/DefaultLayout';
 import { getUserFromSession } from '~/utils/session/session.server';
 import { GeistProvider } from '@geist-ui/core';
 
 export function links() {
     return [
-        { rel: 'stylesheet', href: styles },
+        { rel: 'stylesheet', href: stylesheet },
 
         {
             rel: 'apple-touch-icon',
