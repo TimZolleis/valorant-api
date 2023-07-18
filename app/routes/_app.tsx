@@ -1,9 +1,12 @@
 import DefaultLayout from '~/ui/layout/DefaultLayout';
+import { Outlet } from '@remix-run/react';
 
-const AppLayout = () => {
+const NewLayoutPage = () => {
     return (
         <DefaultLayout>
-            <AppLayout />
+            <Outlet />
         </DefaultLayout>
     );
 };
+
+export default NewLayoutPage;

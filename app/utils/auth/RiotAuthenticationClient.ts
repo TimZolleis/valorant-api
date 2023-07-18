@@ -118,15 +118,19 @@ export class RiotAuthenticationClient {
         this.jar = cookieJar;
         this.client = client;
         return await this.client
-            .put<ValorantAuthenticationTokenResponse>(`${ENDPOINTS.AUTH}/api/v1/authorization`, {
-                type: 'multifactor',
-                code: multifactorCode,
-                rememberDevice: true,
-            })
+            .put<ValorantAuthenticationTokenResponse>(
+                'https://auth.riotgames.com/api/v1/authorization',
+                {
+                    type: 'multifactor',
+                    code: multifactorCode,
+                    rememberDevice: true,
+                }
+            )
             .then((response) => {
                 return parseTokenData(response.data.response.parameters.uri);
             })
             .catch((error) => {
+                console.log(error);
                 throw new Error(`Invalid code: ${error.message}`);
             });
     }

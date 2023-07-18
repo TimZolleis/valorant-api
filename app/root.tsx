@@ -1,4 +1,4 @@
-import type { LoaderFunction, MetaFunction } from '@vercel/remix';
+import type { LoaderFunction, MetaFunction, V2_MetaFunction } from '@vercel/remix';
 import { json } from '@vercel/remix';
 import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration } from '@remix-run/react';
 import stylesheet from '~/tailwind.css';
@@ -31,11 +31,9 @@ export function links() {
     ];
 }
 
-export const meta: MetaFunction = () => ({
-    charset: 'utf-8',
-    title: 'GunBuddy',
-    viewport: 'width=device-width,initial-scale=1',
-});
+export const meta: V2_MetaFunction = () => {
+    return [{ title: 'New Remix App' }, { name: 'description', content: 'Welcome to Remix!' }];
+};
 
 export const loader: LoaderFunction = async ({ request }) => {
     const user = await getUserFromSession(request);
@@ -51,7 +49,7 @@ export default function App() {
                 <Meta />
                 <Links />
             </head>
-            <body className={'block relative bg-[#0a0a0a] text-white font-inter'}>
+            <body className={'block relative  text-white font-inter'}>
                 <GeistProvider themeType={'dark'}>
                     <Outlet />
                     <ScrollRestoration />

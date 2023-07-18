@@ -1,13 +1,15 @@
 import type { ActionFunction } from '@vercel/remix';
-import { json, redirect } from '@vercel/remix';
+import { redirect } from '@vercel/remix';
 import { RiotAuthenticationClient } from '~/utils/auth/RiotAuthenticationClient';
-import { commitSession, getSession } from '~/utils/session/session.server';
-import { Form, Link, useActionData, useNavigation } from '@remix-run/react';
+import { getSession } from '~/utils/session/session.server';
 import { MultifactorAuthenticationRequiredException } from '~/exceptions/MultifactorAuthenticationRequiredException';
 import { zfd } from 'zod-form-data';
 import { handleActionError } from '~/utils/general-utils';
 import { Input } from '~/components/ui/Input';
 import { Label } from '~/components/ui/label';
+import { Button } from '~/components/ui/Button';
+import { Form, useNavigation } from '@remix-run/react';
+import { Loader } from '~/components/ui/Loader';
 
 const loginSchema = zfd.formData({
     username: zfd.text(),
@@ -31,24 +33,35 @@ export const action: ActionFunction = async ({ request, params }) => {
 };
 
 const LoginPage = () => {
+    const navigation = useNavigation();
     return (
         <>
             <div className='container flex h-screen w-screen flex-col items-center justify-center'>
                 <div className='mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]'>
                     <div className='flex flex-col space-y-2 text-center'>
+                        <div className={'flex justify-center'}>
+                            <img
+                                className={'h-24 w-24'}
+                                src='/favicons/android-chrome-256x256.png'
+                                alt=''
+                            />
+                        </div>
                         <h1 className='text-2xl font-semibold tracking-tight'>Welcome back</h1>
                         <p className='text-sm text-muted-foreground'>
-                            Enter your email to sign in to your account
+                            Enter your email to sign in to your RiotGames account
                         </p>
                     </div>
-                    <div className={'grid gap-2'}>
-                        <Label>Username</Label>
-                        <Input name={'username'} />
-                    </div>
-                    <div className={'grid gap-2'}>
-                        <Label>Password</Label>
-                        <Input type={'password'} name={'password'}></Input>
-                    </div>
+                    <Form method={'post'} className={'grid gap-2 w-full'}>
+                        <div className={'grid gap-2'}>
+                            <Label>Username</Label>
+                            <Input name={'username'} />
+                        </div>
+                        <div className={'grid gap-2'}>
+                            <Label>Password</Label>
+                            <Input type={'password'} name={'password'}></Input>
+                        </div>
+                        <Button>{navigation.state === 'idle' ? 'Sign in' : <Loader />}</Button>
+                    </Form>
                 </div>
             </div>
         </>
