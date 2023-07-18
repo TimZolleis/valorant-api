@@ -2,7 +2,6 @@ import type { LoaderFunction, MetaFunction } from '@vercel/remix';
 import { json } from '@vercel/remix';
 import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration } from '@remix-run/react';
 import stylesheet from '~/tailwind.css';
-import DefaultLayout from '~/ui/layout/DefaultLayout';
 import { getUserFromSession } from '~/utils/session/session.server';
 import { GeistProvider } from '@geist-ui/core';
 
@@ -54,9 +53,7 @@ export default function App() {
             </head>
             <body className={'block relative bg-[#0a0a0a] text-white font-inter'}>
                 <GeistProvider themeType={'dark'}>
-                    <DefaultLayout>
-                        <Outlet />
-                    </DefaultLayout>
+                    <Outlet />
                     <ScrollRestoration />
                     <Scripts />
                     <LiveReload />

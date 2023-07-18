@@ -6,6 +6,8 @@ import { Form, Link, useActionData, useNavigation } from '@remix-run/react';
 import { MultifactorAuthenticationRequiredException } from '~/exceptions/MultifactorAuthenticationRequiredException';
 import { zfd } from 'zod-form-data';
 import { handleActionError } from '~/utils/general-utils';
+import { Input } from '~/components/ui/Input';
+import { Label } from '~/components/ui/label';
 
 const loginSchema = zfd.formData({
     username: zfd.text(),
@@ -39,7 +41,14 @@ const LoginPage = () => {
                             Enter your email to sign in to your account
                         </p>
                     </div>
-                    <p className='px-8 text-center text-sm text-muted-foreground'></p>
+                    <div className={'grid gap-2'}>
+                        <Label>Username</Label>
+                        <Input name={'username'} />
+                    </div>
+                    <div className={'grid gap-2'}>
+                        <Label>Password</Label>
+                        <Input type={'password'} name={'password'}></Input>
+                    </div>
                 </div>
             </div>
         </>

@@ -8,7 +8,7 @@ import { RiotGamesApiClient } from '~/utils/riot/RiotGamesApiClient';
 import type { ValorantUser } from '~/models/user/ValorantUser';
 import type { ValorantApiCharacter } from '~/models/valorant-api/ValorantApiCharacter';
 import type { Match } from '~/models/valorant/competitive/ValorantCompetitiveUpdate';
-import type { getHistory } from '~/routes/__index/index';
+import type { getHistory } from '~/routes/_app._index.live._index';
 import { getCompetitiveUpdates } from '~/utils/player/competitiveupdate.server';
 import { DateTime } from 'luxon';
 
