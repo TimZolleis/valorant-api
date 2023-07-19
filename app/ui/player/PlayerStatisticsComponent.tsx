@@ -1,12 +1,12 @@
-import type { PlayerStatisticsRoute } from '~/routes/api/player/$playerId/competitive/statistics';
 import type { ReactNode } from 'react';
+import { useMemo } from 'react';
 import { SmallContainer } from '~/ui/container/SmallContainer';
 import type { PlayerRank } from '~/utils/player/rank.server';
 import type { ValorantCompetitiveUpdate } from '~/models/valorant/competitive/ValorantCompetitiveUpdate';
 import { DateTime } from 'luxon';
 import type { getDailyRoundPerformance } from '~/utils/player/statistics.server';
-import { useMemo } from 'react';
 import type { PlayerStatistics } from '~/ui/player/PlayerDetailsComponent';
+import type { PlayerStatisticsRoute } from '~/routes/api.player.$playerId.statistics';
 
 function getPercentage(total: number, fraction: number) {
     return (fraction / total) * 100;
@@ -22,7 +22,7 @@ export const PlayerStatisticsComponent = ({
     return (
         <div className={'grid w-full gap-2 md:grid-cols-2 lg:grid-cols-3'}>
             <StatisticsContainer title={'Total Winrate'}>
-                <p className={'p-2 text-title-large font-semibold'}>
+                <p className={'p-2 text-2xl font-semibold'}>
                     {statistics.totalStatistics.winrate.toFixed(2)}%
                 </p>
             </StatisticsContainer>
@@ -33,7 +33,7 @@ export const PlayerStatisticsComponent = ({
                         src={statistics.totalStatistics.topRank?.smallIcon}
                         alt=''
                     />
-                    <p className={'p-2 text-title-large font-semibold capitalize'}>
+                    <p className={'p-2 text-2xl font-semibold capitalize'}>
                         {statistics.totalStatistics?.topRank?.tierName.toLowerCase()}
                     </p>
                 </div>
@@ -78,10 +78,7 @@ export const DailyStatisticsComponent = ({
     return (
         <div className={'grid w-full gap-2 md:grid-cols-2 lg:grid-cols-3'}>
             <StatisticsContainer title={'Daily Winrate'}>
-                <div
-                    className={
-                        'flex items-center gap-2 p-2 text-title-large font-semibold capitalize'
-                    }>
+                <div className={'flex items-center gap-2 p-2 text-2xl font-semibold capitalize'}>
                     <p>{dailyWinrate.winPercentage.toFixed(2) || 0}%</p>
                     <span className={'flex gap-2'}>
                         <p className={'text-green-800'}> {dailyWinrate.wonGames}</p> /{' '}
@@ -90,7 +87,7 @@ export const DailyStatisticsComponent = ({
                 </div>
             </StatisticsContainer>
             <StatisticsContainer title={'Daily RR'}>
-                <p className={'p-2 text-title-large font-semibold capitalize'}>{dailyRRGain()}RR</p>
+                <p className={'p-2 text-2xl font-semibold capitalize'}>{dailyRRGain()}RR</p>
             </StatisticsContainer>
             <StatisticsContainer title={'Daily Round Performance'}>
                 <div className={'mt-2 flex flex-wrap justify-between gap-5 pr-5'}>
@@ -194,7 +191,7 @@ export const StatisticsContainer = ({
 }) => {
     return (
         <SmallContainer>
-            <p className={'border-b border-white/20 pb-2 text-label-medium'}>{title}</p>
+            <p className={'border-b pb-2 text-lg'}>{title}</p>
             {children}
         </SmallContainer>
     );
@@ -205,13 +202,11 @@ export const PlayerRankComponent = ({ rank }: { rank: PlayerRank }) => {
         <div className={'flex items-center py-2'}>
             <img className={'h-10'} src={rank?.tier?.smallIcon} alt='' />
             <div className={'flex flex-col p-2'}>
-                <p className={'text-title-large  font-semibold capitalize'}>
+                <p className={'text-2xl font-semibold capitalize'}>
                     {rank?.tier?.tierName.toLowerCase()}
                 </p>
                 <div className={'flex items-center gap-2'}>
-                    <p className={'text-label-medium leading-none text-neutral-400'}>
-                        {rank?.latestRR}RR
-                    </p>
+                    <p className={'text-sm leading-none text-neutral-400'}>{rank?.latestRR}RR</p>
                 </div>
             </div>
         </div>

@@ -63,11 +63,7 @@ const IndexPage = () => {
                         resolve={promises}
                         errorElement={<div className={''}>An Error occurred</div>}>
                         {([rank, statistics, competitiveUpdate]) => (
-                            <PlayerStatisticsComponent
-                                statistics={statistics}
-                                rank={rank}
-                                competitiveUpdate={competitiveUpdate}
-                            />
+                            <PlayerStatisticsComponent statistics={statistics} rank={rank} />
                         )}
                     </Await>
                 </Suspense>

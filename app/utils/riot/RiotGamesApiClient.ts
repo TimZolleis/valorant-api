@@ -17,6 +17,22 @@ import {
     storeCachedValue,
     storeDatabaseCachedValue,
 } from '~/utils/cache/cache.server';
+import { get } from '@vercel/edge-config';
+
+import { z } from 'zod';
+
+export const riotConfigSchema = z.object({
+    ciphers: z.array(z.string()),
+    clientPlatform: z.object({
+        platformChipset: z.string(),
+        platformOS: z.string(),
+        platformOSVersion: z.string(),
+        platformType: z.string(),
+    }),
+    riotClientBuild: z.string(),
+    riotClientVersion: z.string(),
+});
+export type RiotConfig = z.infer<typeof riotConfigSchema>;
 
 export class RiotGamesApiClient {
     axiosClient: AxiosInstance;
@@ -26,7 +42,9 @@ export class RiotGamesApiClient {
     constructor(accessToken: string, entitlement: string) {
         this.accessToken = accessToken;
         this.entitlement = entitlement;
-        this.axiosClient = this.getAxiosClient(accessToken, entitlement);
+    }
+    async assignClient() {
+        this.axiosClient = await this.getAxiosClient();
     }
 
     async get<T>(
@@ -35,6 +53,7 @@ export class RiotGamesApiClient {
         useFallback = false
     ): Promise<T> {
         const url = useFallback ? request.getFallback().getUrl() : request.getUrl();
+        await this.assignClient();
         return this.axiosClient
             .get(url, config)
             .then((response) => response.data)
@@ -50,6 +69,7 @@ export class RiotGamesApiClient {
         useFallback = false
     ) {
         const url = useFallback ? request.getFallback().getUrl() : request.getUrl();
+        await this.assignClient();
         return this.axiosClient
             .post(url, body, config)
             .then((response) => response.data)
@@ -63,6 +83,7 @@ export class RiotGamesApiClient {
         useFallback = false
     ) {
         const url = useFallback ? request.getFallback().getUrl() : request.getUrl();
+        await this.assignClient();
         return this.axiosClient
             .put(url, body, config)
             .then((response) => response.data)
@@ -76,6 +97,7 @@ export class RiotGamesApiClient {
         useFallback = false
     ): Promise<T> {
         const url = useFallback ? request.getFallback().getUrl() : request.getUrl();
+        await this.assignClient();
         const key = constructCacheKey(url, cacheConfig.key);
         try {
             return await getCachedValue(key);
@@ -94,6 +116,7 @@ export class RiotGamesApiClient {
         useFallback = false
     ): Promise<T> {
         const url = useFallback ? request.getFallback().getUrl() : request.getUrl();
+        await this.assignClient();
         const key = constructCacheKey(url, cacheConfig.key);
         try {
             return await getCachedValue(key);
@@ -111,6 +134,7 @@ export class RiotGamesApiClient {
         useFallback = false
     ): Promise<T> {
         const url = useFallback ? request.getFallback().getUrl() : request.getUrl();
+        await this.assignClient();
         const key = constructCacheKey(url, cacheConfig.key);
         try {
             return await getDatabaseCachedValue(key);
@@ -137,12 +161,13 @@ export class RiotGamesApiClient {
         }
     }
 
-    private getAxiosClient(accessToken: string, entitlement: string, extraHeaders?: {}) {
+    private async getAxiosClient(extraHeaders?: {}) {
+        const riotConfig = await get('riotConfig').then((res) => riotConfigSchema.parse(res));
         return axios.create({
             headers: {
-                ...getDefaultHeaders(),
-                ...getAuthorizationHeader(accessToken),
-                ...getEntitlementsHeader(entitlement),
+                ...getDefaultHeaders(riotConfig),
+                ...getAuthorizationHeader(this.accessToken),
+                ...getEntitlementsHeader(this.entitlement),
                 ...extraHeaders,
             },
         });

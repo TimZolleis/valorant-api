@@ -4,8 +4,9 @@ import type { CookieAgent } from 'http-cookie-agent/http';
 import { HttpsCookieAgent } from 'http-cookie-agent/http';
 import type * as https from 'https';
 import type { InternalAxiosRequestConfig } from 'axios';
-import axios, { AxiosRequestConfig } from 'axios';
+import axios from 'axios';
 import { riotConfig } from '~/config/riot';
+import type { RiotConfig } from '~/utils/riot/RiotGamesApiClient';
 
 declare global {
     var __lastApiRequest: number | undefined;
@@ -30,7 +31,12 @@ export function getLoginClient(jar: CookieJar = new CookieJar()) {
         axios.create({
             httpAgent: getAgent(jar),
             httpsAgent: getAgent(jar),
-            headers: { ...getDefaultHeaders() },
+            headers: {
+                ...getDefaultHeaders({
+                    riotClientVersion: riotConfig.clientVersion,
+                    clientPlatform: riotConfig.clientPlatform,
+                }),
+            },
         })
     );
     client.interceptors.request.use((config) => requestScheduler(config, 100));
@@ -51,12 +57,14 @@ function getAgent(jar: CookieJar): CookieAgent<https.Agent> {
     });
 }
 
-export function getDefaultHeaders() {
+export function getDefaultHeaders(config: Partial<RiotConfig>) {
     return {
         'content-type': AXIOS_CONSTANTS.CONTENT_TYPE,
-        'user-agent': AXIOS_CONSTANTS.USER_AGENT,
-        'X-Riot-ClientVersion': riotConfig.clientVersion,
-        ...getClientPlatformHeader(),
+        'user-agent': `RiotClient/${config.riotClientBuild} rso-auth (Windows;10;;Professional, x64)`,
+        'X-Riot-ClientVersion': config.riotClientVersion,
+        'X-Riot-ClientPlatform': Buffer.from(JSON.stringify(config.clientPlatform)).toString(
+            'base64'
+        ),
     };
 }
 

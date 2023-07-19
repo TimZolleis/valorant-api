@@ -9,12 +9,10 @@ import {
 } from '~/utils/store/storeoffer.server';
 import type { RouteMatch } from '@remix-run/react';
 import { Await, useLoaderData } from '@remix-run/react';
-import { Suspense, useEffect } from 'react';
+import { Suspense } from 'react';
 import { WeaponComponent } from '~/ui/weapon/WeaponComponent';
 import { LoadingContainer } from '~/ui/container/LoadingContainer';
 import { BreadCrumbLink } from '~/ui/common/BreadCrumbLink';
-import type { ValorantStoreFront } from '~/models/valorant/store/ValorantStoreFront';
-import { DateTime } from 'luxon';
 
 export const loader = async ({ request }: DataFunctionArgs) => {
     const user = await requireUser(request);
