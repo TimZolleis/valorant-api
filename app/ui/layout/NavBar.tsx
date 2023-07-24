@@ -9,7 +9,7 @@ const NavBar = ({ ref }: { ref?: Ref<any> }) => {
     const [showNavbar, setShowNavbar] = useState(false);
 
     return (
-        <div className={'w-full border-b border-zinc-800 '}>
+        <div className={'w-full border-b border-zinc-800 h-16'}>
             <div ref={ref} className={'justify-between flex px-8 py-3'}>
                 <div className='flex items-center w-full justify-between'>
                     <span className={'flex items-center min-w-0 truncate pr-5 w-full'}>
@@ -26,50 +26,6 @@ const NavBar = ({ ref }: { ref?: Ref<any> }) => {
                         src='/resources/icons/menu-icon.svg'
                         alt=''
                     />
-                    <motion.div
-                        className={`backdrop-blur md:backdrop-blur-none p-3 z-50 fixed left-0 top-0 right-0 bottom-0 md:relative w-full ${
-                            showNavbar ? 'flex' : 'hidden'
-                        } md:flex flex-col items-center justify-center`}
-                        onClick={() => setShowNavbar(!showNavbar)}>
-                        <div
-                            onClick={(e) => e.stopPropagation()}
-                            className={
-                                'group fixed md:relative inset-x-0 bottom-0 z-40 w-full cursor-grab md:flex justify-end'
-                            }>
-                            <div className='flex flex-col p-5 md:p-0 gap-5  border-t border-white/20 md:border-none   '>
-                                <div
-                                    className={'flex w-full items-center justify-center md:hidden'}>
-                                    <div
-                                        className={'h-2 w-20 bg-neutral-800 rounded-full'}
-                                        onClick={() => setShowNavbar(!showNavbar)}></div>
-                                </div>
-                                <div
-                                    className={'p-5 md:p-0 flex flex-col md:flex-row gap-5'}
-                                    onClick={() => setShowNavbar(!showNavbar)}>
-                                    <NavigationLink
-                                        icon={'/resources/icons/chart-icon.svg'}
-                                        to={'/'}
-                                        text={'Dashboard'}
-                                    />
-                                    <NavigationLink
-                                        icon={'/resources/icons/shop-icon.svg'}
-                                        to={'/store/offers'}
-                                        text={'Store'}
-                                    />
-                                    <NavigationLink
-                                        icon={'/resources/icons/search.svg'}
-                                        to={'/search'}
-                                        text={'Search Player'}
-                                    />
-                                    <NavigationLink
-                                        icon={'/resources/icons/user-icon.svg'}
-                                        to={user ? '/logout' : '/login'}
-                                        text={user ? 'Logout' : 'Login'}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </motion.div>
                 </div>
             </div>
             <HorizontalNavigation />
@@ -77,9 +33,9 @@ const NavBar = ({ ref }: { ref?: Ref<any> }) => {
     );
 };
 
-const NavigationLink = ({ icon, to, text }: { icon: string; to: string; text: string }) => {
+export const NavigationLink = ({ icon, to, text }: { icon: string; to: string; text: string }) => {
     return (
-        <Link to={to} className={'flex items-center gap-2'}>
+        <Link to={to} className={'flex items-center gap-2 p-2 hover:bg-accent/80 rounded-md'}>
             <img className={'h-5'} src={icon} alt='' />
             <p className={'  text-sm'}>{text}</p>
         </Link>

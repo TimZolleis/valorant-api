@@ -8,7 +8,7 @@ import type {
     ValorantStoreFront,
 } from '~/models/valorant/store/ValorantStoreFront';
 import { DateTime } from 'luxon';
-import { ValorantApiClient } from '~/utils/valorant-api/ValorantApiClient';
+import { ValorantApiClient } from '~/utils/valorant-api/valorant-api.client';
 import type { ValorantApiWeaponSkin } from '~/models/valorant-api/ValorantApiWeaponSkin';
 import { RIOT_POINTS_UUID } from '~/config/riot';
 import type { ValorantStoreOffers } from '~/models/valorant/store/ValorantStoreOffers';
@@ -135,7 +135,7 @@ export async function getNightMarket(storefront: ValorantStoreFront) {
 export async function getItembyItemId(itemId: string, itemTypeId: string) {
     const url = itemTypeToValorantApiUrl[itemTypeId](itemId);
     if (!url) throw new Error('The provided itemTypeId is invalid');
-    return await new ValorantApiClient().getDatabaseCached<ValorantApiWeaponSkin>(url, {
+    return await new ValorantApiClient().getCached<ValorantApiWeaponSkin>(url, {
         key: 'skinlevel',
         expiration: 0,
     });

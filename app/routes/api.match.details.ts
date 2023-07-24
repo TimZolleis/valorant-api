@@ -4,7 +4,7 @@ import { requireUser } from '~/utils/session/session.server';
 import { RiotRequest } from '~/models/Request';
 import { endpoints } from '~/config/endpoints';
 import { RiotGamesApiClient } from '~/utils/riot/RiotGamesApiClient';
-import { ValorantApiClient } from '~/utils/valorant-api/ValorantApiClient';
+import { ValorantApiClient } from '~/utils/valorant-api/valorant-api.server';
 import { valorantApiEndpoints } from '~/config/valorantApiEndpoints';
 
 function requireMatchId(request: Request) {

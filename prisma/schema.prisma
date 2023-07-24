@@ -55,11 +55,6 @@ model Reminder {
   createdAt      String
 }
 
-model Cache {
-  key   String @id @unique
-  value Json
-}
-
 model MatchAnalysisSchedule {
   matchId        String         @id
   matchStartTime DateTime

@@ -49,7 +49,7 @@ export default function App() {
                 <Meta />
                 <Links />
             </head>
-            <body className={'block relative  text-white font-inter'}>
+            <body className={'font-inter dark'}>
                 <GeistProvider themeType={'dark'}>
                     <Outlet />
                     <ScrollRestoration />

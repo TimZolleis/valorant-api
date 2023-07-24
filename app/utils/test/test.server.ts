@@ -1,7 +1,7 @@
 import type { ValorantUser } from '~/models/user/ValorantUser';
 import { RiotRequest } from '~/models/Request';
 import { endpoints } from '~/config/endpoints';
-import { ValorantApiClient } from '~/utils/valorant-api/ValorantApiClient';
+import { ValorantApiClient } from '~/utils/valorant-api/valorant-api.server';
 import { RiotGamesApiClient } from '~/utils/riot/RiotGamesApiClient';
 import type { MatchHistoryResponse } from 'valorant-api-types';
 import { getMatchDetails } from '~/utils/match/match.server';

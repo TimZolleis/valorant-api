@@ -1,15 +1,15 @@
-import { ValorantApiClient } from '~/utils/valorant-api/ValorantApiClient';
+import { ValorantApiClient } from '~/utils/valorant-api/valorant-api.server';
 import { valorantApiEndpoints } from '~/config/valorantApiEndpoints';
-import { ValorantApiCompetitiveSeason } from '~/models/valorant-api/ValorantApiCompetitiveSeasons';
+import type { ValorantApiCompetitiveSeason } from '~/models/valorant-api/ValorantApiCompetitiveSeasons';
 import { seasonsConfig } from '~/config/season';
-import { ValorantUser } from '~/models/user/ValorantUser';
+import type { ValorantUser } from '~/models/user/ValorantUser';
 import { getLatestCompetitiveUpdate } from '~/utils/player/competitiveupdate.server';
-import { ValorantApiCompetitiveTier } from '~/models/valorant-api/ValorantApiCompetitiveTier';
+import type { ValorantApiCompetitiveTier } from '~/models/valorant-api/ValorantApiCompetitiveTier';
 
 export type PlayerRank = Awaited<ReturnType<typeof getPlayerRank>>;
 
 export async function getCurrentCompetitiveTiers() {
-    const competitiveSeasons = await new ValorantApiClient().getDatabaseCached<
+    const competitiveSeasons = await new ValorantApiClient().getCached<
         ValorantApiCompetitiveSeason[]
     >(valorantApiEndpoints.competitiveSeasons, {
         key: 'competitive-seasons',
@@ -18,7 +18,7 @@ export async function getCurrentCompetitiveTiers() {
     const competitiveTiersUuid = competitiveSeasons.find((season) => {
         return season.seasonUuid === seasonsConfig.currentAct.ID;
     })?.competitiveTiersUuid;
-    return await new ValorantApiClient().getDatabaseCached<ValorantApiCompetitiveTier>(
+    return await new ValorantApiClient().getCached<ValorantApiCompetitiveTier>(
         valorantApiEndpoints.competitiveTierByUUid(competitiveTiersUuid!),
         {
             key: 'competitive-tiers',

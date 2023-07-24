@@ -6,7 +6,7 @@ import { MultifactorAuthenticationRequiredException } from '~/exceptions/Multifa
 import { zfd } from 'zod-form-data';
 import { handleActionError } from '~/utils/general-utils';
 import { Input } from '~/components/ui/Input';
-import { Label } from '~/components/ui/label';
+import { Label } from '~/components/ui/Label';
 import { Button } from '~/components/ui/Button';
 import { Form, useNavigation } from '@remix-run/react';
 import { Loader } from '~/components/ui/Loader';

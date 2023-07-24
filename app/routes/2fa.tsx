@@ -4,7 +4,7 @@ import { RiotAuthenticationClient } from '~/utils/auth/RiotAuthenticationClient'
 import { commitSession, getSession } from '~/utils/session/session.server';
 import { Form, Link, useActionData, useLoaderData, useNavigation } from '@remix-run/react';
 import type { AuthenticationCookies } from '~/models/cookies/MultifactorCookies';
-import { Label } from '~/components/ui/label';
+import { Label } from '~/components/ui/Label';
 import { Input } from '~/components/ui/Input';
 import { Button } from '~/components/ui/Button';
 import { Loader } from '~/components/ui/Loader';

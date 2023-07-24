@@ -1,7 +1,6 @@
 import type { ValorantApiWeaponSkin } from '~/models/valorant-api/ValorantApiWeaponSkin';
 import { Container } from '~/ui/container/Container';
 import { Link } from '@remix-run/react';
-import { Card, CardContent, CardHeader } from '~/components/ui/card';
 
 export const WeaponComponent = ({
     weapon,

@@ -1,4 +1,4 @@
-import { ValorantApiClient } from '~/utils/valorant-api/ValorantApiClient';
+import { ValorantApiClient } from '~/utils/valorant-api/valorant-api.client';
 import type { ValorantApiWeaponSkin } from '~/models/valorant-api/ValorantApiWeaponSkin';
 import { valorantApiEndpoints } from '~/config/valorantApiEndpoints';
 import MiniSearch from 'minisearch';
@@ -48,7 +48,7 @@ async function storeAllSkinlevels() {
 }
 
 async function getAllSkinLevels() {
-    return await new ValorantApiClient().getDatabaseCached<ValorantApiWeaponSkin[]>(
+    return await new ValorantApiClient().getCached<ValorantApiWeaponSkin[]>(
         valorantApiEndpoints.weapon.allSkinlevels,
         {
             key: 'skinlevel',

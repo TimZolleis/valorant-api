@@ -1,5 +1,5 @@
 import type { Player, ValorantMatchDetails } from '~/models/valorant/match/ValorantMatchDetails';
-import { ValorantApiClient } from '~/utils/valorant-api/ValorantApiClient';
+import { ValorantApiClient } from '~/utils/valorant-api/valorant-api.server';
 import type { ValorantApiMap } from '~/models/valorant-api/ValorantApiMap';
 import { valorantApiEndpoints } from '~/config/valorantApiEndpoints';
 import { RiotRequest } from '~/models/Request';
@@ -11,9 +11,36 @@ import type { Match } from '~/models/valorant/competitive/ValorantCompetitiveUpd
 import type { getHistory } from '~/routes/_app.live._index';
 import { getCompetitiveUpdates } from '~/utils/player/competitiveupdate.server';
 import { DateTime } from 'luxon';
+import type { MatchHistoryResponse } from 'valorant-api-types';
+
+export async function getMatches(user: ValorantUser) {
+    const history = await new RiotGamesApiClient(
+        user.accessToken,
+        user.entitlement
+    ).getCached<MatchHistoryResponse>(
+        new RiotRequest(user.userData.region).buildBaseUrl(
+            endpoints.match.history(user.userData.puuid)
+        ),
+        {
+            key: 'match-history',
+            expiration: 300,
+        },
+        {
+            params: {
+                queue: 'competitive',
+            },
+        }
+    );
+    return await Promise.all(
+        history.History.map(async (match) => {
+            const details = await getMatchDetails(user, match.MatchID);
+            return { details, ...match };
+        })
+    );
+}
 
 export async function getMatchMap(mapId: string) {
-    const maps = await new ValorantApiClient().getDatabaseCached<ValorantApiMap[]>(
+    const maps = await new ValorantApiClient().getCached<ValorantApiMap[]>(
         valorantApiEndpoints.maps,
         {
             key: 'maps',
@@ -118,7 +145,7 @@ function analyzePlayerShots(puuid: string, details: ValorantMatchDetails) {
 
 export async function getCharacterByUUid(characterId: string | undefined) {
     if (!characterId) return null;
-    return await new ValorantApiClient().getDatabaseCached<ValorantApiCharacter>(
+    return await new ValorantApiClient().getCached<ValorantApiCharacter>(
         valorantApiEndpoints.characterByUuid(characterId),
         {
             key: 'character',

@@ -2,13 +2,7 @@ import type { AxiosInstance } from 'axios';
 import axios from 'axios';
 import { ValorantApiNotAvailableException } from '~/exceptions/ValorantApiNotAvailableException';
 import type { CacheConfig } from '~/utils/redis/redis.server';
-import {
-    constructCacheKey,
-    getCachedValue,
-    getDatabaseCachedValue,
-    storeCachedValue,
-    storeDatabaseCachedValue,
-} from '~/utils/cache/cache.server';
+import { constructCacheKey, getCachedValue, storeCachedValue } from '~/utils/cache/cache.server';
 
 export class ValorantApiClient {
     axiosClient: AxiosInstance;
@@ -35,16 +29,6 @@ export class ValorantApiClient {
         } catch (error: any) {
             const result = await this.get<T>(url);
             await storeCachedValue<T>(key, cacheConfig.expiration, result);
-            return result;
-        }
-    }
-    async getDatabaseCached<T>(url: string, cacheConfig: CacheConfig): Promise<T> {
-        const key = constructCacheKey(url, cacheConfig.key);
-        try {
-            return await getDatabaseCachedValue<T>(key);
-        } catch (error: any) {
-            const result = await this.get<T>(url);
-            await storeDatabaseCachedValue<T>(key, cacheConfig.expiration, result);
             return result;
         }
     }

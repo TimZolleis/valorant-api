@@ -5,7 +5,7 @@ import { RiotGamesApiClient } from '~/utils/riot/RiotGamesApiClient';
 import type { ValorantApiPlayerLoadout } from '~/models/valorant-api/ValorantApiPlayerLoadout';
 import { getPlayerRank } from '~/utils/player/rank.server';
 import { getCompetitiveUpdates } from '~/utils/player/competitiveupdate.server';
-import { ValorantApiClient } from '~/utils/valorant-api/ValorantApiClient';
+import { ValorantApiClient } from '~/utils/valorant-api/valorant-api.client';
 import { valorantApiEndpoints } from '~/config/valorantApiEndpoints';
 import type { ValorantApiPlayerCard } from '~/models/valorant-api/ValorantApiPlayerCard';
 import { getPlayerNameService } from '~/utils/player/nameservice.server';

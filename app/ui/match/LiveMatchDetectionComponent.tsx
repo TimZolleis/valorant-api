@@ -1,11 +1,11 @@
 import type { FetcherWithComponents } from '@remix-run/react';
 import { useFetcher } from '@remix-run/react';
 import { useEffect, useState } from 'react';
-import type { LiveMatchRoute } from '~/routes/api/match/live';
+import type { loader } from '~/routes/api.match.live';
 import { useNavigate } from 'react-router';
-import { Loading } from '@geist-ui/core';
-import { Button } from '~/ui/common/Button';
-import type { loader } from '~/routes/api/match/live';
+import { Button } from '~/components/ui/Button';
+import { Loader } from '~/components/ui/Loader';
+import { RefreshCw } from 'lucide-react';
 
 function checkForGame(fetcher: FetcherWithComponents<unknown>) {
     fetcher.load('/api/match/live');
@@ -45,13 +45,9 @@ export const LiveMatchDetectionComponent = () => {
 
     return (
         <>
-            <Button onClick={() => checkForGame(fetcher)} height={'normal'}>
-                {isLoading && (
-                    <div className={'w-10 flex items-center'}>
-                        <Loading color={'#000000'} type='error' />
-                    </div>
-                )}
-                {!isLoading && <p className={'text-sm'}>Check for live game</p>}
+            <Button size={'sm'} onClick={() => checkForGame(fetcher)}>
+                {isLoading && <Loader size={20} />}
+                {!isLoading && <RefreshCw className={'h-4 w-4'} />}
             </Button>
         </>
     );

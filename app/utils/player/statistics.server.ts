@@ -5,7 +5,7 @@ import type {
     SeasonalInfoBySeasonID,
 } from '~/models/valorant/competitive/ValorantMMR';
 import { getRankByTierNumber } from '~/utils/player/rank.server';
-import { ValorantApiClient } from '~/utils/valorant-api/ValorantApiClient';
+import { ValorantApiClient } from '~/utils/valorant-api/valorant-api.server';
 import { valorantApiEndpoints } from '~/config/valorantApiEndpoints';
 import type { ValorantApiSeason } from '~/models/valorant-api/ValorantApiSeason';
 import { prisma } from '~/utils/db/db.server';
@@ -33,11 +33,10 @@ async function getSeasonalStatistics(seasonalInfoBySeasonID: SeasonalInfoBySeaso
     return await Promise.all(
         seasonsIds.map(async (seasonId) => {
             const season = seasonalInfoBySeasonID[seasonId];
-            const seasonDescription =
-                await new ValorantApiClient().getDatabaseCached<ValorantApiSeason>(
-                    valorantApiEndpoints.seasonByUuid(seasonId),
-                    { key: 'season', expiration: 3600 }
-                );
+            const seasonDescription = await new ValorantApiClient().getCached<ValorantApiSeason>(
+                valorantApiEndpoints.seasonByUuid(seasonId),
+                { key: 'season', expiration: 3600 }
+            );
             const winrate = calculateWinrate(season.NumberOfWins, season.NumberOfGames);
             const highestRank = await getSeasonalTopRank(season);
             return {
